@@ -1,0 +1,802 @@
+<?php
+require_once '../../config/config.php';
+requireLogin();
+
+$db = Database::getInstance()->getConnection();
+
+// Déterminer le mode (création ou modification)
+$editMode = isset($_GET['id']) && !empty($_GET['id']);
+$ecriture_id = $editMode ? intval($_GET['id']) : null;
+$ecriture = null;
+$lignes = [];
+
+if ($editMode) {
+    // Charger l'écriture existante
+    $stmt = $db->prepare("SELECT * FROM ecritures WHERE id = ?");
+    $stmt->execute([$ecriture_id]);
+    $ecriture = $stmt->fetch();
+
+    if (!$ecriture) {
+        $_SESSION['flash'] = ['type' => 'error', 'message' => 'Écriture introuvable'];
+        header('Location: liste.php');
+        exit;
+    }
+
+    // Vérifier que c'est un brouillon (on ne peut modifier que les brouillons)
+    if ($ecriture['statut'] !== 'Brouillon') {
+        $_SESSION['flash'] = ['type' => 'error', 'message' => 'Seules les écritures en brouillon peuvent être modifiées'];
+        header('Location: liste.php');
+        exit;
+    }
+
+    // Charger les lignes
+    $stmtLignes = $db->prepare("SELECT * FROM lignes_ecriture WHERE id_ecriture = ? ORDER BY id");
+    $stmtLignes->execute([$ecriture_id]);
+    $lignes = $stmtLignes->fetchAll();
+}
+
+// Traitement du formulaire
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? 'save';
+
+    $data = [
+        'date_ecriture' => $_POST['date_ecriture'] ?? '',
+        'journal' => $_POST['journal'] ?? '',
+        'libelle' => trim($_POST['libelle'] ?? ''),
+        'id_tiers' => !empty($_POST['id_tiers']) ? intval($_POST['id_tiers']) : null,
+        'compte_tiers' => !empty($_POST['compte_tiers']) ? trim($_POST['compte_tiers']) : null,
+        'num_piece' => !empty($_POST['num_piece']) ? trim($_POST['num_piece']) : null,
+        'reference_piece' => !empty($_POST['reference_piece']) ? trim($_POST['reference_piece']) : null,
+        'statut' => ($action === 'validate') ? 'Validé' : 'Brouillon'
+    ];
+
+    // Vérifier que la date d'écriture n'est pas dans un exercice clôturé
+    if (!empty($data['date_ecriture'])) {
+        blockIfExerciceClosed($data['date_ecriture'], $db, 'saisie.php' . ($editMode ? '?id=' . $ecriture_id : ''));
+    }
+
+    // Générer automatiquement le mois et l'année depuis la date
+    if (!empty($data['date_ecriture'])) {
+        $date = new DateTime($data['date_ecriture']);
+        $mois_fr = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+        $data['mois'] = $mois_fr[(int)$date->format('n') - 1];
+        $data['annee'] = $date->format('Y');
+    }
+
+    // Validation
+    $errors = [];
+    if (empty($data['date_ecriture'])) $errors[] = "La date est requise";
+    if (empty($data['journal'])) $errors[] = "Le journal est requis";
+    if (empty($data['libelle'])) $errors[] = "Le libellé est requis";
+
+    // Validation des lignes
+    $details = [];
+    $total_debit = 0;
+    $total_credit = 0;
+
+    if (!empty($_POST['details']) && is_array($_POST['details'])) {
+        foreach ($_POST['details'] as $index => $detail) {
+            if (!empty($detail['compte']) && !empty($detail['libelle'])) {
+                $debit = floatval($detail['debit'] ?? 0);
+                $credit = floatval($detail['credit'] ?? 0);
+
+                if ($debit > 0 || $credit > 0) {
+                    if ($debit > 0 && $credit > 0) {
+                        $errors[] = "Ligne " . ($index + 1) . ": Un compte ne peut pas avoir à la fois un débit et un crédit";
+                        continue;
+                    }
+
+                    $details[] = [
+                        'compte' => intval($detail['compte']),
+                        'compte_tiers' => !empty($detail['compte_tiers']) ? trim($detail['compte_tiers']) : null,
+                        'numero_facture' => !empty($detail['numero_facture']) ? trim($detail['numero_facture']) : null,
+                        'date_ligne' => !empty($detail['date_ligne']) ? $detail['date_ligne'] : null,
+                        'libelle' => trim($detail['libelle']),
+                        'debit' => $debit,
+                        'credit' => $credit
+                    ];
+
+                    $total_debit += $debit;
+                    $total_credit += $credit;
+                }
+            }
+        }
+    }
+
+    if (empty($details)) {
+        $errors[] = "Au moins une ligne d'écriture est requise";
+    } else {
+        // Vérifier l'équilibre
+        if (abs($total_debit - $total_credit) > 0.01) {
+            $errors[] = "Les écritures doivent être équilibrées (Débit: " . number_format($total_debit, 2, ',', ' ') . " FCFA, Crédit: " . number_format($total_credit, 2, ',', ' ') . " FCFA)";
+        }
+    }
+
+    if (empty($errors)) {
+        try {
+            $db->beginTransaction();
+
+            if ($editMode) {
+                // Mise à jour de l'écriture existante
+                $sql = "UPDATE ecritures SET
+                        date_ecriture = ?, journal = ?, libelle = ?, mois = ?, annee = ?,
+                        id_tiers = ?, compte_tiers = ?, num_piece = ?, reference_piece = ?, statut = ?, montant_total = ?
+                        WHERE id = ?";
+                $stmt = $db->prepare($sql);
+                $stmt->execute([
+                    $data['date_ecriture'],
+                    $data['journal'],
+                    $data['libelle'],
+                    $data['mois'],
+                    $data['annee'],
+                    $data['id_tiers'],
+                    $data['compte_tiers'],
+                    $data['num_piece'],
+                    $data['reference_piece'],
+                    $data['statut'],
+                    max($total_debit, $total_credit),
+                    $ecriture_id
+                ]);
+
+                // Supprimer les anciennes lignes
+                $db->prepare("DELETE FROM lignes_ecriture WHERE id_ecriture = ?")->execute([$ecriture_id]);
+                $new_id = $ecriture_id;
+            } else {
+                // Création d'une nouvelle écriture
+                // Générer le numéro d'écriture
+                $numero_ecriture = $data['journal'] . date('m', strtotime($data['date_ecriture'])) . date('y', strtotime($data['date_ecriture']));
+
+                // Compter les écritures du même journal ce mois
+                $stmtCount = $db->prepare("SELECT COUNT(*) as count FROM ecritures WHERE journal = ? AND mois = ? AND annee = ?");
+                $stmtCount->execute([$data['journal'], $data['mois'], $data['annee']]);
+                $count = $stmtCount->fetch()['count'] + 1;
+                $numero_ecriture .= str_pad($count, 4, '0', STR_PAD_LEFT);
+
+                $sql = "INSERT INTO ecritures (numero_ecriture, date_ecriture, journal, libelle, mois, annee, id_tiers, compte_tiers, num_piece, reference_piece, statut, montant_total, date_creation)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+                $stmt = $db->prepare($sql);
+                $stmt->execute([
+                    $numero_ecriture,
+                    $data['date_ecriture'],
+                    $data['journal'],
+                    $data['libelle'],
+                    $data['mois'],
+                    $data['annee'],
+                    $data['id_tiers'],
+                    $data['compte_tiers'],
+                    $data['num_piece'],
+                    $data['reference_piece'],
+                    $data['statut'],
+                    max($total_debit, $total_credit)
+                ]);
+                $new_id = $db->lastInsertId();
+            }
+
+            // Insérer les nouvelles lignes
+            $sqlLigne = "INSERT INTO lignes_ecriture (id_ecriture, compte, compte_tiers, numero_facture, date_ligne, libelle, debit, credit) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmtLigne = $db->prepare($sqlLigne);
+
+            foreach ($details as $detail) {
+                $stmtLigne->execute([
+                    $new_id,
+                    $detail['compte'],
+                    $detail['compte_tiers'],
+                    $detail['numero_facture'],
+                    $detail['date_ligne'],
+                    $detail['libelle'],
+                    $detail['debit'],
+                    $detail['credit']
+                ]);
+            }
+
+            $db->commit();
+
+            $message = $editMode ? 'Écriture modifiée avec succès' : 'Écriture créée avec succès';
+            $_SESSION['flash'] = ['type' => 'success', 'message' => $message];
+            header('Location: voir.php?id=' . $new_id);
+            exit;
+
+        } catch (Exception $e) {
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
+            $errors[] = 'Erreur lors de l\'enregistrement: ' . $e->getMessage();
+        }
+    }
+
+    if (!empty($errors)) {
+        $_SESSION['flash'] = ['type' => 'error', 'message' => implode('<br>', $errors)];
+    }
+}
+
+// Récupérer les données pour les sélecteurs
+try {
+    $journaux = $db->query("SELECT * FROM code_journal WHERE actif = 1 ORDER BY code")->fetchAll();
+    $comptes = $db->query("SELECT compte, intitule_compte FROM plan_comptable WHERE actif = 'Oui' ORDER BY compte")->fetchAll();
+    $tiers = $db->query("SELECT id, compte_tiers, nom, type FROM plan_tiers WHERE actif = 1 ORDER BY nom")->fetchAll();
+} catch (Exception $e) {
+    $journaux = [];
+    $comptes = [];
+    $tiers = [];
+}
+
+// Liste des mois
+$mois_list = [
+    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+];
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $editMode ? 'Modifier' : 'Nouvelle' ?> Écriture - <?php echo APP_NAME; ?></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .select2-container {
+            width: 100% !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100">
+    <div class="flex h-screen overflow-hidden">
+        <?php include '../../includes/sidebar.php'; ?>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto">
+            <!-- Header -->
+            <header class="bg-slate-800/30 border-b border-slate-700/50 p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">
+                            <?= $editMode ? 'Modifier l\'écriture' : 'Nouvelle écriture comptable' ?>
+                        </h1>
+                        <p class="text-sm text-slate-400 mt-1">
+                            <?= $editMode ? 'Modification de l\'écriture ' . htmlspecialchars($ecriture['numero_ecriture']) : 'Saisie d\'une nouvelle écriture en partie double' ?>
+                        </p>
+                    </div>
+                    <div>
+                        <a href="liste.php" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition-colors inline-flex items-center gap-2">
+                            <i class="fas fa-arrow-left"></i>
+                            Retour à la liste
+                        </a>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Flash Message -->
+            <?php if (isset($_SESSION['flash'])): ?>
+                <div class="m-6 p-4 rounded-lg <?= $_SESSION['flash']['type'] === 'success' ? 'bg-green-500/10 border border-green-500/50 text-green-400' : 'bg-red-500/10 border border-red-500/50 text-red-400' ?>">
+                    <i class="fas <?= $_SESSION['flash']['type'] === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle' ?> mr-2"></i>
+                    <?= $_SESSION['flash']['message'] ?>
+                </div>
+                <?php unset($_SESSION['flash']); ?>
+            <?php endif; ?>
+
+            <!-- Formulaire -->
+            <div class="p-6">
+                <form method="POST" id="ecritureForm" class="space-y-6">
+                    <!-- En-tête de l'écriture -->
+                    <div class="bg-slate-800/50 border border-slate-700/50 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <i class="fas fa-file-alt text-blue-400"></i>
+                            Informations générales
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Date (mois et année seront générés automatiquement) -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">
+                                    <i class="fas fa-calendar text-blue-400 mr-1"></i>Date de l'écriture *
+                                    <span class="text-xs text-slate-500 ml-2">(Mois et année automatiques)</span>
+                                </label>
+                                <input type="date" name="date_ecriture" required
+                                       value="<?= $editMode ? htmlspecialchars($ecriture['date_ecriture']) : date('Y-m-d') ?>"
+                                       class="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500 transition-colors">
+                            </div>
+
+                            <!-- Journal -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">
+                                    <i class="fas fa-book text-blue-400 mr-1"></i>Journal *
+                                </label>
+                                <select name="journal" required
+                                        class="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500 transition-colors">
+                                    <option value="">Sélectionner un journal</option>
+                                    <?php foreach ($journaux as $j): ?>
+                                        <option value="<?= htmlspecialchars($j['code']) ?>"
+                                                <?= ($editMode && $ecriture['journal'] === $j['code']) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($j['code']) ?> - <?= htmlspecialchars($j['journal']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <!-- Tiers (optionnel) -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">
+                                    <i class="fas fa-user text-blue-400 mr-1"></i>Tiers (optionnel)
+                                </label>
+                                <select name="id_tiers" id="selectTiers" onchange="updateCodeTiers()"
+                                        class="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500 transition-colors">
+                                    <option value="">Aucun tiers</option>
+                                    <?php foreach ($tiers as $t): ?>
+                                        <option value="<?= $t['id'] ?>" data-code-tiers="<?= htmlspecialchars($t['compte_tiers']) ?>"
+                                                <?= ($editMode && $ecriture['id_tiers'] == $t['id']) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($t['nom']) ?> (<?= htmlspecialchars($t['type']) ?>)
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <!-- Code tiers (généré automatiquement) -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">
+                                    <i class="fas fa-barcode text-blue-400 mr-1"></i>Code tiers
+                                    <span class="text-xs text-slate-500 ml-2">(Automatique)</span>
+                                </label>
+                                <input type="text" id="codeTiers" name="compte_tiers" readonly
+                                       value="<?= $editMode ? htmlspecialchars($ecriture['compte_tiers'] ?? '') : '' ?>"
+                                       placeholder="Sélectionnez un tiers"
+                                       class="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-400 cursor-not-allowed">
+                            </div>
+
+                            <!-- N° pièce (optionnel) -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">
+                                    <i class="fas fa-hashtag text-blue-400 mr-1"></i>N° de pièce (optionnel)
+                                </label>
+                                <input type="text" name="num_piece"
+                                       value="<?= $editMode ? htmlspecialchars($ecriture['num_piece'] ?? '') : '' ?>"
+                                       placeholder="Ex: FAC-2024-001"
+                                       class="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors">
+                            </div>
+
+                            <!-- Référence pièce (optionnel) -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">
+                                    <i class="fas fa-file-invoice text-blue-400 mr-1"></i>Référence pièce (optionnel)
+                                </label>
+                                <input type="text" name="reference_piece"
+                                       value="<?= $editMode ? htmlspecialchars($ecriture['reference_piece'] ?? '') : '' ?>"
+                                       placeholder="Ex: Facture n°123, Chèque n°456..."
+                                       class="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors">
+                            </div>
+                        </div>
+
+                        <!-- Libellé -->
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-slate-300 mb-2">
+                                <i class="fas fa-align-left text-blue-400 mr-1"></i>Libellé de l'écriture *
+                            </label>
+                            <textarea name="libelle" required rows="2"
+                                      placeholder="Description de l'écriture comptable..."
+                                      class="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"><?= $editMode ? htmlspecialchars($ecriture['libelle']) : '' ?></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Lignes d'écriture -->
+                    <div class="bg-slate-800/50 border border-slate-700/50 rounded-lg p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+                                <i class="fas fa-list text-blue-400"></i>
+                                Lignes d'écriture (partie double)
+                            </h3>
+                            <button type="button" onclick="addLine()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors inline-flex items-center gap-2">
+                                <i class="fas fa-plus"></i>
+                                Ajouter une ligne
+                            </button>
+                        </div>
+
+                        <!-- En-têtes du tableau -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full" id="lignesTable">
+                                <thead class="bg-slate-900/50 border-b border-slate-700">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left text-xs font-medium text-slate-400 uppercase" style="width: 16%">Compte</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium text-slate-400 uppercase" style="width: 8%">Cpte Tiers</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium text-slate-400 uppercase" style="width: 9%">N° Facture</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium text-slate-400 uppercase" style="width: 9%">Date Facture</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium text-slate-400 uppercase" style="width: 18%">Libellé</th>
+                                        <th class="px-3 py-2 text-right text-xs font-medium text-slate-400 uppercase" style="width: 12%">Débit</th>
+                                        <th class="px-3 py-2 text-right text-xs font-medium text-slate-400 uppercase" style="width: 12%">Crédit</th>
+                                        <th class="px-3 py-2 text-center text-xs font-medium text-slate-400 uppercase" style="width: 6%">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lignesBody">
+                                    <?php if ($editMode && !empty($lignes)): ?>
+                                        <?php foreach ($lignes as $index => $ligne): ?>
+                                            <tr class="border-b border-slate-700/50 ligne-row">
+                                                <td class="px-3 py-2">
+                                                    <select name="details[<?= $index ?>][compte]" required class="w-full px-2 py-1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm focus:outline-none focus:border-blue-500">
+                                                        <option value="">Sélectionner</option>
+                                                        <?php foreach ($comptes as $c): ?>
+                                                            <option value="<?= $c['compte'] ?>" <?= ($ligne['compte'] == $c['compte']) ? 'selected' : '' ?>>
+                                                                <?= htmlspecialchars($c['compte']) ?> - <?= htmlspecialchars(substr($c['intitule_compte'], 0, 20)) ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </td>
+                                                <td class="px-3 py-2">
+                                                    <select name="details[<?= $index ?>][compte_tiers]"
+                                                           class="w-full px-2 py-1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm focus:outline-none focus:border-blue-500">
+                                                        <option value="">--</option>
+                                                        <?php foreach ($tiers as $t): ?>
+                                                            <option value="<?= $t['compte_tiers'] ?>" <?= ($ligne['compte_tiers'] == $t['compte_tiers']) ? 'selected' : '' ?>>
+                                                                <?= htmlspecialchars($t['compte_tiers']) ?> - <?= htmlspecialchars(substr($t['nom'], 0, 15)) ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </td>
+                                                <td class="px-3 py-2">
+                                                    <input type="text" name="details[<?= $index ?>][numero_facture]"
+                                                           value="<?= htmlspecialchars($ligne['numero_facture'] ?? '') ?>"
+                                                           placeholder="Ex: FA2025001"
+                                                           class="w-full px-2 py-1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm focus:outline-none focus:border-blue-500">
+                                                </td>
+                                                <td class="px-3 py-2">
+                                                    <input type="date" name="details[<?= $index ?>][date_ligne]"
+                                                           value="<?= htmlspecialchars($ligne['date_ligne'] ?? '') ?>"
+                                                           class="w-full px-2 py-1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm focus:outline-none focus:border-blue-500">
+                                                </td>
+                                                <td class="px-3 py-2">
+                                                    <input type="text" name="details[<?= $index ?>][libelle]" required
+                                                           value="<?= htmlspecialchars($ligne['libelle']) ?>"
+                                                           class="w-full px-2 py-1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm focus:outline-none focus:border-blue-500">
+                                                </td>
+                                                <td class="px-3 py-2">
+                                                    <input type="number" name="details[<?= $index ?>][debit]" step="0.01" min="0"
+                                                           value="<?= $ligne['debit'] ?>"
+                                                           class="w-full px-2 py-1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm text-right focus:outline-none focus:border-blue-500 debit-input"
+                                                           onchange="calculateTotals()">
+                                                </td>
+                                                <td class="px-3 py-2">
+                                                    <input type="number" name="details[<?= $index ?>][credit]" step="0.01" min="0"
+                                                           value="<?= $ligne['credit'] ?>"
+                                                           class="w-full px-2 py-1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm text-right focus:outline-none focus:border-blue-500 credit-input"
+                                                           onchange="calculateTotals()">
+                                                </td>
+                                                <td class="px-3 py-2 text-center">
+                                                    <button type="button" onclick="removeLine(this)" class="text-red-400 hover:text-red-300 transition-colors">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </tbody>
+                                <tfoot class="bg-slate-900/50 border-t-2 border-slate-700">
+                                    <tr>
+                                        <td colspan="4" class="px-3 py-3 text-right font-semibold text-white">TOTAUX:</td>
+                                        <td class="px-3 py-3 text-right">
+                                            <span id="totalDebit" class="font-bold text-cyan-400 text-lg">0</span>
+                                            <span class="text-slate-400 text-sm ml-1">FCFA</span>
+                                        </td>
+                                        <td class="px-3 py-3 text-right">
+                                            <span id="totalCredit" class="font-bold text-pink-400 text-lg">0</span>
+                                            <span class="text-slate-400 text-sm ml-1">FCFA</span>
+                                        </td>
+                                        <td class="px-3 py-3 text-center">
+                                            <span id="equilibreIcon"></span>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <!-- Message d'équilibre -->
+                        <div id="equilibreMessage" class="mt-4 p-3 rounded-lg hidden"></div>
+                    </div>
+
+                    <!-- Boutons d'action -->
+                    <div class="flex items-center justify-between bg-slate-800/50 border border-slate-700/50 rounded-lg p-6">
+                        <a href="liste.php" class="text-slate-400 hover:text-white transition-colors">
+                            <i class="fas fa-times mr-2"></i>Annuler
+                        </a>
+                        <div class="flex gap-3">
+                            <button type="submit" name="action" value="save" class="bg-slate-600 hover:bg-slate-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors inline-flex items-center gap-2">
+                                <i class="fas fa-save"></i>
+                                Enregistrer en brouillon
+                            </button>
+                            <button type="submit" name="action" value="validate" class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-6 py-2.5 rounded-lg font-medium transition-all shadow-lg hover:shadow-xl inline-flex items-center gap-2">
+                                <i class="fas fa-check-circle"></i>
+                                Valider l'écriture
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let lineIndex = <?= $editMode ? count($lignes) : 0 ?>;
+        const comptes = <?= json_encode($comptes) ?>;
+        const tiers = <?= json_encode($tiers) ?>;
+
+        function addLine() {
+            const tbody = document.getElementById('lignesBody');
+            const tr = document.createElement('tr');
+            tr.className = 'border-b border-slate-700/50 ligne-row';
+
+            // Récupérer les valeurs automatiques
+            const dateEcriture = document.querySelector('input[name="date_ecriture"]').value || '';
+            const autoLibelle = generateAutoLibelle() || '';
+
+            tr.innerHTML = `
+                <td class="px-3 py-2">
+                    <select name="details[${lineIndex}][compte]" required class="w-full px-2 py-1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 select-compte">
+                        <option value="">Sélectionner</option>
+                        ${comptes.map(c => `<option value="${c.compte}">${c.compte} - ${c.intitule_compte.substring(0, 20)}</option>`).join('')}
+                    </select>
+                </td>
+                <td class="px-3 py-2">
+                    <select name="details[${lineIndex}][compte_tiers]"
+                           class="w-full px-2 py-1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm focus:outline-none focus:border-blue-500">
+                        <option value="">--</option>
+                        ${tiers.map(t => `<option value="${t.compte_tiers}">${t.compte_tiers} - ${t.nom.substring(0, 15)}</option>`).join('')}
+                    </select>
+                </td>
+                <td class="px-3 py-2">
+                    <input type="text" name="details[${lineIndex}][numero_facture]"
+                           placeholder="Ex: FA2025001"
+                           class="w-full px-2 py-1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm focus:outline-none focus:border-blue-500">
+                </td>
+                <td class="px-3 py-2">
+                    <input type="date" name="details[${lineIndex}][date_ligne]" value="${dateEcriture}"
+                           class="w-full px-2 py-1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm focus:outline-none focus:border-blue-500">
+                </td>
+                <td class="px-3 py-2">
+                    <input type="text" name="details[${lineIndex}][libelle]" required value="${autoLibelle}"
+                           class="w-full px-2 py-1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm focus:outline-none focus:border-blue-500">
+                </td>
+                <td class="px-3 py-2">
+                    <input type="number" name="details[${lineIndex}][debit]" step="0.01" min="0" value="0"
+                           class="w-full px-2 py-1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm text-right focus:outline-none focus:border-blue-500 debit-input"
+                           onchange="calculateTotals()">
+                </td>
+                <td class="px-3 py-2">
+                    <input type="number" name="details[${lineIndex}][credit]" step="0.01" min="0" value="0"
+                           class="w-full px-2 py-1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm text-right focus:outline-none focus:border-blue-500 credit-input"
+                           onchange="calculateTotals()">
+                </td>
+                <td class="px-3 py-2 text-center">
+                    <button type="button" onclick="removeLine(this)" class="text-red-400 hover:text-red-300 transition-colors">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+
+            // Ajouter un écouteur sur le select du compte pour détecter les changements
+            const newRow = tbody.lastElementChild;
+            const selectCompte = newRow.querySelector('.select-compte');
+            if (selectCompte) {
+                selectCompte.addEventListener('change', function() {
+                    updateLineAutoFields(newRow);
+                });
+            }
+
+            lineIndex++;
+            calculateTotals();
+        }
+
+        function removeLine(button) {
+            if (document.querySelectorAll('.ligne-row').length <= 1) {
+                alert('Il doit y avoir au moins une ligne d\'écriture');
+                return;
+            }
+            button.closest('tr').remove();
+            calculateTotals();
+        }
+
+        function calculateTotals() {
+            let totalDebit = 0;
+            let totalCredit = 0;
+
+            document.querySelectorAll('.debit-input').forEach(input => {
+                totalDebit += parseFloat(input.value) || 0;
+            });
+
+            document.querySelectorAll('.credit-input').forEach(input => {
+                totalCredit += parseFloat(input.value) || 0;
+            });
+
+            document.getElementById('totalDebit').textContent = totalDebit.toLocaleString('fr-FR', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+            document.getElementById('totalCredit').textContent = totalCredit.toLocaleString('fr-FR', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+
+            const equilibre = Math.abs(totalDebit - totalCredit) < 0.01;
+            const equilibreIcon = document.getElementById('equilibreIcon');
+            const equilibreMessage = document.getElementById('equilibreMessage');
+
+            if (totalDebit === 0 && totalCredit === 0) {
+                equilibreIcon.innerHTML = '';
+                equilibreMessage.className = 'mt-4 p-3 rounded-lg hidden';
+            } else if (equilibre) {
+                equilibreIcon.innerHTML = '<i class="fas fa-check-circle text-green-400 text-xl"></i>';
+                equilibreMessage.className = 'mt-4 p-3 rounded-lg bg-green-500/10 border border-green-500/50 text-green-400';
+                equilibreMessage.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Les écritures sont équilibrées';
+            } else {
+                const ecart = Math.abs(totalDebit - totalCredit);
+                equilibreIcon.innerHTML = '<i class="fas fa-exclamation-triangle text-red-400 text-xl"></i>';
+                equilibreMessage.className = 'mt-4 p-3 rounded-lg bg-red-500/10 border border-red-500/50 text-red-400';
+                equilibreMessage.innerHTML = `<i class="fas fa-exclamation-triangle mr-2"></i>Déséquilibre de ${ecart.toLocaleString('fr-FR', {minimumFractionDigits: 0, maximumFractionDigits: 0})} FCFA`;
+            }
+        }
+
+        // Fonction pour mettre à jour le code tiers automatiquement
+        function updateCodeTiers() {
+            const selectTiers = document.getElementById('selectTiers');
+            const codeTiersInput = document.getElementById('codeTiers');
+
+            if (selectTiers.value) {
+                const selectedOption = selectTiers.options[selectTiers.selectedIndex];
+                const codeTiers = selectedOption.getAttribute('data-code-tiers');
+                codeTiersInput.value = codeTiers || '';
+            } else {
+                codeTiersInput.value = '';
+            }
+
+            // Mettre à jour les lignes existantes avec le nouveau code tiers
+            updateAllLinesAutoFields();
+        }
+
+        // Fonction pour générer le libellé automatique
+        function generateAutoLibelle() {
+            const journal = document.querySelector('select[name="journal"]').value;
+            const dateEcriture = document.querySelector('input[name="date_ecriture"]').value;
+            const selectTiers = document.getElementById('selectTiers');
+            const libelleEcriture = document.querySelector('textarea[name="libelle"]').value;
+
+            if (!journal || !dateEcriture || !libelleEcriture) {
+                return '';
+            }
+
+            // Convertir la date en format MOISAA (ex: AVR25 pour avril 2025)
+            const date = new Date(dateEcriture);
+            const mois = ['JAN', 'FEV', 'MAR', 'AVR', 'MAI', 'JUN', 'JUL', 'AOU', 'SEP', 'OCT', 'NOV', 'DEC'];
+            const moisAbrege = mois[date.getMonth()];
+            const anneeAbrege = date.getFullYear().toString().substr(-2);
+            const moisAA = moisAbrege + anneeAbrege;
+
+            // Récupérer le nom du tiers sélectionné
+            let nomTiers = '';
+            if (selectTiers && selectTiers.value && selectTiers.selectedIndex > 0) {
+                // Extraire le nom du tiers depuis le texte de l'option (format: "Nom (Type)")
+                const selectedText = selectTiers.options[selectTiers.selectedIndex].text;
+                // Extraire uniquement le nom avant la parenthèse
+                nomTiers = selectedText.split('(')[0].trim();
+            }
+
+            // Construire le libellé selon si un tiers est sélectionné ou non
+            let libelle;
+            if (nomTiers && nomTiers !== '') {
+                // Avec tiers: JOURNAL/MOISAA/NOM_TIERS/LIBELLE
+                libelle = journal + '/' + moisAA + '/' + nomTiers + '/' + libelleEcriture;
+            } else {
+                // Sans tiers: JOURNAL/MOISAA/LIBELLE
+                libelle = journal + '/' + moisAA + '/' + libelleEcriture;
+            }
+
+            return libelle;
+        }
+
+        // Fonction pour vérifier si un compte nécessite un tiers/facture
+        function needsTiersAndFacture(compte) {
+            if (!compte) return false;
+            const compteStr = compte.toString();
+            return compteStr.startsWith('4011') ||
+                   compteStr.startsWith('4012') ||
+                   compteStr.startsWith('4111') ||
+                   compteStr.startsWith('4112') ||
+                   compteStr.startsWith('422');
+        }
+
+        // Fonction pour mettre à jour les champs d'une ligne selon le compte sélectionné
+        function updateLineAutoFields(row) {
+            const selectCompte = row.querySelector('select[name*="[compte]"]');
+            const compteValue = selectCompte ? selectCompte.value : '';
+
+            const dateEcriture = document.querySelector('input[name="date_ecriture"]').value;
+            const codeTiers = document.getElementById('codeTiers').value;
+            const referencePiece = document.querySelector('input[name="reference_piece"]').value;
+            const autoLibelle = generateAutoLibelle();
+
+            // Vérifier si ce compte nécessite tiers et facture
+            const needsAuto = needsTiersAndFacture(compteValue);
+
+            // Mettre à jour le compte tiers
+            const selectCompteTiers = row.querySelector('select[name*="[compte_tiers]"]');
+            if (selectCompteTiers) {
+                if (needsAuto && codeTiers) {
+                    // Chercher l'option qui correspond au code tiers
+                    const option = Array.from(selectCompteTiers.options).find(opt => opt.value === codeTiers);
+                    if (option) {
+                        selectCompteTiers.value = codeTiers;
+                    }
+                }
+            }
+
+            // Mettre à jour le numéro de facture
+            const inputNumeroFacture = row.querySelector('input[name*="[numero_facture]"]');
+            if (inputNumeroFacture) {
+                if (needsAuto && referencePiece) {
+                    inputNumeroFacture.value = referencePiece;
+                }
+            }
+
+            // Mettre à jour la date facture
+            const inputDateLigne = row.querySelector('input[name*="[date_ligne]"]');
+            if (inputDateLigne && dateEcriture) {
+                inputDateLigne.value = dateEcriture;
+            }
+
+            // Mettre à jour le libellé
+            const inputLibelle = row.querySelector('input[name*="[libelle]"]');
+            if (inputLibelle && autoLibelle) {
+                // Vérifier si le libellé actuel semble être généré automatiquement (contient des "/")
+                // ou s'il est vide
+                const currentLibelle = inputLibelle.value;
+                const seemsAutoGenerated = currentLibelle === '' || currentLibelle.includes('/');
+
+                if (seemsAutoGenerated) {
+                    inputLibelle.value = autoLibelle;
+                }
+            }
+        }
+
+        // Fonction pour mettre à jour tous les champs automatiques des lignes
+        function updateAllLinesAutoFields() {
+            // Mettre à jour toutes les lignes
+            document.querySelectorAll('.ligne-row').forEach(row => {
+                updateLineAutoFields(row);
+            });
+        }
+
+        // Initialiser le code tiers si un tiers est déjà sélectionné (mode édition)
+        <?php if ($editMode && $ecriture['id_tiers']): ?>
+        updateCodeTiers();
+        <?php endif; ?>
+
+        // Initialiser avec 2 lignes si mode création
+        <?php if (!$editMode): ?>
+        addLine();
+        addLine();
+        <?php else: ?>
+        calculateTotals();
+        <?php endif; ?>
+
+        // Ajouter des écouteurs d'événements pour mettre à jour automatiquement les lignes
+        document.querySelector('select[name="journal"]').addEventListener('change', updateAllLinesAutoFields);
+        document.querySelector('input[name="date_ecriture"]').addEventListener('change', updateAllLinesAutoFields);
+        document.querySelector('textarea[name="libelle"]').addEventListener('input', updateAllLinesAutoFields);
+        document.querySelector('input[name="reference_piece"]').addEventListener('input', updateAllLinesAutoFields);
+
+        // Ajouter des écouteurs sur les lignes existantes (mode édition)
+        document.querySelectorAll('.ligne-row').forEach(row => {
+            const selectCompte = row.querySelector('select[name*="[compte]"]');
+            if (selectCompte) {
+                selectCompte.addEventListener('change', function() {
+                    updateLineAutoFields(row);
+                });
+            }
+        });
+
+        // Validation du formulaire
+        document.getElementById('ecritureForm').addEventListener('submit', function(e) {
+            const totalDebit = parseFloat(document.getElementById('totalDebit').textContent.replace(/\s/g, '')) || 0;
+            const totalCredit = parseFloat(document.getElementById('totalCredit').textContent.replace(/\s/g, '')) || 0;
+
+            if (Math.abs(totalDebit - totalCredit) > 0.01) {
+                if (!confirm('Les écritures ne sont pas équilibrées. Voulez-vous quand même continuer ?')) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

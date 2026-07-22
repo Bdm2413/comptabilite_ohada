@@ -1,0 +1,22 @@
+1. Groupes de l'actif
+
+AD (IMMOBILISATIONS INCORPORELLES) contient : AE, AF, AG et AH
+AI (IMMOBILISATIONS CORPORELLES) contient : AJ, AK, AL, AM, AN et AP
+AQ (IMMOBILISATIONS FINANCIERES) contient : AR et AS
+BG (CREANCES ET EMPLOIS ASSIMILES) contient : BH, BI et BJ
+
+Je ne sais pas comment faire avec BQ, BR et BS parce qu'ils appartiennent à BZ.
+
+2. Groupe du passif
+
+Je ne sais pas trop comment organiser.
+
+3. Bilan condensé
+
+Au final, le bilan condensé devra être structuré de la façon suivante :
+
+Pour l'actif, le bilan condensé doit permettre de voir :
+AD, AI, AQ, AZ, BA, BB, BK, BT, BU et BZ
+
+Pour le passif, le bilan condensé devra être structuré de la façon suivante :
+CP, DD, DF, DP, DT, DV et DZ.

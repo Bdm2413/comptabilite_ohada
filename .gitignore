@@ -1,0 +1,56 @@
+# ============================================
+#  .gitignore - Comptabilité OHADA (SYSCOHADA)
+# ============================================
+
+# --- Dépendances Composer (à regénérer avec "composer install") ---
+vendor/
+
+# --- Fichiers de backup et dumps SQL ---
+backups/
+*.sql
+
+# --- Fichiers de config sensibles (contiennent les identifiants DB) ---
+# Dupliquer en config/database.example.php avant de commiter
+# config/database.php
+# config/config.php
+
+# --- Fichier réservé Windows (non copiable) ---
+nul
+
+# --- Fichiers de log ---
+*.log
+logs/
+
+# --- Cache applicatif ---
+cache/
+tmp/
+temp/
+
+# --- Fichiers uploadés par les utilisateurs ---
+public/uploads/
+assets/uploads/
+
+# --- Fichiers de session PHP ---
+sessions/
+
+# --- Fichiers de l'IDE et système ---
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Fichiers temporaires PHP ---
+*.bak
+*.swp
+*.swo
+*~
+
+# --- Variables d'environnement (si tu migres vers .env un jour) ---
+.env
+.env.local
+.env.production
+
+# --- Fichiers trop volumineux pour GitHub (>100MB) ---
+Support Tableau Flux de Trésorerie.pdf
+Support Tableau Flux de Trésorerie_Part I.pdf

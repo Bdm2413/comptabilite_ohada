@@ -1,0 +1,37 @@
+Calculs Bilan et Compte de résultat
+
+1. Calcul Bilan
+
+a. Actif du bilan
+
+AD = AE + AF + AG + AH
+AI = AJ + AK + AL + AM + AN + AP
+AQ = AR + AS
+AZ = AD + AI + AQ
+BG = BH + BI + BJ
+BK = BA + BB + BG
+BT = BQ + BR + BS
+BZ = AZ + BK + BT + BU
+
+b. Passif du bilan
+
+CP = CA + CB + CD + CE + CF + CG + CH + CJ + CL + CM
+DD = DA + DB + DC
+DF = CP + DD
+DP = DH + DI + DJ + DK + DM + DN
+DT = DQ + DR
+DZ = DF + DP + DT + DV
+
+La colonne AMORT/DEPREC de l'actif du bilan ne prend que les comptes commençant par 28 et par 29. Pour être plus précis, les comptes du bilan qui sont de type : Amortis/Provision.
+
+2. Compte de résultat
+
+XA = TA + RA + RB
+XB = TA + TB + TC + TD
+XC = RA + RB + XB + TE + TF + TG + TH + TI + RC + RD + RE + RF + RG + RH + RI + RJ
+XD = XC + EK
+XE = XD + TJ + RL
+XF = TK + TL + TM + RM + RN
+XG = XE + XF
+XH = TN + TO + RO + RP
+XI = XG + XH + RQ + RS

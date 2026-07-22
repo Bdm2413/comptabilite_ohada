@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API - ComptaSYSCOHADA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 p-8">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8 text-emerald-400">🧪 Test API - ComptaSYSCOHADA</h1>
+
+        <!-- Section Login -->
+        <div class="bg-slate-800 rounded-lg p-6 mb-6 border border-slate-700">
+            <h2 class="text-xl font-semibold mb-4 text-blue-400">1. Authentification</h2>
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <input type="email" id="email" value="admin@comptabilite.local" class="px-4 py-2 bg-slate-700 border border-slate-600 rounded text-white" placeholder="Email">
+                <input type="password" id="password" value="admin123" class="px-4 py-2 bg-slate-700 border border-slate-600 rounded text-white" placeholder="Password">
+            </div>
+
+            <button onclick="login()" class="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded transition">
+                🔐 Se connecter
+            </button>
+
+            <div id="token-display" class="mt-4 hidden">
+                <p class="text-sm text-slate-400 mb-2">Token JWT :</p>
+                <div class="bg-slate-700 p-3 rounded text-xs font-mono break-all" id="token-text"></div>
+            </div>
+        </div>
+
+        <!-- Section Tests -->
+        <div class="bg-slate-800 rounded-lg p-6 border border-slate-700">
+            <h2 class="text-xl font-semibold mb-4 text-purple-400">2. Tests des Endpoints</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                <!-- Écritures -->
+                <button onclick="testEndpoint('/ecritures', 'GET')" class="px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded text-sm transition">
+                    📝 GET Écritures
+                </button>
+                <button onclick="testEndpoint('/ecritures/1', 'GET')" class="px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded text-sm transition">
+                    📄 GET Écriture #1
+                </button>
+
+                <!-- Balance -->
+                <button onclick="testEndpoint('/balance/generale', 'GET')" class="px-4 py-3 bg-green-600 hover:bg-green-700 rounded text-sm transition">
+                    ⚖️ Balance Générale
+                </button>
+                <button onclick="testEndpoint('/balance/auxiliaire', 'GET')" class="px-4 py-3 bg-green-600 hover:bg-green-700 rounded text-sm transition">
+                    📊 Balance Auxiliaire
+                </button>
+
+                <!-- Grand-Livre -->
+                <button onclick="testEndpoint('/grand-livre', 'GET')" class="px-4 py-3 bg-purple-600 hover:bg-purple-700 rounded text-sm transition">
+                    📖 Grand-Livre (tous)
+                </button>
+                <button onclick="testEndpoint('/grand-livre/601100', 'GET')" class="px-4 py-3 bg-purple-600 hover:bg-purple-700 rounded text-sm transition">
+                    📗 Grand-Livre 601100
+                </button>
+            </div>
+
+            <!-- Test POST écriture -->
+            <details class="mb-4">
+                <summary class="cursor-pointer text-orange-400 font-semibold mb-2">➕ Test POST - Créer une écriture</summary>
+                <textarea id="post-data" class="w-full h-40 bg-slate-700 border border-slate-600 rounded p-3 text-sm font-mono" placeholder="JSON...">
+{
+  "numero_piece": "TEST001",
+  "date_piece": "2025-01-20",
+  "journal": "AC",
+  "libelle_ecriture": "Test API",
+  "statut": "brouillon",
+  "lignes": [
+    {
+      "compte": "605300",
+      "libelle": "Test fournitures",
+      "debit": 10000,
+      "credit": 0
+    },
+    {
+      "compte": "401100",
+      "libelle": "Test fournisseur",
+      "debit": 0,
+      "credit": 10000
+    }
+  ]
+}</textarea>
+                <button onclick="createEcriture()" class="mt-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded transition">
+                    🚀 Créer l'écriture
+                </button>
+            </details>
+        </div>
+
+        <!-- Résultats -->
+        <div class="bg-slate-800 rounded-lg p-6 mt-6 border border-slate-700">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-semibold text-yellow-400">📤 Réponse</h2>
+                <button onclick="clearResponse()" class="px-3 py-1 bg-slate-700 hover:bg-slate-600 text-sm rounded">Effacer</button>
+            </div>
+
+            <div id="response-status" class="mb-2 text-sm"></div>
+            <pre id="response" class="bg-slate-900 p-4 rounded text-xs font-mono overflow-auto max-h-96 border border-slate-700"></pre>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin + '/comptabilite_ohada/api/v1';
+        let token = localStorage.getItem('api_token');
+
+        // Afficher le token si déjà connecté
+        if (token) {
+            document.getElementById('token-display').classList.remove('hidden');
+            document.getElementById('token-text').textContent = token;
+        }
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(API_BASE + '/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                displayResponse(response.status, data);
+
+                if (data.success && data.data.token) {
+                    token = data.data.token;
+                    localStorage.setItem('api_token', token);
+                    document.getElementById('token-display').classList.remove('hidden');
+                    document.getElementById('token-text').textContent = token;
+                }
+            } catch (error) {
+                displayResponse(0, { error: error.message });
+            }
+        }
+
+        async function testEndpoint(endpoint, method = 'GET') {
+            if (!token) {
+                alert('Veuillez vous connecter d\'abord');
+                return;
+            }
+
+            try {
+                const response = await fetch(API_BASE + endpoint, {
+                    method,
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                displayResponse(response.status, data);
+            } catch (error) {
+                displayResponse(0, { error: error.message });
+            }
+        }
+
+        async function createEcriture() {
+            if (!token) {
+                alert('Veuillez vous connecter d\'abord');
+                return;
+            }
+
+            const postData = document.getElementById('post-data').value;
+
+            try {
+                const data = JSON.parse(postData);
+
+                const response = await fetch(API_BASE + '/ecritures', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                displayResponse(response.status, result);
+            } catch (error) {
+                displayResponse(0, { error: error.message });
+            }
+        }
+
+        function displayResponse(status, data) {
+            const statusDiv = document.getElementById('response-status');
+            const responseDiv = document.getElementById('response');
+
+            let statusColor = 'text-slate-400';
+            if (status >= 200 && status < 300) statusColor = 'text-emerald-400';
+            else if (status >= 400 && status < 500) statusColor = 'text-orange-400';
+            else if (status >= 500) statusColor = 'text-red-400';
+
+            statusDiv.innerHTML = `<span class="${statusColor} font-semibold">Status: ${status || 'Network Error'}</span>`;
+            responseDiv.textContent = JSON.stringify(data, null, 2);
+        }
+
+        function clearResponse() {
+            document.getElementById('response-status').innerHTML = '';
+            document.getElementById('response').textContent = '';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,3264 @@
+
+================================================================================
+FEUILLE: NOTE 3A (sheet23.xml)
+================================================================================
+  A1: - 0 -
+  I2: NOTE 3A SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  I4: Sigle usuel :
+  J4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  F5: Exercice clos le :
+  G5: 45657
+  I5: Durée (en mois) :
+  J5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 3A : IMMOBILISATIONS (BRUTES)
+  A8: SITUATIONS ET MOUVEMENTS
+  D8: A
+  E8: AUGMENTATIONS B
+  H8: DIMINUTIONS C
+  J8: D = A + B - C
+  D9: MONTANT BRUT A L'OUVERTURE DE L'EXERCICE
+  E9: Acquisitions Apports Créations
+  F9: Virements de poste à poste
+  G9: Suite à une réévaluation pratiquée au cours de l'exercice
+  H9: Cessions Scissions Hors service
+  I9: Virements de poste à poste
+  J9: MONTANT BRUT A LA CLOTURE DE L'EXERCICE
+  A10: RUBRIQUES
+  A11: IMMOBILISATIONS INCORPORELLES
+  D11: 0
+  E11: 0
+  F11: 0
+  G11: 0
+  H11: 0
+  I11: 0
+  J11: 0
+  A12: Frais de développement et de prospection
+  J12: 0
+  A13: Brevets, licences, logiciels, et droits similaires
+  J13: 0
+  A14: Fonds commercial et droit au bail
+  J14: 0
+  A15: Autres immobilisations incorporelles
+  J15: 0
+  A16: IMMOBILISATIONS CORPORELLES
+  D16: 0
+  E16: 9518300
+  F16: 0
+  G16: 0
+  H16: 0
+  I16: 0
+  J16: 9518300
+  A17: Terrains hors immeuble de placement
+  J17: 0
+  A18: Terrains - immeuble de placement
+  J18: 0
+  A19: Bâtiments hors immeuble de placement
+  J19: 0
+  A20: Bâtiments - immeuble de placement
+  J20: 0
+  A21: Aménagements, agencements et installations
+  J21: 0
+  A22: Matériel, mobilier et actifs biologiques
+  E22: 118300
+  J22: 118300
+  A23: Matériel de transport
+  E23: 9400000
+  J23: 9400000
+  A24: AVANCES ET ACOMPTES VERSES SUR IMMOBILISATIONS
+  D24: 0
+  E24: 0
+  F24: 0
+  G24: 0
+  H24: 0
+  I24: 0
+  J24: 0
+  A25: Avances et acomptes sur immobilisations incorporelles
+  J25: 0
+  A26: Avances et acomptes sur immobilisations corporelles
+  J26: 0
+  A27: IMMOBILISATIONS FINANCIERES
+  D27: 346107474
+  E27: 180000
+  F27: 0
+  G27: 0
+  H27: 0
+  I27: 0
+  J27: 346287474
+  A28: Titres de participation
+  D28: 10000000
+  J28: 10000000
+  A29: Autres immobilisations financières
+  D29: 336107474
+  E29: 180000
+  J29: 336287474
+  A30: TOTAL GENERAL
+  D30: 346107474
+  E30: 9698300
+  F30: 0
+  G30: 0
+  H30: 0
+  I30: 0
+  J30: 355805774
+  A31: Commentaire :
+  A32: ●   Toute variation significative doit être commentée.
+  E32: ●   Indiquer les créances du groupe avec nature et date d'échéance.
+  A33: ●   Détailler les éléments constitutifs du fonds commercial et indiquer la date d'acquisition.
+  E33: ●   Pour les banques, DAT indiquer le nom de la banque le montant et la date d'échéance.
+  A34: ●   Pour l'immobilisation incorporelle relative à la concession faire un descriptif de l'accord.
+  E34: ●  Pour les frais de développement, donner toutes les informations mentionnées dans la partie Opérat
+  A35: ●   Indiquer :
+  E35: ●  Donner le détail des produits et charges liés aux immeubles de placement.
+  A36: -        la nature de la créance ;
+  A37: -        la durée de la concession ;
+  A38: -        l'échéance.
+
+================================================================================
+FEUILLE: NOTE 3B (sheet24.xml)
+================================================================================
+  A1: - 0 -
+  K2: NOTE 3B SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  K4: Sigle usuel :
+  L4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  H5: Exercice clos le :
+  I5: 45657
+  K5: Durée (en mois) :
+  L5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 3B : BIENS PRIS EN LOCATION ACQUISITION
+  A8: SITUATIONS ET MOUVEMENTS
+  F8: A
+  G8: AUGMENTATIONS B
+  J8: DIMINUTIONS C
+  L8: D = A + B - C
+  E9: NATURE  DU  CONTRAT (I ; M ; A) [1]
+  F9: MONTANT BRUT A L'OUVERTURE DE L'EXERCICE
+  G9: Acquisitions Apports Créations
+  H9: Virements de poste à poste
+  I9: Suite à une réévaluation pratiquée au cours de l'exercice
+  J9: Cessions Scissions Hors service
+  K9: Virements de poste à poste
+  L9: MONTANT BRUT A LA CLOTURE DE L'EXERCICE
+  A10: RUBRIQUES
+  A11: Terrains
+  L11: 0
+  A12: Bâtiments
+  L12: 0
+  A13: Matériel, mobilier
+  L13: 0
+  A14: Matériel de transport
+  L14: 0
+  A15: TOTAL  IMMOBILISATIONS EN LOCATION-ACQUISITION
+  F15: 0
+  G15: 0
+  H15: 0
+  I15: 0
+  J15: 0
+  K15: 0
+  L15: 0
+  A16: [1] I : Crédit-bail immobilier ; M : Crédit-bail mobilier ; A : Autres contrats (dédoubler le poste 
+  A17: Commentaire:
+  A18: ●   Indiquer la nature du bien, le nom du bailleur et la durée du bail.
+
+================================================================================
+FEUILLE: NOTE 3C (sheet25.xml)
+================================================================================
+  A1: - 0 -
+  N2: NOTE 3C SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  L4: Sigle usuel :
+  N4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  H5: Exercice clos le :
+  J5: 45657
+  L5: Durée (en mois) :
+  N5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 3C : IMMOBILISATIONS (AMORTISSEMENTS)
+  A8: SITUATIONS ET MOUVEMENTS
+  D8: A
+  F8: B
+  H8: C
+  L8: D
+  N8: E = A + B - C - D
+  D9: AMORTISSEMENTS CUMULES A L'OUVERTURE DE L'EXERCICE
+  F9: AUGMENTATIONS:
+  H9: DIMINUTIONS :
+  L9: Virements de poste à poste
+  N9: CUMUL DES AMORTISSEMENTS A LA CLOTURE DE L'EXERCICE
+  A10: RUBRIQUES
+  F10: DOTATIONS  DE L'EXERCICE
+  H10: Amortissements relatifs aux éléments sortis de l'actif
+  J10: Reprises d'amortissements
+  A11: Frais de développement et de prospection
+  N11: 0
+  A12: Brevets, licences, logiciels et droits similaires
+  N12: 0
+  A13: Fonds commercial et droit au bail
+  N13: 0
+  A14: Autres immobilisations incorporelles
+  N14: 0
+  A15: IMMOBILISATIONS INCORPORELLES
+  D15: 0
+  F15: 0
+  H15: 0
+  J15: 0
+  L15: 0
+  N15: 0
+  A16: Terrains hors immeuble de placement
+  N16: 0
+  A17: Terrains - immeuble de  placement
+  N17: 0
+  A18: Bâtiments hors immeuble de placement
+  N18: 0
+  A19: Bâtiments - immeuble de placement
+  N19: 0
+  A20: Aménagements, agencements et installations
+  N20: 0
+  A21: Matériel, mobilier et actifs biologiques
+  F21: 24810
+  N21: 24810
+  A22: Matériel de transport
+  F22: 3037593
+  N22: 3037593
+  A23: IMMOBILISATIONS CORPORELLES
+  D23: 0
+  F23: 3062403
+  H23: 0
+  J23: 0
+  L23: 0
+  N23: 3062403
+  A24: TOTAL GENERAL
+  D24: 0
+  F24: 3062403
+  H24: 0
+  J24: 0
+  L24: 0
+  N24: 3062403
+  A25: Commentaire :
+  A26: ●   Indiquer
+  A27: -   les modes d'amortissement utilisés ;
+  A28: -   la durée d'utilité ou les taux d'amortissements utilisés.
+
+================================================================================
+FEUILLE: NOTE 3C BIS (sheet26.xml)
+================================================================================
+  A1: - 0 -
+  J2: NOTE 3C BIS SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  J4: Sigle usuel :
+  K4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  G5: 45657
+  J5: Durée (mois) :
+  K5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 3C BIS : IMMOBILISATIONS (DEPRECIATIONS)
+  A8: SITUATIONS ET MOUVEMENTS
+  D8: A
+  F8: B
+  H8: C
+  J8: D = A + B - C
+  D9: DEPRECIATIONS CUMULES A L'OUVERTURE DE L'EXERCICE
+  F9: AUGMENTATIONS: DOTATIONS  DE L'EXERCICE
+  H9: DIMINUTIONS : REPRISES DE L'EXERCICE
+  J9: CUMUL DES DEPRECIATIONS A LA CLOTURE DE L'EXERCICE
+  A10: RUBRIQUES
+  A11: Frais de développement et de prospection
+  J11: 0
+  A12: Brevets, licences, logiciels et droits similaires
+  J12: 0
+  A13: Fonds commercial et droit au bail
+  J13: 0
+  A14: Autres immobilisations incorporelles
+  J14: 0
+  A15: IMMOBILISATIONS INCORPORELLES
+  D15: 0
+  F15: 0
+  H15: 0
+  J15: 0
+  A16: Terrains hors immeuble de placement
+  J16: 0
+  A17: Terrains - immeuble de  placement
+  J17: 0
+  A18: Bâtiments hors immeuble de placement
+  J18: 0
+  A19: Bâtiments - immeuble de placement
+  J19: 0
+  A20: Aménagements, agencements et installations
+  J20: 0
+  A21: Matériel, mobilier et actifs biologiques
+  J21: 0
+  A22: Matériel de transport
+  J22: 0
+  A23: IMMOBILISATIONS CORPORELLES
+  D23: 0
+  F23: 0
+  H23: 0
+  J23: 0
+  A24: TOTAL GENERAL
+  D24: 0
+  F24: 0
+  H24: 0
+  J24: 0
+  A25: Commentaire :
+  A26: ●   Indiquer les événements et circonstances qui ont conduit à la dépréciation et à la reprise.
+
+================================================================================
+FEUILLE: NOTE 3D (sheet27.xml)
+================================================================================
+  A1: - 0 -
+  G2: NOTE 3D SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  G4: Sigle usuel :
+  H4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  D5: Exercice clos le :
+  E5: 45657
+  G5: Durée (en mois) :
+  H5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 3D : IMMOBILISATIONS (PLUS-VALUES ET MOINS- VALUES DE CESSION)
+  A8: SITUATIONS ET MOUVEMENTS
+  D8: MONTANT BRUT
+  E8: AMORTISSEMENTS PRATIQUES
+  F8: VALEUR COMPTABLE NETTE
+  G8: PRIX DE CESSION
+  H8: PLUS-VALUE OU MOINS-VALUE
+  A9: RUBRIQUES
+  D9: A
+  E9: B
+  F9: C = A - B
+  G9: D
+  H9: E = D - C
+  A10: Frais de développement et de prospection
+  F10: 0
+  H10: 0
+  A11: Brevets, licences, logiciels et droits similaires
+  F11: 0
+  H11: 0
+  A12: Fonds commercial et droit au bail
+  F12: 0
+  H12: 0
+  A13: Autres immobilisations incorporelles
+  F13: 0
+  H13: 0
+  A14: IMMOBILISATIONS INCORPORELLES
+  D14: 0
+  E14: 0
+  F14: 0
+  G14: 0
+  H14: 0
+  A15: Terrains
+  F15: 0
+  H15: 0
+  A16: Bâtiments
+  F16: 0
+  H16: 0
+  A17: Aménagements, agencements et installations
+  F17: 0
+  H17: 0
+  A18: Matériel, mobilier et actifs biologiques
+  F18: 0
+  H18: 0
+  A19: Matériel de transport
+  F19: 0
+  H19: 0
+  A20: IMMOBILISATIONS CORPORELLES
+  D20: 0
+  E20: 0
+  F20: 0
+  G20: 0
+  H20: 0
+  A21: Titres de participations
+  F21: 0
+  H21: 0
+  A22: Autres immobilisations financières
+  F22: 0
+  H22: 0
+  A23: IMMOBILISATIONS FINANCIERES
+  D23: 0
+  E23: 0
+  F23: 0
+  G23: 0
+  H23: 0
+  A24: TOTAL GENERAL
+  D24: 0
+  E24: 0
+  F24: 0
+  G24: 0
+  H24: 0
+  A25: Commentaire :
+  A26: ●   Mentionner la justification de la cession ainsi que la date d'acquisition et la date de sortie.
+
+================================================================================
+FEUILLE: NOTE 3E (sheet28.xml)
+================================================================================
+  A1: - 0 -
+  H2: NOTE 3E SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  H4: Sigle usuel :
+  I4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  H5: Durée (en mois) :
+  I5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 3E : INFORMATIONS SUR LES REEVALUATIONS EFFECTUEES PAR L'ENTITE
+  A8: Nature et date des réévaluations (2000 caractères maximum) :
+  A10: Eléments réévalués par postes du bilan
+  F10: Montants en coûts historiques
+  G10: Montant réévalués
+  H10: Ecarts de réévaluation
+  I10: Amortissements supplémentaires
+  A12: TOTAL GENERAL
+  F12: 0
+  G12: 0
+  H12: 0
+  I12: 0
+  A13: Méthode de réévaluation utilisée (2000 caractères maximum) :
+  A15: Traitement fiscal de l'écart de réévaluation et des amortissements supplémentaires (2000 caractères 
+  A17: Montant de l'écart incorporé au capital :
+
+================================================================================
+FEUILLE: NOTE 4 (sheet29.xml)
+================================================================================
+  A1: - 0 -
+  J2: NOTE 4 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  I4: Sigle usuel :
+  J4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  F5: Exercice clos le :
+  G5: 45657
+  I5: Durée (en mois) :
+  J5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 4 : IMMOBILISATIONS FINANCIERES
+  A8: Libellés
+  F8: Année N
+  G8: Année N-1
+  H8: Variation en %
+  I8: Créances  à un an au plus
+  J8: Créances à plus d'un an et à deux ans au plus
+  K8: Créances à plus de deux ans
+  A9: Titres de participation
+  G9: 10000000
+  H9: -1
+  A10: Prêts et créances
+  H10: [FORMULE: IF(G10,(F10-G10)/ABS(G10),IF(ISBLANK(G10),"",IF(F10,IF( F10 ]
+  A11: Prêt au personnel
+  A12: Créances sur l'état
+  A13: Titres immobilisés
+  A14: Dépôts et cautionnements
+  F14: 180000
+  G14: 0
+  H14: 1
+  A15: Intérêts courus
+  A16: Créances rattachées à des avances et participations à des GIE
+  A17: Immobilisations financières diverses
+  G17: 336107474
+  H17: -1
+  A18: TOTAL BRUT
+  F18: 180000
+  G18: 346107474
+  H18: -0.99947993032938665
+  I18: 0
+  J18: 0
+  K18: 0
+  A19: Dépréciations des titres de participation
+  H19: [FORMULE: IF(G19,(F19-G19)/ABS(G19),IF(ISBLANK(G19),"",IF(F19,IF( F19 ]
+  A20: Dépréciations des autres immobilisations financières
+  H20: [FORMULE: IF(G20,(F20-G20)/ABS(G20),IF(ISBLANK(G20),"",IF(F20,IF( F20 ]
+  A21: TOTAL NET DE DEPRECIATION
+  F21: 180000
+  G21: 346107474
+  H21: -0.99947993032938665
+  A23: Liste des filiales et participations :
+  A24: Dénomination sociale
+  E24: Localisation (ville / pays)
+  F24: Valeur d'acquisition
+  G24: % Détenu
+  H24: Montant des capitaux propres filiale
+  I24: Résultat dernier exercice filiale (1)
+  J24: Année du dernier exercice filiale
+  K24: Part de bénéfice reçue de la filiale (2)
+  A26: (1): Préciser dans la colonne suivante s'il s'agit du résultat de l'exercice N ou du résultat de l'e
+  E26: (2): S'il s'agit du résultat de l'exercice n-1, renseigner la colonne "part du bénéfice reçue de la 
+  A27: Commentaire :
+  A28: ●   Justifier toute variation significative.
+  F28: ●   Indiquer le nombre et la date d'acquisition des actions ou parts propres.
+  A29: ●   Commenter toutes les créances anciennes.
+  F29: ●   Dépréciation : indiquer les évènements et les circonstances qui ont motivé la dépréciation ou la
+  A30: ●   Pour les créances relatives à la concession, faire un descriptif de l'accord.
+  A31: ●   Indiquer :
+  A32: -       la nature de la créance ;
+  A33: -       la durée de la concession ;
+  A34: -       l'échéance.
+
+================================================================================
+FEUILLE: NOTE 5 (sheet30.xml)
+================================================================================
+  A1: - 0 -
+  H2: NOTE 5 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  H4: Sigle usuel :
+  I4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  H5: Durée (en mois) :
+  I5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 5 : ACTIF CIRCULANT ET DETTES CIRCULANTES  HAO
+  A8: ACTIF CIRCULANT HAO
+  A9: Libellés
+  E9: Année N
+  G9: Année N-1
+  I9: Variation en %
+  A10: Créances sur cessions d'immobilisations
+  I10: [FORMULE: IF(G10,(E10-G10)/G10,IF(ISBLANK(G10),"",IF(E10,IF( E10 > 0,1]
+  A11: Autres créances hors activités ordinaires
+  I11: [FORMULE: IF(G11,(E11-G11)/G11,IF(ISBLANK(G11),"",IF(E11,IF( E11 > 0,1]
+  A12: TOTAL BRUT
+  E12: 0
+  G12: 0
+  I12: [FORMULE: IF(G12,(E12-G12)/G12,IF(ISBLANK(G12),"",IF(E12,IF( E12 > 0,1]
+  A13: Dépréciations des créances HAO
+  I13: [FORMULE: IF(G13,(E13-G13)/G13,IF(ISBLANK(G13),"",IF(E13,IF( E13 > 0,1]
+  A14: TOTAL NET DE DEPRECIATIONS
+  E14: 0
+  G14: 0
+  I14: [FORMULE: IF(G14,(E14-G14)/G14,IF(ISBLANK(G14),"",IF(E14,IF( E14 > 0,1]
+  A15: Commentaire:
+  A16: •     Commenter toute variation significative.
+  A17: •     Dépréciation : indiquer les évènements et les circonstances qui ont motivé la dépréciation ou 
+  A19: DETTES  CIRCULANTES HAO
+  A21: Libellés
+  E21: Année N
+  G21: Année N-1
+  I21: Variation en %
+  A22: Fournisseurs d'investissements
+  I22: [FORMULE: IF(G22,(E22-G22)/G22,IF(ISBLANK(G22),"",IF(E22,IF( E22 > 0,1]
+  A23: Fournisseurs d'investissements effets à payer
+  I23: [FORMULE: IF(G23,(E23-G23)/G23,IF(ISBLANK(G23),"",IF(E23,IF( E23 > 0,1]
+  A24: Versements restant à effectuer sur titres de participation et titres immobilisés non libérés
+  I24: [FORMULE: IF(G24,(E24-G24)/G24,IF(ISBLANK(G24),"",IF(E24,IF( E24 > 0,1]
+  A25: Autres dettes hors activités ordinaires
+  I25: [FORMULE: IF(G25,(E25-G25)/G25,IF(ISBLANK(G25),"",IF(E25,IF( E25 > 0,1]
+  A26: TOTAL
+  E26: 0
+  G26: 0
+  I26: [FORMULE: IF(G26,(E26-G26)/G26,IF(ISBLANK(G26),"",IF(E26,IF( E26 > 0,1]
+  A27: Commentaire:
+  A28: ●   Indiquer la date de cession et la nature de l'immobilisation achetée et/ou cédée.
+  A29: ●   Expliciter toute variation significative.
+
+================================================================================
+FEUILLE: NOTE 6 (sheet31.xml)
+================================================================================
+  A1: - 0 -
+  I2: NOTE 6 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  I4: Sigle usuel :
+  J4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  I5: Durée (en mois) :
+  J5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 6 : STOCKS ET EN COURS (1)
+  A8: Libellés
+  E8: Année N
+  G8: Année N-1
+  I8: Variation de stock en valeur
+  J8: Variation en %
+  A9: Marchandises
+  I9: 0
+  J9: [FORMULE: IF(G9,(E9-G9)/G9,IF(ISBLANK(G9),"",IF(E9,IF( E9 > 0,1,-1),""]
+  A10: Matières premières et fournitures liées
+  I10: 0
+  J10: [FORMULE: IF(G10,(E10-G10)/G10,IF(ISBLANK(G10),"",IF(E10,IF( E10 > 0,1]
+  A11: Autres approvisionnements
+  I11: 0
+  A12: Produits en cours
+  I12: 0
+  A13: Services en cours
+  I13: 0
+  A14: Produits finis
+  I14: 0
+  A15: Produits intermédiaires
+  I15: 0
+  A16: Stocks en cours de route, en consignation ou en dépôt
+  I16: 0
+  A17: TOTAL BRUT STOCKS ET EN COURS
+  E17: 0
+  G17: 0
+  I17: 0
+  A18: Dépréciations des stocks
+  I18: 0
+  A19: TOTAL NET DE DEPRECIATIONS
+  E19: 0
+  G19: 0
+  I19: 0
+  A20: (1) Les stocks H.A.O. seront inscrits dans l'actif circulant H.A.O. que lorsque leur montant total e
+  A21: Commentaire :
+  A22: ●   Indiquer la date de prise d'inventaire et décrire brièvement la procédure, les méthodes comptabl
+  A23: ●   Commenter toute variation significative des stocks.
+  A24: ●   Indiquer le détail des stocks dépréciés et les évènements et circonstances qui ont conduit à la 
+
+================================================================================
+FEUILLE: NOTE 7 (sheet32.xml)
+================================================================================
+  A1: - 0 -
+  I2: NOTE 7 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  I4: Sigle usuel :
+  J4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  F5: Exercice clos le :
+  G5: 45657
+  I5: Durée (en mois) :
+  J5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 7 : CLIENTS
+  A8: Libellés
+  E8: Année N
+  F8: Année N-1
+  G8: Variation en %
+  H8: Créances à un an au plus
+  I8: Créances à plus d'un an et à deux ans au plus
+  J8: Créances à plus de deux ans
+  A9: Clients (hors réserves de propriété et Groupe)
+  G9: [FORMULE: IF(F9,(E9-F9)/F9,IF(ISBLANK(F9),"",IF(E9,IF( E9 > 0,1,-1),""]
+  A10: Clients effets à recevoir  (hors réserves de propriété et groupe)
+  G10: [FORMULE: IF(F10,(E10-F10)/F10,IF(ISBLANK(F10),"",IF(E10,IF( E10 > 0,1]
+  A11: Clients avec réserves de propriété
+  A12: Clients et effets à recevoir Groupe
+  A13: Créances sur cession d'immobilisations
+  A14: Clients effets escomptés et non échus
+  A15: Créances litigieuses ou douteuses
+  A16: Clients produits à recevoir
+  A17: TOTAL BRUT CLIENTS
+  E17: 0
+  F17: 0
+  H17: 0
+  I17: 0
+  J17: 0
+  A18: Dépréciations des comptes clients
+  A19: TOTAL NET DE DEPRECIATIONS
+  E19: 0
+  F19: 0
+  A20: Clients, avances reçues hors groupe
+  A21: Clients, avances reçues groupe
+  A22: Autres clients créditeurs
+  A23: TOTAL CLIENTS CREDITEURS
+  E23: 0
+  F23: 0
+  H23: 0
+  I23: 0
+  J23: 0
+  A24: Commentaire :
+  A25: ●   Commenter toutes variations significatives.
+  A26: ●   Indiquer pour les créances du groupe, le nom de la société du groupe et le % de titres détenues.
+  A27: ●   Commenter les créances anciennes.
+  A28: ●   Indiquer les événements et circonstances qui ont conduit à la dépréciation et à la reprise.
+
+================================================================================
+FEUILLE: NOTE 8 (sheet33.xml)
+================================================================================
+  A1: - 0 -
+  I2: NOTE 8 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  I4: Sigle usuel :
+  J4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  F5: Exercice clos le :
+  G5: 45657
+  I5: Durée (en mois) :
+  J5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 8 : AUTRES CREANCES
+  A8: Libellés
+  E8: Année N
+  F8: Année N-1
+  G8: Variation en %
+  H8: Créances à un an au plus
+  I8: Créances à plus d'un an et à deux ans au plus
+  J8: Créances à plus de deux ans
+  A9: Personnel
+  G9: [FORMULE: IF(F9,(E9-F9)/F9,IF(ISBLANK(F9),"",IF(E9,IF( E9 > 0,1,-1),""]
+  A10: Organismes sociaux
+  G10: [FORMULE: IF(F10,(E10-F10)/F10,IF(ISBLANK(F10),"",IF(E10,IF( E10 > 0,1]
+  A11: Etat et Collectivités publiques
+  A12: Organismes internationaux
+  A13: Apporteurs, associés et groupe
+  F13: 100000000
+  G13: -1
+  I13: 100000000
+  A14: Compte transitoire ajustement spécial lié à la révision du SYSCOHADA (Voir Notes 8A & 8C)
+  A15: Autres débiteurs divers
+  E15: 147345835
+  F15: 130807635
+  G15: 0.12643145791910387
+  H15: 16538200
+  I15: 130807635
+  A16: Comptes permanents non bloqués des établissements et des succursales
+  A17: Comptes de liaison charges et produits
+  A18: Comptes de liaison des sociétés en participation
+  A19: TOTAL BRUT AUTRES CREANCES
+  E19: 147345835
+  F19: 230807635
+  G19: -0.36160762186224904
+  H19: 16538200
+  I19: 230807635
+  J19: 0
+  A20: Dépréciations des autres créances
+  A21: TOTAL NET DE DEPRECIATIONS
+  E21: 147345835
+  F21: 230807635
+  G21: -0.36160762186224904
+  A22: Commentaire :
+  A23: ●   Justifier toute variation significative.
+  A24: ●   Détailler les créances dont le montant est significatif.
+  A25: ●   Justifier les créances anciennes.
+  A26: ●   Indiquer les événements et circonstances qui ont conduit à la dépréciation et à la reprise.
+  A27: ●   Compte transitoire ajustement spécial, indiquer le détail du compte et la durée restant pour l'a
+
+================================================================================
+FEUILLE: NOTE 8A (sheet34.xml)
+================================================================================
+  A1: - 0 -
+  I2: NOTE 8A SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  I4: Sigle usuel :
+  J4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  F5: Exercice clos le :
+  G5: 45657
+  I5: Durée (en mois) :
+  J5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 8A : TABLEAU D’ETALEMENT DES CHARGES IMMOBILISEES
+  A8: Libellés
+  E8: Frais d'établissement
+  G8: Charges à repartir sur plusieurs exercices
+  I8: Primes de remboursement des obligations
+  A9: Compte transitoire à solder: 4751 compte transitoire, ajustement lié à la révision du SYSCOHADA, com
+  A10: Montant global à étaler au 1er janvier de l'année N
+  A11: Durée d'étalement retenue
+  A12: Exercice N
+  E12: Comptes
+  F12: Montants
+  G12: Comptes
+  H12: Montants
+  I12: Comptes
+  J12: Montants
+  I13: 6714
+  A43: Total exercice N
+  F43: 0
+  H43: 0
+  J43: 0
+  A44: Total exercice N+1
+  A45: Total exercice N+2
+  A46: Total exercice N+3
+  A47: Total exercice N+4
+  A48: TOTAL GENERAL
+  F48: 0
+  H48: 0
+  J48: 0
+
+================================================================================
+FEUILLE: NOTE 8B (sheet35.xml)
+================================================================================
+  A1: - 0 -
+  H2: NOTE 8B SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  H4: Sigle usuel :
+  I4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  H5: Durée (en mois) :
+  I5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 8B : TABLEAU D’ETALEMENT DE PROVISIONS POUR CHARGES A REPARTIR
+  A8: LIBELLES
+  E8: PROVISIONS POUR CHARGES A REPARTIR
+  A9: Compte transitoire à solder: 4751 compte transitoire ajustement spécial lié à la révision du SYSCOHA
+  A10: Montant global à étaler au 1er janvier N
+  A11: Durée d'étalement retenue
+  E12: Comptes
+  H12: Montants
+  E13: 791 Reprises de provisions et dépréciations d'exploitation
+  A14: Total exercice N
+  H14: 0
+  A15: Total exercice N+1
+  A16: Total exercice N+2
+  A17: Total exercice N+3
+  A18: Total exercice N+4
+  A19: TOTAL GENERAL
+  H19: 0
+
+================================================================================
+FEUILLE: NOTE 8C (sheet36.xml)
+================================================================================
+  A1: - 0 -
+  H2: NOTE 8C SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  H4: Sigle usuel :
+  I4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  H5: Durée (en mois) :
+  I5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 8C : TABLEAU D’ETALEMENT DE PROVISIONS POUR ENGAGEMENTS DE RETAITE
+  A8: Libellés
+  E8: PROVISIONS POUR PENSIONS ET OBLIGATIONS SIMILAIRES
+  A9: Compte transitoire à solder: 4751 compte transitoire ajustement spécial lié à la révision du SYSCOHA
+  A10: Montant global à étaler au 1er janvier N
+  A11: Durée d'étalement retenue
+  E12: Comptes
+  H12: Montants
+  E13: 6911 Dotation aux provisions pour risques et charges
+  A14: Total exercice N
+  H14: 0
+  A15: Total exercice N+1
+  A16: Total exercice N+2
+  A17: Total exercice N+3
+  A18: Total exercice N+4
+  A19: TOTAL GENERAL
+  H19: 0
+
+================================================================================
+FEUILLE: NOTE 9 (sheet37.xml)
+================================================================================
+  A1: - 0 -
+  H2: NOTE 9 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  H4: Sigle usuel :
+  I4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  H5: Durée (en mois) :
+  I5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 9 : TITRES DE PLACEMENT
+  A8: Libellés
+  E8: Année N
+  G8: Année N-1
+  I8: Variation en %
+  A9: Titres de trésor et bons de caisse à court terme
+  I9: [FORMULE: IF(G9,(E9-G9)/G9,IF(ISBLANK(G9),"",IF(E9,IF( E9 > 0,1,-1),""]
+  A10: Actions
+  I10: [FORMULE: IF(G10,(E10-G10)/G10,IF(ISBLANK(G10),"",IF(E10,IF( E10 > 0,1]
+  A11: Obligations
+  A12: Bons de souscription
+  A13: Titres négociables hors régions
+  A14: Intérêts courus
+  A15: Autres valeurs assimilées
+  A16: TOTAL BRUT TITRES
+  E16: 0
+  G16: 0
+  A17: Dépréciations des titres
+  A18: TOTAL NET DE DEPRECIATIONS
+  E18: 0
+  G18: 0
+  A19: Commentaire:
+  A20: ●   Justifier toute variation significative.
+  A21: ●   Pour les titres cotés à une bourse de valeur : indiquer le nombre, le prix unitaire d'acquisitio
+  A22: ●   Faire ressortir les actions ou parts propres et indiquer la date d'acquisition et le nombre de t
+  A23: ●   Indiquer les événements et circonstances qui ont conduit à la dépréciation et à la reprise.
+
+================================================================================
+FEUILLE: NOTE 10 (sheet38.xml)
+================================================================================
+  A1: - 0 -
+  H2: NOTE 10 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  H4: Sigle usuel :
+  I4: NEPER VENTURES
+  A5: N° de compte contribuable (NCC) :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  H5: Durée (en mois) :
+  I5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 10 : VALEURS A ENCAISSER
+  A8: Libellés
+  E8: Année N
+  G8: Année N-1
+  I8: Variation en %
+  A9: Effets à encaisser
+  I9: [FORMULE: IF(G9,(E9-G9)/G9,IF(ISBLANK(G9),"",IF(E9,IF( E9 > 0,1,-1),""]
+  A10: Effets à l'encaissement
+  I10: [FORMULE: IF(G10,(E10-G10)/G10,IF(ISBLANK(G10),"",IF(E10,IF( E10 > 0,1]
+  A11: Chèques à encaisser
+  A12: Chèques à l'encaissement
+  A13: Cartes de crédit à encaisser
+  A14: Autres valeurs à encaisser
+  A15: TOTAL BRUT VALEURS A ENCAISSER
+  E15: 0
+  G15: 0
+  A16: Dépréciations des valeurs à encaisser
+  A17: TOTAL NET DE DEPRECIATIONS
+  E17: 0
+  G17: 0
+  A18: Commentaire :
+  A19: ●   Commenter toute variation significative ;
+  A20: ●   Indiquer les événements et circonstances qui ont conduit à la dépréciation et à la reprise.
+
+================================================================================
+FEUILLE: NOTE 11 (sheet39.xml)
+================================================================================
+  A1: - 0 -
+  H2: NOTE 11 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  H4: Sigle usuel :
+  I4: NEPER VENTURES
+  A5: N° de compte contribuable (NCC) :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  H5: Durée (en mois) :
+  I5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 11 : DISPONIBILITES
+  A8: Libellés
+  E8: Année N
+  G8: Année N-1
+  I8: Variation en %
+  A9: Banques locales
+  E9: 78897574
+  G9: 373330531
+  I9: -0.78866562617135649
+  A10: Banques autres états région
+  I10: [FORMULE: IF(G10,(E10-G10)/G10,IF(ISBLANK(G10),"",IF(E10,IF( E10 > 0,1]
+  A11: Banques, dépôt à terme
+  A12: Autres Banques
+  A13: Banques intérêts courus
+  A14: Chèques postaux
+  A15: Autres établissement financiers
+  A16: Etablissement financiers intérêts courus
+  A17: Instruments de trésorerie
+  A18: Instruments de monnaie  électronique
+  A19: Caisse
+  A20: Régies d'avances et virements accréditifs
+  A21: TOTAL BRUT DISPONIBILITES
+  E21: 78897574
+  G21: 373330531
+  I21: -0.78866562617135649
+  A22: Dépréciations
+  A23: TOTAL NET DE DEPRECIATIONS
+  E23: 78897574
+  G23: 373330531
+  I23: -0.78866562617135649
+  A24: Commentaire :
+  A25: ●   Indiquer la date de rapprochement des comptes bancaires.
+  A26: ●   Indiquer la date d'inventaire de la caisse et des instruments de monnaie électronique.
+  A27: ●   Justifier toute variation significative.
+  A28: ●   Détailler les instruments de monnaie électronique si le montant est significatif.
+  A29: ●   Indiquer les événements et circonstances qui ont conduit à la dépréciation et à la reprise.
+  A31: NB : Banques et intérêts courus et Etablissement financiers intérêts courus figurent dans cette rubr
+
+================================================================================
+FEUILLE: NOTE 12 (sheet40.xml)
+================================================================================
+  A1: - 0 -
+  H2: NOTE 12 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  H4: Sigle usuel :
+  I4: NEPER VENTURES
+  A5: N° de compte contribuable (NCC) :
+  C5: 2302331Z
+  F5: Exercice clos le :
+  G5: 45657
+  H5: Durée (en mois) :
+  I5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 12 : ECARTS DE CONVERSION ET TRANSFERTS DE CHARGES
+  A8: ECARTS DE CONVERSION
+  A9: Libellés
+  E9: Devises
+  F9: Montant en devises
+  G9: Cours UML Année acquisition
+  H9: Cours UML 31/12
+  I9: Variation  en valeur
+  A10: Ecarts de conversion actif :  détailler les créances et dettes concernées
+  I11: 0
+  A12: Ecart de conversion passif :  détailler les créances et dettes concernées
+  I13: 0
+  A14: UML : Unités Monétaires légales Commentaire:  Faire un commentaire.
+  A15: TRANSFERTS DE CHARGES
+  A16: Libellés
+  G16: Année N
+  H16: Année N-1
+  I16: Variation en %
+  A17: Transferts de charges d'exploitation :  détailler la nature des charges transférées et leurs comptes
+  I18: [FORMULE: IFERROR((G18-H18)/H18,"")]
+  A19: Transferts de charges financières :  détailler la nature des charges transférées et leurs comptes de
+  I20: [FORMULE: IFERROR((G20-H20)/H20,"")]
+  A21: (1): Leurs comptes d'origine: autrement dit indiquerles numéros de comptes d'où le transfert est eff
+  A22: Commentaire:  Faire un commentaire.
+
+================================================================================
+FEUILLE: NOTE 13 (sheet41.xml)
+================================================================================
+  A1: - 0 -
+  K2: NOTE 13 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  K4: Sigle usuel :
+  L4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  I5: Exercice clos le :
+  J5: 45657
+  K5: Durée (en mois) :
+  L5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 13 : CAPITAL
+  I8: Valeur nominale des actions ou parts :
+  L8: 10000
+  A9: Nom et prénoms ou raison sociale
+  E9: N° de compte contribuable
+  F9: Nationalité
+  G9: Autres nationalités à préciser
+  H9: Pays de résidence
+  I9: Nature des actions ou parts (Ordinaires ou préférences)
+  J9: Nombre
+  K9: Montant total
+  L9: Cessions ou remboursements en cours d'exercice
+  A10: SIDIBE ISSA
+  F10: Côte d'Ivoire
+  H10: Côte d'Ivoire
+  I10: Ordinaires
+  J10: 3650
+  K10: 36500000
+  A11: PETE ANGE JEAN FRANCOIS
+  F11: Côte d'Ivoire
+  H11: Côte d'Ivoire
+  I11: Ordinaires
+  J11: 3650
+  K11: 36500000
+  A12: SAS REHOBOTH
+  F12: Côte d'Ivoire
+  H12: Côte d'Ivoire
+  I12: Ordinaires
+  J12: 2400
+  K12: 24000000
+  A13: EBELLE KOTO NADINE
+  F13: Cameroun
+  H13: France
+  I13: Ordinaires
+  J13: 300
+  K13: 3000000
+  A14: Apporteurs, capital non appelé
+  A15: TOTAL
+  K15: 100000000
+  A16: Commentaire :
+  A17: ●   Indiquer si possible le montant du capital à la constitution.
+  I17: ●  Pour les attributions gratuites d'actions indiquer :
+  A18: ●   Indiquer si possible les dates des AGE et le montant du capital augmenté en cas d'augmentation d
+  I18: - Date de délibération de l’AGE qui décide de l’attribution des actions
+  A19: ●   Indiquer si possible les dates des AGE et le montant du capital diminué en cas de réduction de c
+  I19: - Pourcentage maximum du capital social à attribuer au personnel salarié
+  A20: ●   Indiquer les avantages accordés aux actions de préférence.
+  I20: - Pourcentage maximum du capital social à attribuer aux dirigeants
+  A21: ●   Apporteurs, capital non appelé : indiquer le délai restant pour appeler le capital.
+  I21: - Nombre d’actions à attribuer gratuitement
+  I22: - Délai de conservation des actions par les bénéficiaires
+  I23: - Nombre de ses actions propres que la société détient
+
+================================================================================
+FEUILLE: NOTE 14 (sheet42.xml)
+================================================================================
+  A1: - 0 -
+  G2: NOTE 14 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  G4: Sigle usuel :
+  H4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  G5: Durée (en mois) :
+  H5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 14 : PRIMES ET RESERVES
+  A8: Libellés
+  F8: Année N
+  G8: Année N-1
+  H8: Variation en valeur
+  A9: Primes d'émission
+  H9: 0
+  A10: Prime d'apport
+  H10: 0
+  A11: Prime de fusion
+  H11: 0
+  A12: Prime de conversion
+  H12: 0
+  A13: Autres primes
+  H13: 0
+  A14: TOTAL PRIMES
+  F14: 0
+  G14: 0
+  H14: 0
+  A15: Réserves légales
+  H15: 0
+  A16: Réserves statutaires
+  H16: 0
+  A17: Réserves de plus-values nettes à long terme
+  H17: 0
+  A18: Réserves d’attribution gratuite d’actions au personnel salarié et aux dirigeants
+  H18: 0
+  A19: Autres réserves réglementées
+  H19: 0
+  A20: TOTAL RESERVES INDISPONIBLES
+  F20: 0
+  G20: 0
+  H20: 0
+  A21: Réserves libres
+  H21: 0
+  A22: Report à nouveau
+  H22: 0
+  A23: Commentaire:
+  A24: ●   Indiquer les dates de l'AGE qui a décidé des primes d'apport, d'émission de fusion.
+  A25: ●   Indiquer le détail des réserves libres.
+  A26: ●   Indiquer le montant restant à doter et le taux de dotation de la réserve légale.
+  A27: ●   Indiquer la date de l'AGO qui justifie la variation des réserves et du report à nouveau.
+
+================================================================================
+FEUILLE: NOTE 15A (sheet43.xml)
+================================================================================
+  A1: - 0 -
+  I2: NOTE 15A SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  I4: Sigle usuel :
+  J4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  F5: Exercice clos le :
+  G5: 45657
+  I5: Durée (en mois) :
+  J5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 15A : SUBVENTIONS D'INVESTISSEMENT ET PROVISIONS REGLEMENTEES
+  A8: Libellés
+  D8: NOTE
+  E8: Année N
+  F8: Année N-1
+  G8: Variation en valeur
+  H8: Variation en %
+  I8: Régime fiscal
+  J8: Echéances
+  A9: État
+  G9: 0
+  H9: [FORMULE: IF(F9,(E9-F9)/F9,IF(ISBLANK(F9),"",IF(E9,IF( E9 > 0,1,-1),""]
+  A10: Régions
+  G10: 0
+  H10: [FORMULE: IF(F10,(E10-F10)/F10,IF(ISBLANK(F10),"",IF(E10,IF( E10 > 0,1]
+  A11: Départements
+  G11: 0
+  A12: Communes et collectivités publiques décentralisées
+  G12: 0
+  A13: Entités publiques ou mixtes
+  G13: 0
+  A14: Entités et organismes privés
+  G14: 0
+  A15: Organismes internationaux
+  G15: 0
+  A16: Autres
+  G16: 0
+  A17: TOTAL SUBVENTIONS
+  E17: 0
+  F17: 0
+  G17: 0
+  A18: Amortissements dérogatoires
+  G18: 0
+  A19: Plus-value de cession à réinvestir
+  G19: 0
+  A20: Provisions spéciales de réévaluation
+  D20: 3E
+  G20: 0
+  A21: Provisions réglementées relatives aux immobilisations
+  G21: 0
+  A22: Provisions réglementées relatives aux stocks
+  G22: 0
+  A23: Provisions pour investissement
+  G23: 0
+  A24: Autres provisions et fonds réglementés
+  G24: 0
+  A25: TOTAL PROVISIONS REGLEMENTEES
+  E25: 0
+  F25: 0
+  G25: 0
+  A26: TOTAL SUBVENTIONS ET PROVISIONS REGLEMENTEES
+  E26: 0
+  F26: 0
+  G26: 0
+  A27: Commentaire:
+  A28: ●   Indiquer pour la subvention la date d’octroi, la nature, les obligations éventuelles.
+  A29: ●   Pour les provisions réglementées, indiquer le texte de référence, les obligations. Commenter tou
+  A30: ●  Commenter toute variation significative.
+
+================================================================================
+FEUILLE: NOTE 15B (sheet44.xml)
+================================================================================
+  A1: - 0 -
+  J2: NOTE 15B SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  J4: Sigle usuel :
+  K4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  G5: Exercice clos le :
+  H5: 45657
+  J5: Durée (en mois) :
+  K5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 15B : AUTRES  FONDS  PROPRES (1)
+  A8: Libellés
+  F8: NOTE
+  G8: Année N
+  H8: Année N-1
+  I8: Variation en valeur
+  J8: Variation en %
+  K8: Echéances
+  A9: Titres participatifs
+  I9: 0
+  J9: [FORMULE: IF(H9,(G9-H9)/H9,IF(ISBLANK(H9),"",IF(G9,IF( G9 > 0,1,-1),""]
+  A10: Avances conditionnées
+  I10: 0
+  A11: Titres subordonnés à durée indéterminée (T.S.D.I.)
+  I11: 0
+  A12: Obligations remboursables en actions (O.R.A.)
+  I12: 0
+  A13: Autres avances et dettes assorties de conditions particulières
+  I13: 0
+  A14: TOTAL AUTRES FONDS PROPRES
+  G14: 0
+  H14: 0
+  I14: 0
+  A16: (1) Le  cas  échéant,  une  rubrique  "Autres  fonds  propres"  (montant des émissions de titres par
+  A17: Commentaire:
+  A18: ●   Justifier l'inscription de ces dettes dans une rubrique spécifique du passif du bilan "autres fo
+  A19: ●   Justifier le caractère significatif du montant total de cette rubrique
+  A20: ●   Commenter toute variation significative
+
+================================================================================
+FEUILLE: NOTE 16A (sheet45.xml)
+================================================================================
+  A1: - 0 -
+  J2: NOTE 16A SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  J4: Sigle usuel :
+  K4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  G5: Exercice clos le :
+  I5: 45657
+  J5: Durée (en mois) :
+  K5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 16A : DETTES FINANCIERES ET RESSOURCES ASSIMILES
+  A8: Libellés
+  E8: Année N
+  F8: Année N-1
+  G8: Variation en valeur
+  H8: Variation en %
+  I8: Dettes à un an au plus
+  J8: Dettes à plus d'un an et à deux ans au plus
+  K8: Dettes à plus de deux ans
+  A9: Emprunts obligataires
+  G9: 0
+  H9: [FORMULE: IF(F9,(E9-F9)/F9,IF(ISBLANK(F9),"",IF(E9,IF( E9 > 0,1,-1),""]
+  A10: Emprunts et dettes auprès des établissements de crédit
+  G10: 0
+  H10: [FORMULE: IF(F10,(E10-F10)/F10,IF(ISBLANK(F10),"",IF(E10,IF( E10 > 0,1]
+  A11: Avances reçues de l'Etat
+  G11: 0
+  A12: Avances reçues et comptes courants bloqués
+  G12: 0
+  A13: Dépôts et cautionnements reçus
+  G13: 0
+  A14: Intérêts courus
+  G14: 0
+  A15: Avances et dettes assorties de conditions particulières
+  G15: 0
+  A16: Autres emprunts et dettes
+  G16: 0
+  A17: Dettes liées à des participations et sociétés en participation
+  G17: 0
+  A18: Comptes permanents bloqués des établissements et succursales
+  G18: 0
+  A19: TOTAL EMPRUNTS ET DETTES FINANCIERES
+  E19: 0
+  F19: 0
+  G19: 0
+  I19: 0
+  J19: 0
+  K19: 0
+  A20: Crédit bail immobilier
+  G20: 0
+  A21: Crédit bail mobilier
+  G21: 0
+  A22: Location vente
+  G22: 0
+  A23: Intérêts courus
+  G23: 0
+  A24: Autres dettes de location acquisition
+  G24: 0
+  A25: TOTAL DETTES DE LOCATION ACQUISITION
+  E25: 0
+  F25: 0
+  G25: 0
+  I25: 0
+  J25: 0
+  K25: 0
+  A26: Provisions pour litiges
+  G26: 0
+  A27: Provisions pour garantie donnés aux clients
+  G27: 0
+  A28: Provisions pour pertes sur marchés à achèvement futur
+  G28: 0
+  A29: Provisions pour pertes de change
+  G29: 0
+  A30: Provisions pour impôts
+  G30: 0
+  A31: Provisions pour pensions et obligations assimilées - engagements de retraite
+  G31: 0
+  A32: Actif du régime de retraite (1)
+  G32: 0
+  A33: Provisions pour restructuration
+  G33: 0
+  A34: Provisions pour amendes et pénalités
+  G34: 0
+  A35: Provisions pour propre assureur
+  G35: 0
+  A36: Provisions pour démantèlement et remise en état
+  G36: 0
+  A37: Provisions de droits à réduction ou avantage en nature
+  G37: 0
+  A38: Autres provisions
+  G38: 0
+  A39: TOTAL PROVISIONS POUR RISQUES ET CHARGES
+  E39: 0
+  F39: 0
+  G39: 0
+  A40: (1): Le solde de ce compte est débiteur
+  A41: Commentaire:
+  A42: Pour chaque emprunt et dette de location acquisition: mentionner la date d'octroi, le nom de l'organ
+  A43: ●   Indiquer les événements et circonstances qui ont conduit à la provision et à la reprise.
+  A44: ●   Pour les pensions et obligations de retraite, indiquer :
+  A45: - la méthode d'évaluation retenue
+  A46: - le nom de la compagnie d'assurance ou du fonds de pension, le descriptif de la convention signée a
+
+================================================================================
+FEUILLE: NOTE 16B (sheet46.xml)
+================================================================================
+  A1: - 0 -
+  H2: NOTE 16B SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  H4: Sigle usuel :
+  I4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  F5: Exercice clos le :
+  G5: 45657
+  H5: Durée (en mois) :
+  I5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 16B : ENGAGEMENTS DE RETRAITE ET AVANTAGES ASSIMILES : (METHODE ACTUARIELLE)
+  A8: HYPOTHESES ACTUARIELLES
+  A9: Libellés
+  H9: Année N
+  I9: Année N-1
+  A10: Taux d'augmentation des salaires
+  A11: Taux d'actualisation
+  A12: Taux d'inflation
+  A13: Probabilité d'être présent dans l'entité à la date de départ à la retraite (expérience passée)
+  A14: Probabilité d'être en vie à l'âge de départ à la retraite (table de mortalité)
+  A15: Taux de rendement effectif des actifs du régime
+  A16: Commentaire :
+  A17: ●   Commenter les variations d'hypothèses actuarielles utilisées pour le calcul des engagements de r
+  A19: VARIATION DE LA VALEUR DE L'ENGAGEMENT DE RETRAITE  AU COURS DE L'EXERCICE
+  A20: Libellés
+  H20: Année N
+  I20: Année N-1
+  A21: Obligation au titre des engagements de retraite à l'ouverture
+  A22: Coût des services rendus au cours de l'exercice
+  A23: Coût financier
+  A24: Pertes actuarielles / (gain)
+  A25: Prestations payées au cours de l'exercice
+  A26: Coût des services passés
+  A27: Obligation au titre des engagements de retraite à la clôture
+  A28: Commentaire :
+  A29: ●   Indiquer le montant de la charge par nature comptabilisée au cours de exercice
+  A31: ANALYSE DE SENSIBILITE DES HYPOTHESES ACTUARIELLES
+  A32: Libellés
+  F32: Année N
+  H32: Année N-1
+  F33: Augmentation
+  G33: Diminution
+  H33: Augmentation
+  I33: Diminution
+  A34: Taux d'actualisation (variation de ...%)
+  A35: Taux de progression des salaires (variation de ...%)
+  A36: Taux de départ du personnel (variation de ...%)
+  A37: Commentaire :
+  A38: ●   Indiquer l’impact des variations obtenues sur le montant des engagements de retraite.
+
+================================================================================
+FEUILLE: NOTE 16B BIS (sheet47.xml)
+================================================================================
+  A1: - 0 -
+  H2: NOTE 16B BIS SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  H4: Sigle usuel :
+  I4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  F5: Exercice clos le :
+  G5: 45657
+  H5: Durée (en mois) :
+  I5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 16B BIS : ENGAGEMENTS DE RETRAITE ET AVANTAGES ASSIMILES : (METHODE ACTUARIELLE SUITE)
+  A8: ACTIF/PASSIF NET COMPTABILISE AU TITRE DES REGIMES FINANCES
+  A9: Libellés
+  H9: Année N
+  I9: Année N-1
+  A10: Valeur actuelle de l'obligation résultant de régimes financés
+  A11: Valeur actuelle des actifs affectés aux plans de retraite
+  A12: Excédent / Déficit de régime
+  A13: Commentaire :
+  A14: ●   Indiquer le montant comptabilisé au passif (ou actif) à la clôture de l'exercice.
+  A16: VALEUR ACTUELLE DES ACTIFS DU REGIME
+  A17: Libellés
+  F17: Année N
+  H17: Année N-1
+  F18: Rendement attendu
+  G18: Juste valeur des actifs
+  H18: Rendement  attendu
+  I18: Juste valeur des actifs
+  A19: Actions
+  A20: Obligations
+  A21: Autres
+  A22: Total
+  F22: 0
+  G22: 0
+  H22: 0
+  I22: 0
+  A23: Commentaire :
+  A24: ●   Expliquer comment les taux de rendement par catégorie d’actifs et global ont été déterminés
+  A25: ●   Indiquer le montant des rendements réels des actifs affectés aux plans en N et N-1
+
+================================================================================
+FEUILLE: NOTE 16C (sheet48.xml)
+================================================================================
+  A1: - 0 -
+  G2: NOTE 16C SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  G4: Sigle usuel :
+  H4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  G5: Durée (en mois) :
+  H5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 16C : ACTIFS ET PASSIFS EVENTUELS
+  A8: Libellés
+  G8: Année N
+  H8: Année N-1
+  A9: Actif éventuel
+  G9: 0
+  H9: 0
+  A10: Litiges
+  A12: Passif éventuel
+  G12: 0
+  H12: 0
+  A13: Litiges
+  A15: Commentaire :
+  A16: ●   Décrire les principales caractéristiques des actifs / passifs éventuels, l’horizon de temps auqu
+
+================================================================================
+FEUILLE: NOTE 17 (sheet49.xml)
+================================================================================
+  A1: - 0 -
+  J2: NOTE 17 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  J4: Sigle usuel :
+  K4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  F5: Exercice clos le :
+  G5: 45657
+  J5: Durée (en mois) :
+  K5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 17 : FOURNISSEURS D'EXPLOITATION
+  A8: Libellés
+  F8: Année N
+  G8: Année N-1
+  H8: Variation en %
+  I8: Dettes à un an au plus
+  J8: Dettes à plus d'un an et à deux ans au plus
+  K8: Dettes à plus de deux ans
+  A9: Fournisseurs dettes en compte (hors groupe)
+  F9: 149574415
+  G9: 102498450
+  H9: 0.45928465259718559
+  I9: 47075965
+  J9: 102498450
+  A10: Fournisseurs, sous-traitants
+  H10: [FORMULE: IF(G10,(F10-G10)/G10,IF(ISBLANK(G10),"",IF(F10,IF( F10 > 0,1]
+  A11: Fournisseurs, réserve de propriété
+  A12: Fournisseurs, retenue de garantie
+  A13: Fournisseurs effets à payer (hors groupe)
+  A14: Fournisseurs, dettes et effets à payer groupe
+  A15: Fournisseurs, acquisitions courantes d'immobilisations
+  A16: Fournisseurs factures non parvenues (hors groupe)
+  F16: 1501550
+  G16: 1501550
+  H16: 0
+  J16: 1501550
+  A17: Fournisseurs factures non parvenues groupe
+  A18: TOTAL FOURNISSEURS
+  F18: 151075965
+  G18: 104000000
+  H18: 0.45265350961538464
+  I18: 47075965
+  J18: 104000000
+  K18: 0
+  A19: Fournisseurs, avances et acomptes (hors groupe)
+  H19: [FORMULE: IF(G19,(F19-G19)/G19,IF(ISBLANK(G19),"",IF(F19,IF( F19 > 0,1]
+  A20: Fournisseurs, avances et acomptes groupe
+  H20: [FORMULE: IF(G20,(F20-G20)/G20,IF(ISBLANK(G20),"",IF(F20,IF( F20 > 0,1]
+  A21: Autres fournisseurs débiteurs
+  H21: [FORMULE: IF(G21,(F21-G21)/G21,IF(ISBLANK(G21),"",IF(F21,IF( F21 > 0,1]
+  A22: TOTAL FOURNISSEURS DEBITEURS
+  F22: 0
+  G22: 0
+  H22: [FORMULE: IF(G22,(F22-G22)/G22,IF(ISBLANK(G22),"",IF(F22,IF( F22 > 0,1]
+  I22: 0
+  J22: 0
+  K22: 0
+  A23: Commentaire:
+  A24: ●   Commenter toutes variations significatives.
+  A25: ●   Indiquer pour les dettes du groupe le nom de la société du groupe et le % de titres détenus.
+  A26: ●   Commenter les dettes anciennes.
+
+================================================================================
+FEUILLE: NOTE 18 (sheet50.xml)
+================================================================================
+  A1: - 0 -
+  J2: NOTE 18 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  J4: Sigle usuel :
+  K4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  G5: Exercice clos le :
+  H5: 45657
+  J5: Durée (en mois) :
+  K5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 18 : DETTES FISCALES ET SOCIALES
+  A8: Libellés
+  E8: Année N
+  F8: Année N-1
+  G8: Variation en valeur
+  H8: Variation en %
+  I8: Dettes à un an au plus
+  J8: Dettes à plus d'un an et à deux ans au plus
+  K8: Dettes à plus de deux ans
+  A9: Personnel rémunérations dues
+  E9: 1000000
+  F9: 0
+  G9: 1000000
+  H9: 1
+  I9: 1000000
+  A10: Personnel, congés à payer
+  E10: 989526
+  F10: 0
+  G10: 989526
+  H10: 1
+  I10: 989526
+  A11: Charges sociales sur congés à payer
+  G11: 0
+  A12: Autres personnel
+  G12: 0
+  A13: Caisse de sécurité sociale
+  G13: 0
+  A14: Caisse de retraite
+  E14: 1905143
+  F14: 0
+  G14: 1905143
+  H14: 1
+  I14: 1905143
+  A15: Mutuelle de santé
+  G15: 0
+  A16: Assurance Retraite
+  G16: 0
+  A17: Autres charges sociales à payer
+  G17: 0
+  A18: Autres cotisations et organismes sociaux
+  G18: 0
+  A19: TOTAL DETTES SOCIALES
+  E19: 3894669
+  F19: 0
+  G19: 3894669
+  H19: 1
+  I19: 3894669
+  J19: 0
+  K19: 0
+  A20: Etat, impôts sur les bénéfices
+  G20: 0
+  A21: Etat, impôts et taxes
+  G21: 0
+  A22: Etat, TVA
+  G22: 0
+  A23: Etat, impôts retenus à la source
+  E23: 20095180
+  F23: 8918922
+  G23: 11176258
+  H23: 1.2530951610519747
+  I23: 11176258
+  J23: 8918922
+  A24: Autres dettes Etat
+  E24: 495833
+  F24: 145833
+  G24: 350000
+  H24: 2.4000054857268247
+  I24: 350000
+  J24: 145833
+  A25: TOTAL DETTES FISCALES
+  E25: 20591013
+  F25: 9064755
+  G25: 11526258
+  H25: 1.2715465558638925
+  I25: 11526258
+  J25: 9064755
+  K25: 0
+  A26: TOTAL DETTES SOCIALES ET FISCALES
+  E26: 24485682
+  F26: 9064755
+  G26: 15420927
+  H26: 1.7011962264837825
+  I26: 15420927
+  J26: 9064755
+  K26: 0
+  A27: Commentaire:
+  A28: ●   Commenter toute variation significative.
+  A29: ●   Commenter les dettes anciennes
+
+================================================================================
+FEUILLE: NOTE 19 (sheet51.xml)
+================================================================================
+  A1: - 0 -
+  J2: NOTE 19 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  J4: Sigle usuel :
+  K4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  G5: Exercice clos le :
+  I5: 45657
+  J5: Durée (en mois) :
+  K5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 19 : AUTRES DETTES ET PROVISIONS POUR RISQUES ET CHARGES A COURT TERME
+  A8: Libellés
+  E8: Année N
+  F8: Année N-1
+  G8: Variation en valeur
+  H8: Variation en %
+  I8: Dettes à un an au plus
+  J8: Dettes à plus d'un an et à deux ans au plus
+  K8: Dettes à plus de deux ans
+  A9: Organismes internationaux
+  G9: 0
+  H9: [FORMULE: IF(F9,(E9-F9)/F9,IF(ISBLANK(F9),"",IF(E9,IF( E9 > 0,1,-1),""]
+  A10: Apporteurs, opérations sur le capital
+  G10: 0
+  H10: [FORMULE: IF(F10,(E10-F10)/F10,IF(ISBLANK(F10),"",IF(E10,IF( E10 > 0,1]
+  A11: Associés, compte courant
+  E11: 329693774
+  F11: 346125474
+  G11: -16431700
+  H11: -4.7473246652744203E-2
+  A12: Associés dividendes à payer
+  G12: 0
+  A13: Groupe, comptes courants
+  G13: 0
+  A14: Autres dettes associés
+  G14: 0
+  A15: TOTAL DETTES ASSOCIES
+  E15: 329693774
+  F15: 346125474
+  G15: -16431700
+  H15: -4.7473246652744203E-2
+  I15: 0
+  J15: 0
+  K15: 0
+  A16: Créditeurs divers
+  E16: 167899544
+  F16: 438342185
+  G16: -270442641
+  H16: -0.61696695014649339
+  A17: Obligataires
+  G17: 0
+  A18: Rémunérations d'administrateurs
+  G18: 0
+  A19: Compte d'affacturage et de titrisation
+  G19: 0
+  A20: Versements restant à effectuer sur titres de placement non libérés
+  G20: 0
+  A21: Compte transitoire ajustement spécial lié à la révision du SYSCOHADA (Voir Note 8B)
+  G21: 0
+  A22: Autres créditeurs divers
+  G22: 0
+  A23: TOTAL  CREDITEURS DIVERS
+  E23: 167899544
+  F23: 438342185
+  G23: -270442641
+  H23: -0.61696695014649339
+  I23: 0
+  J23: 0
+  K23: 0
+  A24: Comptes permanents non bloqués des établissements et des succursales
+  G24: 0
+  A25: Comptes de liaison charges et produits
+  G25: 0
+  A26: Comptes de liaison des sociétés en participation
+  G26: 0
+  A27: TOTAL  COMPTES DE LIAISON
+  E27: 0
+  F27: 0
+  G27: 0
+  I27: 0
+  J27: 0
+  K27: 0
+  A28: TOTAL  AUTRES DETTES
+  E28: 497593318
+  F28: 784467659
+  G28: -286874341
+  H28: -0.365693011953728
+  I28: 0
+  J28: 0
+  K28: 0
+  A29: Provisions pour risques et charges à court terme (voir note 28)
+  G29: 0
+  A30: Commentaire:
+  A31: ●   Commenter toute variation significative.
+  A32: ●   Indiquer le taux de rémunération si compte courant rémunéré.
+  A33: ●   Commenter les dettes anciennes.
+  A34: ●   Compte transitoire ajustement spécial, indiquer le détail du compte et la durée restant pour l'a
+
+================================================================================
+FEUILLE: NOTE 20 (sheet52.xml)
+================================================================================
+  A1: - 0 -
+  G2: NOTE 20 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  G4: Sigle usuel :
+  H4: NEPER VENTURES
+  A5: N° de compte contribuable (NCC) :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  G5: Durée (en mois) :
+  H5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 20 : BANQUES, CREDIT D'ESCOMPTE ET DE TRESORERIE
+  A8: Libellés
+  F8: Année N
+  G8: Année N-1
+  H8: Variation en %
+  A9: Escomptes de crédit de campagne
+  H9: [FORMULE: IF(G9,(F9-G9)/G9,IF(ISBLANK(G9),"",IF(F9,IF( F9 > 0,1,-1),""]
+  A10: Escomptes de crédit ordinaires
+  H10: [FORMULE: IF(G10,(F10-G10)/G10,IF(ISBLANK(G10),"",IF(F10,IF( F10 > 0,1]
+  A11: TOTAL: BANQUES, CREDITS D'ESCOMPTE ET DE TRESORERIE
+  F11: 0
+  G11: 0
+  A12: Banques locales
+  F12: 78897574
+  G12: 373330531
+  H12: -0.78866562617135649
+  A13: Banques autres états région
+  A14: Autres Banques
+  A15: Banques intérêts courus
+  A16: Crédit de trésorerie
+  A17: TOTAL: BANQUES, CREDITS DE TRESORERIE
+  F17: 78897574
+  G17: 373330531
+  H17: -0.78866562617135649
+  A18: TOTAL GENERAL
+  F18: 78897574
+  G18: 373330531
+  H18: -0.78866562617135649
+  A19: Commentaire:
+  A20: ●   Commenter toute variation significative.
+  A21: ●   Indiquer le nom de l'organisme les conditions de crédit, le taux d'intérêt, la durée du crédit.
+  A23: NB : Banques et intérêts courus figurent dans cette rubrique si le compte principal attaché est créd
+
+================================================================================
+FEUILLE: NOTE 21 (sheet53.xml)
+================================================================================
+  A1: - 0 -
+  G2: NOTE 21 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  G4: Sigle usuel :
+  H4: NEPER VENTURES
+  A5: N° de compte contribuable (NCC) :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  G5: Durée (en mois) :
+  H5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 21 : CHIFFRE D’AFFAIRES ET AUTRES PRODUITS
+  A8: Libellés
+  F8: Année N
+  G8: Année N-1
+  H8: Variation en %
+  A9: Ventes de marchandises dans l'Etat partie
+  H9: [FORMULE: IF(G9,(F9-G9)/G9,IF(ISBLANK(G9),"",IF(F9,IF( F9 > 0,1,-1),""]
+  A10: Ventes de marchandises dans les autres Etats parties de la Région (2)
+  H10: [FORMULE: IF(G10,(F10-G10)/G10,IF(ISBLANK(G10),"",IF(F10,IF( F10 > 0,1]
+  A11: Ventes de marchandises hors Région (2)
+  A12: Ventes de marchandises groupe
+  A13: Ventes de marchandises sur internet
+  A14: TOTAL : VENTES MARCHANDISES
+  F14: 0
+  G14: 0
+  A15: Ventes de produits fabriqués dans l'Etat partie
+  A16: Ventes de produits fabriqués dans les autres Etats parties de la Région (2)
+  A17: Ventes de produits fabriqués hors Région (2)
+  A18: Ventes de produits fabriqués groupe
+  A19: Ventes de produits fabriqués sur internet
+  A20: TOTAL : VENTES DE PRODUITS FABRIQUES
+  F20: 0
+  G20: 0
+  A21: Ventes  de travaux et services dans l'Etat partie
+  F21: 96115355
+  G21: 69729740
+  H21: 0.37839829891808002
+  A22: Ventes  de travaux et services dans les autres Etats parties de la Région (2)
+  F22: 0
+  G22: 10610760
+  H22: -1
+  A23: Ventes de travaux et services hors Région (2)
+  A24: Ventes de travaux et services  groupe
+  A25: Ventes de travaux et services  sur internet
+  A26: TOTAL : VENTES DE TRAVAUX ET SERVICES VENDUS
+  F26: 96115355
+  G26: 80340500
+  H26: 0.19634997292772635
+  A27: Produits accessoires à détailler par nature d'activité économique : dont le détail de la rubrique "D
+  F27: 0
+  G27: 0
+  A29: TOTAL : CHIFFRES D'AFFAIRES
+  F29: 96115355
+  G29: 80340500
+  H29: 0.19634997292772635
+  A30: Production immobilisée
+  A31: Subventions d'exploitation
+  A32: Autres produits (1)
+  F32: 11733
+  G32: 50976
+  H32: -0.76983286252354044
+  A33: TOTAL : AUTRES PRODUITS
+  F33: 11733
+  G33: 50976
+  H33: -0.76983286252354044
+  A34: TOTAL
+  F34: 96127088
+  G34: 80391476
+  H34: 0.19573731921528595
+  A35: (1): Sous cette rubrique, les "Divers" de la Fiche R2 ne doivent pas figurer. Il s'agit ici des comp
+  A36: (2): "Région" indique la zone UEMOA  pour les pays UEMOA, la zone CEMAC pour les pays CEMAC, autre z
+  A37: Commentaire:
+  A38: ●   Justifier toute variation significative.
+  A39: ●   Détailler: produits intermédiaires, produits résiduels, produits accessoires et autres produits 
+  A40: ●   Dans le cas de location-financement fournir les informations suivantes :
+  A41: - Résultat de la vente
+  A42: - Produits financiers sur l’investissement net
+  A43: - Revenus locatifs liés aux loyers variables  non inclus dans l’investissement net
+  A44: - Echéances des  loyers à recevoir :
+  A45: • jusqu’à 1 an           • de 1 an à 5 ans          • à plus de 5 ans
+
+================================================================================
+FEUILLE: NOTE 22 (sheet54.xml)
+================================================================================
+  A1: - 0 -
+  G2: NOTE 22 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  G4: Sigle usuel :
+  H4: NEPER VENTURES
+  A5: N° de compte contribuable (NCC) :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  G5: Durée (en mois) :
+  H5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 22 : ACHATS
+  A8: Libellés
+  F8: Année N
+  G8: Année N-1
+  H8: Variation en %
+  A9: Achats de marchandises dans l'Etat partie
+  H9: [FORMULE: IF(G9,(F9-G9)/G9,IF(ISBLANK(G9),"",IF(F9,IF( F9 > 0,1,-1),""]
+  A10: Achats de marchandises dans les autres Etats parties de  la Région (2)
+  H10: [FORMULE: IF(G10,(F10-G10)/G10,IF(ISBLANK(G10),"",IF(F10,IF( F10 > 0,1]
+  A11: Achats de marchandises hors Région (2)
+  A12: Achats de marchandises groupe
+  A13: TOTAL : ACHATS DE MARCHANDISES
+  F13: 0
+  G13: 0
+  A14: Achats de matières premières et fournitures liées  dans l'Etat partie
+  A15: Achats de matères premières et fournitures liées  dans les autres Etats parties de la Région (2)
+  A16: Achats matières premières et fournitures liées hors Région (2)
+  A17: Achats matières premières et fournitures liées groupe
+  A18: TOTAL : ACHATS MATIERES PREMIERES ET FOURNITURES LIEES
+  F18: 0
+  G18: 0
+  A19: Matières consommables
+  A20: Matières combustibles
+  A21: Produits d'entretien
+  A22: Fournitures d'atelier, d'usine et de magasin
+  A23: Eau
+  A24: Electricité
+  A25: Autres énergies
+  A26: Fourniture d'entretien
+  A27: Fourniture de bureau
+  A28: Petit matériel et outillages
+  A29: Achats études, prestations de services, de travaux matériels et équipements
+  F29: 52500
+  G29: 0
+  H29: 1
+  A30: Achats d'emballages
+  A31: Frais sur achats (1)
+  A32: Remises rabais, remises et ristournes (non ventilés)
+  A33: TOTAL : AUTRES ACHATS
+  F33: 52500
+  G33: 0
+  H33: 1
+  A34: (1) voir la note "SUPPL5"
+  A35: (2): "Région" indique la zone UEMOA  pour les pays UEMOA, la zone CEMAC pour les pays CEMAC, autre z
+  A36: Commentaire :
+  A37: ●   Commenter toute variation significative.
+
+================================================================================
+FEUILLE: NOTE 23 (sheet55.xml)
+================================================================================
+  A1: - 0 -
+  G2: NOTE 23 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  G4: Sigle usuel :
+  H4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  G5: Durée (en mois) :
+  H5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 23 : TRANSPORTS
+  A8: Libellés
+  F8: Année N
+  G8: Année N-1
+  H8: Variation en %
+  A9: Transports sur ventes
+  H9: [FORMULE: IF(G9,(F9-G9)/G9,IF(ISBLANK(G9),"",IF(F9,IF( F9 > 0,1,-1),""]
+  A10: Transports pour le compte de tiers
+  H10: [FORMULE: IF(G10,(F10-G10)/G10,IF(ISBLANK(G10),"",IF(F10,IF( F10 > 0,1]
+  A11: Transport du personnel
+  A12: Transports de plis
+  A13: Voyage déplacement (transport)
+  A14: Transport entre établissements ou chantiers
+  A15: Transports administratifs
+  F15: 49500
+  G15: 0
+  H15: 1
+  A16: TOTAL
+  F16: 49500
+  G16: 0
+  H16: 1
+  A17: Commentaire :
+  A18: ●   Commenter toute variation significative.
+
+================================================================================
+FEUILLE: NOTE 24 (sheet56.xml)
+================================================================================
+  A1: - 0 -
+  G2: NOTE 24 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  G4: Sigle usuel :
+  H4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  G5: Durée (en mois) :
+  H5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 24 : SERVICES EXTERIEURS
+  A8: Libellés
+  F8: Année N
+  G8: Année N-1
+  H8: Variation en %
+  A9: Sous-traitance générale
+  H9: [FORMULE: IF(G9,(F9-G9)/G9,IF(ISBLANK(G9),"",IF(F9,IF( F9 > 0,1,-1),""]
+  A10: Locations et charges locatives
+  F10: 2459035
+  G10: 0
+  H10: 1
+  A11: Redevances de location acquisition
+  A12: Entretien, réparations et maintenance
+  A13: Primes d'assurance
+  A14: Etudes, recherches et documentation
+  A15: Publicité, publications, relations publiques
+  A16: Frais de télécommunications
+  A17: Frais bancaires
+  F17: 1129159
+  G17: 862395
+  H17: 0.30932925167701575
+  A18: Rémunérations d'intermédiaires et de conseils
+  F18: 119571083
+  G18: 120920472
+  H18: -1.115930973210227E-2
+  A19: Frais de formation du personnel
+  A20: Redevances pour brevets, licences, logiciels, concession et droits similaires
+  A21: Cotisations
+  A22: Rémunérations de personnel extérieur à l'entité
+  A23: Autres charges externes
+  F23: 298560
+  G23: 5731550
+  H23: -0.94790937878933268
+  A24: TOTAL
+  F24: 123457837
+  G24: 127514417
+  H24: -3.181271651816437E-2
+  A25: Commentaire :
+  A26: ●   Commenter toute variation significative.
+
+================================================================================
+FEUILLE: NOTE 25 (sheet57.xml)
+================================================================================
+  A1: - 0 -
+  G2: NOTE 25 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  G4: Sigle usuel :
+  H4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  G5: Durée (en mois) :
+  H5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 25 : IMPOTS ET TAXES
+  A8: Libellés
+  F8: Année N
+  G8: Année N-1
+  H8: Variation en %
+  A9: Impôts et taxes directs
+  F9: 302256
+  G9: 0
+  H9: 1
+  A10: Impôts et taxes indirects
+  A11: Droits d'enregistrement
+  F11: 0
+  G11: 18000
+  H11: -1
+  A12: Pénalités et amendes fiscales
+  A13: Autres impôts et taxes
+  F13: 350000
+  G13: 145833
+  H13: 1.4000054857268245
+  A14: TOTAL
+  F14: 652256
+  G14: 163833
+  H14: 2.9812247837737207
+  A15: Commentaire:
+  A16: ●   Commenter toute variation significative.
+  A17: ●   Détailler les pénalités et amendes et indiquer la cause.
+
+================================================================================
+FEUILLE: NOTE 26 (sheet58.xml)
+================================================================================
+  A1: - 0 -
+  G2: NOTE 26 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  G4: Sigle usuel :
+  H4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  G5: Durée (en mois) :
+  H5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 26 : AUTRES CHARGES
+  A8: Libellés
+  F8: Année N
+  G8: Année N-1
+  H8: Variation en %
+  A9: Pertes sur créances clients
+  H9: [FORMULE: IF(G9,(F9-G9)/G9,IF(ISBLANK(G9),"",IF(F9,IF( F9 > 0,1,-1),""]
+  A10: Pertes sur autres débiteurs
+  H10: [FORMULE: IF(G10,(F10-G10)/G10,IF(ISBLANK(G10),"",IF(F10,IF( F10 > 0,1]
+  A11: Quote-part de résultat sur opérations faites en commun
+  A12: Valeur comptable des cessions courantes d'immobilisations
+  A13: Perte de change sur créances et dettes commerciales
+  A14: Pénalités et amendes pénales
+  A15: Indemnités de fonction et autres rémunérations d'administrateurs
+  A16: Dons et mécénat
+  A17: Autres charges diverses
+  F17: 126415
+  G17: 0
+  H17: 1
+  A18: Charges pour dépréciations et provisions pour risques à court terme d'exploitation (voir note 28)
+  A19: TOTAL
+  F19: 126415
+  G19: 0
+  H19: 1
+  A20: Commentaire :
+  A21: ●   Commenter toute variation significative.
+  A22: ●   Indiquer la date du PV de l'AGO ou du CA qui fixe les rémunérations des administrateurs.
+  A23: ●   Indiquer les organismes bénéficiaires des dons.
+
+================================================================================
+FEUILLE: NOTE 27A (sheet59.xml)
+================================================================================
+  A1: - 0 -
+  G2: NOTE 27A SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  G4: Sigle usuel :
+  H4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  G5: Durée (en mois) :
+  H5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 27A : CHARGES DE PERSONNEL
+  A8: Libellés
+  F8: Année N
+  G8: Année N-1
+  H8: Variation en %
+  A9: Rémunérations directes versées au personnel national
+  F9: 11994628
+  G9: 0
+  H9: 1
+  A10: Rémunérations directes versées au personnel non national
+  H10: [FORMULE: IF(G10,(F10-G10)/G10,IF(ISBLANK(G10),"",IF(F10,IF( F10 > 0,1]
+  A11: Indemnités forfaitaires versées au personnel
+  F11: 2700000
+  G11: 0
+  H11: 1
+  A12: Charges  sociales (personnel national)
+  F12: 900960
+  G12: 0
+  H12: 1
+  A13: Charges sociales (personnel non national)
+  A14: Rémunérations et charges sociales de l'exploitant individuel
+  A15: Rémunération transférée de personnel extérieur
+  A16: Autres charges sociales
+  F16: 12000
+  G16: 0
+  H16: 1
+  A17: TOTAL
+  F17: 15607588
+  G17: 0
+  H17: 1
+  A18: Commentaire :
+  A19: ●   Commenter toute variation significative.
+  A20: ●   Indiquer la nature et la durée du contrat du personnel extérieur.
+
+================================================================================
+FEUILLE: NOTE 27B (sheet60.xml)
+================================================================================
+  A1: - 0 -
+  R2: NOTE 27B SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  D3: NEPER VENTURES
+  A4: Adresse :
+  C4: 01 BP 6657 ABIDJAN 01
+  Q4: Sigle usuel :
+  R4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  D5: 2302331Z
+  L5: Exercice clos le :
+  O5: 45657
+  R5: Durée (en mois) :
+  S5: 12
+  A6: N° de télédéclarant (NTD):
+  D6: 6549442542585
+  A7: NOTE 27B : EFFECTIFS, MASSE SALARIALE ET PERSONNEL EXTERIEUR
+  B8: EFFECTIF  ET MASSE SALARIALE
+  E8: EFFECTIFS
+  L8: MASSE SALARIALE
+  E9: Nationaux
+  G9: Autres Etats de la Région (3)
+  I9: Hors Région (3)
+  K9: TOTAL
+  L9: Nationaux
+  O9: Autres Etats de la Région (3)
+  Q9: Hors Région (3)
+  S9: TOTAL
+  B11: QUALIFICATIONS
+  E11: M
+  F11: F
+  G11: M
+  H11: F
+  I11: M
+  J11: F
+  L11: M
+  M11: F
+  O11: M
+  P11: F
+  Q11: M
+  R11: F
+  A12: YA
+  B12: 1. Cadres supérieurs
+  K12: 0
+  S12: 0
+  A13: YB
+  B13: 2. Techniciens supérieurs et cadres moyens
+  E13: 1
+  K13: 1
+  L13: 10794828
+  S13: 10794828
+  A14: YC
+  B14: 3. Techniciens, agents de maîtrise et ouvriers  qualifiés
+  K14: 0
+  S14: 0
+  A15: YD
+  B15: 4. Employés, manœuvres, ouvriers, et apprentis
+  K15: 0
+  S15: 0
+  A16: YE
+  B16: TOTAL (1) (A)
+  E16: 1
+  F16: 0
+  G16: 0
+  H16: 0
+  I16: 0
+  J16: 0
+  K16: 1
+  L16: 10794828
+  M16: 0
+  O16: 0
+  P16: 0
+  Q16: 0
+  R16: 0
+  S16: 10794828
+  A17: YF
+  B17: Permanents
+  E17: 1
+  K17: 1
+  L17: 10794828
+  S17: 10794828
+  A18: YG
+  B18: Saisonniers
+  K18: 0
+  N18: 0
+  S18: 0
+  L20: Facturation à l'entité
+  S20: Note n°/référence aux autres parties des états financiers
+  B21: 2. Personnel extérieur
+  A22: YH
+  B22: 1. Cadres supérieurs
+  K22: 0
+  O22: B - Montants comptabilisés non rapportés dans l'état 301 (2)
+  R22: 1199800
+  A23: YI
+  B23: 2. Techniciens supérieurs et cadres moyens
+  K23: 0
+  A24: YJ
+  B24: 3. Techniciens, agents de maîtrise et ouvriers  qualifiés
+  K24: 0
+  O24: C - Montants des avantages en nature et en espèces comptabilisés en comptes de charges de personnel
+  A25: YK
+  B25: 4. Employés, manœuvres, ouvriers, et apprentis
+  K25: 0
+  O25: Total frais de personnel ligne RK ( A + B + C)
+  R25: 11994628
+  A26: YL
+  B26: TOTAL (2)
+  E26: 0
+  F26: 0
+  G26: 0
+  H26: 0
+  I26: 0
+  J26: 0
+  K26: 0
+  L26: 0
+  M26: 0
+  O26: (1): Montants indiqués dans l'état 301 hors avantages en nature et en espèces
+  A27: YM
+  B27: Permanents
+  K27: 0
+  O27: (2): dont provisions pour congés payés
+  A28: YN
+  B28: Saisonniers
+  K28: 0
+  O28: (3): "Région" indique la zone UEMOA  pour les pays UEMOA, la zone CEMAC pour les pays CEMAC, autre z
+  A29: YO
+  B29: TOTAL (1 + 2)
+  E29: 1
+  F29: 0
+  G29: 0
+  H29: 0
+  I29: 0
+  J29: 0
+  K29: 1
+  O29: M : Masculin   F: Féminin
+  A30: Commentaire:
+  A31: ●   Faire un commentaire si nécessaire en cas de mouvement significatif du personnel
+
+================================================================================
+FEUILLE: NOTE 28 (sheet61.xml)
+================================================================================
+  A1: - 0 -
+  K2: NOTE 28 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  D3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  J4: Sigle usuel :
+  K4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  G5: Exercice clos le :
+  H5: 45657
+  J5: Durée (en mois) :
+  K5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 28 : DOTATIONS ET CHARGES POUR PROVISIONS ET DEPRECIATIONS
+  A8: SITUATIONS ET MOUVEMENTS
+  E8: A
+  F8: B
+  I8: C
+  L8: D = A + B - C
+  E9: PROVISIONS A L'OUVERTURE DE L'EXERCICE
+  F9: AUGMENTATIONS : DOTATIONS
+  I9: DIMINUTIONS : REPRISES
+  L9: PROVISIONS A LA CLOTURE DE L'EXERCICE
+  A10: NATURE
+  F10: D'EXPLOITATION
+  G10: FINANCIERES
+  H10: HORS ACTIVITES ORDINAIRES
+  I10: D'EXPLOITATION
+  J10: FINANCIERES
+  K10: HORS ACTIVITES ORDINAIRES
+  A11: Provisions réglementées
+  L11: 0
+  A12: Provisions financières pour risques et charges
+  L12: 0
+  A13: Dépréciations des immobilisations
+  L13: 0
+  A14: TOTAL DOTATIONS
+  E14: 0
+  F14: 0
+  G14: 0
+  H14: 0
+  I14: 0
+  J14: 0
+  K14: 0
+  L14: 0
+  A15: Dépréciations des stocks et en cours
+  L15: 0
+  A16: Dépréciations des comptes  fournisseurs
+  L16: 0
+  A17: Dépréciations des comptes clients
+  L17: 0
+  A18: Dépréciations autres créances d'exploitation
+  L18: 0
+  A19: Dépréciations des comptes de créances HAO
+  L19: 0
+  A20: Dépréciations des titres de placement
+  L20: 0
+  A21: Dépréciations des valeurs à encaisser
+  L21: 0
+  A22: Dépréciations des comptes banques
+  L22: 0
+  A23: Dépréciations des comptes établissements financiers et assimilés
+  L23: 0
+  A24: Dépréciations des comptes d'instruments de trésorerie
+  L24: 0
+  A25: Provisions pour risques à court terme d'exploitation
+  L25: 0
+  A26: Provisions pour risques à court terme HAO
+  L26: 0
+  A27: Provisions pour risques à court terme à caractère financier
+  L27: 0
+  A28: TOTAL CHARGES POUR DEPRECIATIONS ET PROVISIONS A COURT TERME
+  E28: 0
+  F28: 0
+  G28: 0
+  H28: 0
+  I28: 0
+  J28: 0
+  K28: 0
+  L28: 0
+  A29: TOTAL
+  E29: 0
+  F29: 0
+  G29: 0
+  H29: 0
+  I29: 0
+  J29: 0
+  K29: 0
+  L29: 0
+  A30: Commentaire:
+  A31: ●   Indiquer les événements et circonstances qui ont conduit à la constitution et à la reprise de la
+
+================================================================================
+FEUILLE: NOTE 29 (sheet62.xml)
+================================================================================
+  A1: - 0 -
+  G2: NOTE 29 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  G4: Sigle usuel :
+  H4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  G5: Durée (en mois) :
+  H5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 29 : CHARGES ET REVENUS FINANCIERS
+  A8: Libellés
+  F8: Année N
+  G8: Année N-1
+  H8: Variation en %
+  A9: Intérêts des emprunts
+  H9: [FORMULE: IF(G9,(F9-G9)/G9,IF(ISBLANK(G9),"",IF(F9,IF( F9 > 0,1,-1),""]
+  A10: Intérêts dans loyers de locations acquisition
+  H10: [FORMULE: IF(G10,(F10-G10)/G10,IF(ISBLANK(G10),"",IF(F10,IF( F10 > 0,1]
+  A11: Escomptes accordés
+  A12: Autres intérêts
+  A13: Escomptes des effets de commerce
+  A14: Pertes de change financières
+  A15: Pertes sur cessions de titres de placement
+  A16: Malis provenant d’attribution gratuite d’actions au personnel salarié et aux dirigeants
+  A17: Pertes et charges sur risques financiers
+  A18: Charges pour dépréciation et provisions à court terme à caractère financier (voir note 28)
+  A19: SOUS TOTAL : FRAIS FINANCIERS (A)
+  F19: 0
+  G19: 0
+  A20: Intérêts de prêts et créances diverses
+  A21: Revenus de participations et autres titres immobilisés
+  A22: Escomptes obtenus
+  A23: Revenus de placement
+  A24: Intérêts dans loyers de location-financement
+  A25: Gains de change financiers
+  A26: Gains sur cessions de titres de placement
+  A27: Gains sur risques financiers
+  A28: Reprises de charges pour dépréciation et provisions à court terme à caractère financier (voir note 2
+  A29: SOUS TOTAL : REVENUS FINANCIERS (B)
+  F29: 0
+  G29: 0
+  A30: SOUS TOTAL (contrôle) : RESULTAT FINANCIER (B) - (A)
+  F30: 0
+  G30: 0
+  A31: Commentaire :
+  A32: ●   Commenter toute variation significative
+  A33: ●   En cas de paiement à terme, indiquer :
+  A34: -la différence entre le total non actualisé des paiements futurs et la valeur actualisée de ces paie
+  A35: - le taux d'actualisation
+  A36: ●   En cas d'incorporation du coût d'emprunt, indiquer :
+  A37: -le montant des coûts d'emprunt incorporés dans le coût d'actifs au cours de l'exercice; et,
+  A38: - le taux de capitalisation utilisé pour déterminer le montant des coûts d'emprunt pouvant être inco
+
+================================================================================
+FEUILLE: NOTE 30 (sheet63.xml)
+================================================================================
+  A1: - 0 -
+  G2: NOTE 30 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  G4: Sigle usuel :
+  H4: NEPER VENTURES
+  A5: N° de compte contribuable (NCC) :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  G5: Durée (en mois) :
+  H5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 30 : AUTRES  CHARGES ET PRODUITS HAO
+  A8: Libellés
+  F8: Année N
+  G8: Année N-1
+  H8: Variation en %
+  A9: Charges HAO constatées  (compte 831) à  détailler  :
+  F9: 0
+  G9: 0
+  H9: [FORMULE: IF(G9,(F9-G9)/G9,IF(ISBLANK(G9),"",IF(F9,IF( F9 > 0,1,-1),""]
+  H10: [FORMULE: IF(G10,(F10-G10)/G10,IF(ISBLANK(G10),"",IF(F10,IF( F10 > 0,1]
+  A11: Charges liées aux opéations de restructuration
+  A12: Pertes sur créances HAO
+  A13: Dons et libéralités accordés
+  A14: Abandons de créances consentis
+  A15: Charges pour dépréciations et provisions pour risques à court terme  HAO
+  A16: Dotations hors activités ordinaires
+  A17: Participation des travailleurs
+  A18: SOUS TOTAL : AUTRES CHARGES HAO (ligne RP du Compte de Résultat)
+  F18: 0
+  G18: 0
+  H18: [FORMULE: IF(G18,(F18-G18)/G18,IF(ISBLANK(G18),"",IF(F18,IF( F18 > 0,1]
+  A19: Produits HAO constatés (compte 841) à détailler :
+  F19: 0
+  G19: 0
+  A21: Produits liés aux opérations de restructuration
+  A22: Indemnités et subventions HAO (entité agricole)
+  A23: Dons et libéralités obtenus
+  A24: Abandons de créances obtenus
+  A25: Transfert de charges H.A.O
+  A26: Reprises de charges pour dépréciations et provisions pour risques à court terme HAO
+  A27: Reprises des charges, provisions et dépréciations H.A.O
+  A28: Subventions d'équilibre
+  A29: SOUS TOTAL : AUTRES PRODUITS HAO (ligne TO du Compte de Résultat)
+  F29: 0
+  G29: 0
+  A30: Commentaire :
+  A31: ●   Commenter toute variation significative.
+
+================================================================================
+FEUILLE: NOTE 31 (sheet64.xml)
+================================================================================
+  A1: - 0 -
+  J2: NOTE 31 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  J4: Sigle usuel :
+  K4: NEPER VENTURES
+  A5: N° de compte contribuable (NCC) :
+  C5: 2302331Z
+  G5: Exercice clos le :
+  H5: 45657
+  J5: Durée (en mois) :
+  K5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 31 : REPARTITION DU RESULTAT ET AUTRES ELEMENTS CARACTERISTIQUES DES CINQ DERNIERS EXERCICES
+  A8: EXERCICES CONCERNES (1)
+  G8: N
+  H8: N-1
+  I8: N - 2
+  J8: N - 3
+  K8: N - 4
+  A9: NATURE DES INDICATIONS
+  A10: STRUCTURE DU CAPITAL A LA CLOTURE DE L'EXERCICE (2)
+  G10: 0
+  H10: 0
+  I10: 0
+  J10: 0
+  K10: 0
+  A11: Capital social
+  A12: Actions ordinaires
+  A13: Actions à dividendes prioritaires (A.D.P) sans droit de vote
+  A14: Actions nouvelles à émettre :
+  A15: - par conversion d'obligations
+  A16: - par exercice de droits de souscription
+  A17: OPERATIONS ET RESULTATS DE L'EXERCICE (3)
+  G17: 0
+  H17: 0
+  I17: 0
+  J17: 0
+  K17: 0
+  A18: Chiffre d'affaires hors taxes
+  A19: Résultat des activités ordinaires (R.A.O) hors dotations et reprises (exploitation et financières)
+  A20: Participation des travailleurs aux bénéfices
+  A21: Impôt sur le résultat
+  A22: Résultat net (4)
+  A23: RESULTAT ET DIVIDENDE DISTRIBUES
+  G23: 0
+  H23: 0
+  I23: 0
+  J23: 0
+  K23: 0
+  A24: Résultat  distribué (5)
+  A25: Dividende attribué à chaque action
+  A26: PERSONNEL ET POLITIQUE SALARIALE
+  G26: 0
+  H26: 0
+  I26: 0
+  J26: 0
+  K26: 0
+  A27: Effectif moyen des travailleurs au cours de l'exercice (6)
+  A28: Effectif moyen de personnel extérieur
+  A29: Masse salariale distribuée au cours de l'exercice (7)
+  A30: Avantages sociaux versés au cours de l'exercice (8) [Sécurité sociale, œuvres sociales]
+  A31: Personnel extérieur facturé à l'entité (9)
+  A33: (1)  Y compris l'exercice dont les états financiers sont soumis à l'approbation de l'Assemblée
+  G33: (6) Personnel propre
+  A34: (2) Indication, en cas de libération partielle du capital, du montant du capital non appelé
+  G34: (7) Total des comptes 661, 662, 663
+  A35: (3) Les éléments de cette rubrique sont ceux figurant au compte de résultat
+  G35: (8) Total des comptes 664, 668
+  A36: (4) Le résultat, lorsqu'il est négatif, doit comporter le signe "-". Il sera automatiquement affiché
+  G36: (9) Compte 667
+  A37: (5) L'exercice N correspond au dividende proposé du dernier exercice
+
+================================================================================
+FEUILLE: NOTE 32 (sheet65.xml)
+================================================================================
+  A1: - 0 -
+  O2: NOTE 32 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  N4: Sigle usuel :
+  O4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  H5: Exercice clos le :
+  J5: 45657
+  N5: Durée (en mois) :
+  O5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 32 : PRODUCTION DE L'EXERCICE
+  A8: DESIGNATION DU PRODUIT (1)
+  D8: UNITE DE QUANTITE CHOISIE
+  E8: PRODUCTION VENDUE DANS LE PAYS
+  G8: PRODUCTION VENDUE DANS LES AUTRES PAYS DE L'OHADA
+  I8: PRODUCTION VENDUE HORS OHADA
+  K8: PRODUCTION IMMOBILISEE
+  M8: STOCK OUVERTURE DE L'EXERCICE
+  O8: STOCK CLOTURE DE L'EXERCICE
+  E10: Quantité
+  F10: Valeur
+  G10: Quantité
+  H10: Valeur
+  I10: Quantité
+  J10: Valeur
+  K10: Quantité
+  L10: Valeur
+  M10: Quantité
+  N10: Valeur
+  O10: Quantité
+  P10: Valeur
+  A12: NON VENTILE
+  A13: TOTAL
+  E13: 0
+  F13: 0
+  G13: 0
+  H13: 0
+  I13: 0
+  J13: 0
+  K13: 0
+  L13: 0
+  M13: 0
+  N13: 0
+  O13: 0
+  P13: 0
+  A14: (1) Le montant du "non-ventilé" doit être inférieur ou égal à 1% du total des produits
+
+================================================================================
+FEUILLE: NOTE 33 (sheet66.xml)
+================================================================================
+  A1: - 0 -
+  K2: NOTE 33 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  J4: Sigle usuel :
+  K4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  G5: 45657
+  I5: Durée (en mois) :
+  K5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 33 : ACHATS DESTINES A LA PRODUCTION
+  A8: DESIGNATION DES MATIERES ET PRODUITS (1)
+  E8: UNITE DE QUANTITE CHOISIE
+  F8: ACHATS EFFECTUES AU COURS DE L'EXERCICE
+  L8: VARIATION DES STOCKS  (en valeur)
+  F9: PRODUITS DE L'ETAT
+  H9: PRODUITS IMPORTES
+  H10: ACHETES DANS L'ETAT
+  J10: ACHETES HORS DE L'ETAT
+  F11: Quantité
+  G11: Valeur
+  H11: Quantité
+  I11: Valeur
+  J11: Quantité
+  K11: Valeur
+  A13: NON VENTILE
+  A14: TOTAL
+  F14: 0
+  G14: 0
+  H14: 0
+  I14: 0
+  J14: 0
+  K14: 0
+  L14: 0
+  A15: (1) Le montant du "non-ventilé" doit être inférieur ou égal  à 1% du total des achats
+
+================================================================================
+FEUILLE: NOTE 34 (sheet67.xml)
+================================================================================
+  A1: - 0 -
+  G2: NOTE 34 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  F4: Sigle usuel :
+  G4: NEPER VENTURES
+  A5: N° de compte contribuable (NCC) :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  G5: Durée (en mois) :
+  H5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 34 : FICHE DE SYNTHESE DES PRINCIPAUX INDICATEURS FINANCIERS
+  A8: ( EN  MILLIERS DE FRANCS)
+  F8: Année N
+  G8: Année N-1
+  H8: Variation en %
+  A9: ANALYSE DE L'ACTIVITE
+  A10: SOLDES INTERMEDIAIRES DE GESTION
+  A11: CHIFFRE D'AFFAIRES
+  F11: 96115355
+  G11: 80340500
+  H11: 0.19634997292772635
+  A12: MARGE COMMERCIALE
+  F12: 0
+  G12: 0
+  H12: [FORMULE: IF(G12,(F12-G12)/G12,IF(ISBLANK(G12),"",IF(F12,IF( F12 > 0,1]
+  A13: VALEUR AJOUTEE
+  F13: -28186420
+  G13: -47286774
+  H13: -0.4039259265180577
+  A14: EXCEDENT BRUT D'EXPLOITATION (EBE)
+  F14: -43803008
+  G14: -47286774
+  H14: -7.3673158587642285E-2
+  A15: RESULTAT D'EXPLOITATION
+  F15: -46865411
+  G15: -47286774
+  H15: -8.910800301158206E-3
+  A16: RESULTAT FINANCIER
+  F16: 0
+  G16: 0
+  A17: RESULTAT DES ACTIVITES ORDINAIRES
+  F17: -46865411
+  G17: -47286774
+  H17: -8.910800301158206E-3
+  A18: RESULTAT HORS ACTIVITES ORDINAIRES
+  F18: 0
+  G18: 0
+  A19: RESULTAT NET
+  F19: -46865411
+  G19: -47286774
+  H19: -8.910800301158206E-3
+  A20: DETERMINATION DE LA CAPACITE D'AUTOFINANCEMENT
+  A21: Excédent brut d'exploitation (EBE)
+  F21: -43803008
+  G21: -47286774
+  A22: + Valeurs comptables des cessions courantes d’immobilisation  (compte 654)
+  F22: 0
+  G22: 0
+  A23: - Produits des cessions courantes d’immobilisation (compte 754)
+  F23: 0
+  G23: 0
+  A24: = CAPACITE D'AUTOFINANCEMENT D'EXPLOITATION
+  F24: -43803008
+  G24: -47286774
+  H24: -7.3673158587642285E-2
+  A25: + Revenus financiers
+  F25: 0
+  G25: 0
+  A26: + Gains de change financiers
+  F26: 0
+  G26: 0
+  A27: + Transferts de charges financières
+  F27: 0
+  G27: 0
+  A28: + Produits HAO
+  F28: 0
+  G28: 0
+  A29: + Transferts de charges HAO
+  F29: 0
+  G29: 0
+  A30: - Frais financiers
+  F30: 0
+  G30: 0
+  A31: - Pertes de change financières
+  F31: 0
+  G31: 0
+  A32: - Charges HAO
+  F32: 0
+  G32: 0
+  A33: - Participations
+  F33: 0
+  G33: 0
+  A34: - Impôts sur les résultats
+  F34: 0
+  G34: 0
+  A35: = CAPACITE D'AUTOFINANCEMENT GLOBALE (C.A.F.G.)
+  F35: -43803008
+  G35: -47286774
+  H35: -7.3673158587642285E-2
+  A36: - Distributions de dividendes opérées durant l'exercice
+  F36: 0
+  G36: 0
+  H36: [FORMULE: IF(G36,(F36-G36)/G36,IF(ISBLANK(G36),"",IF(F36,IF( F36 > 0,1]
+  A37: = AUTOFINANCEMENT
+  F37: -43803008
+  G37: -47286774
+  H37: -7.3673158587642285E-2
+  A38: ANALYSE DE LA RENTABILITE
+  A39: Rentabilité économique = Résultat d’exploitation (a)/Capitaux propres + dettes financières
+  F39: -8.0141746960189408
+  G39: -0.8970571066927302
+  H39: -712 points
+  A40: Rentabilité financière = Résultat net/Capitaux propres
+  F40: -8.0141746960189408
+  G40: -0.8970571066927302
+  H40: -712 points
+  A41: ANALYSE DE LA STRUCTURE FINANCIERE
+  A42: + Capitaux propres et ressources assimilées
+  F42: 5847815
+  G42: 52713226
+  H42: -0.88906360995625655
+  A43: + Dettes financières* et autres ressources assimilées (b)
+  F43: 0
+  G43: 0
+  H43: 0
+  A44: = ressources stables
+  F44: 5847815
+  G44: 52713226
+  H44: -0.88906360995625655
+  A45: - Actif immobilisé (b)
+  F45: -14635897
+  G45: -8000000
+  H45: 0.82948712499999999
+  A46: = FONDS DE ROULEMENT (1)
+  F46: -8788082
+  G46: 44713226
+  H46: -1.1965432330917032
+  A47: + Actif circulant d'exploitation (b)
+  F47: 822206983
+  G47: 557232254
+  H47: 0.47551936754902918
+  A48: -  Passif circulant d'exploitation (b)
+  F48: -909892639
+  G48: -885849559
+  H48: 2.7141267674323018E-2
+  A49: = BESOIN DE FINANCEMENT D'EXPLOITATION (2)
+  F49: -87685656
+  G49: -328617305
+  H49: -0.73316786832026393
+  A50: + Actif circulant HAO (b)
+  F50: 0
+  G50: 0
+
+================================================================================
+FEUILLE: NOTE 35 (sheet68.xml)
+================================================================================
+  A1: - 0 -
+  H2: NOTE 35 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  H4: Sigle usuel :
+  I4: NEPER VENTURES
+  A5: N° d'identification fiscale :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  G5: 45657
+  H5: Durée (en mois) :
+  I5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 35 : LISTE DES INFORMATIONS SOCIALES, ENVIRONNEMENTALES ET SOCIETALES A FOURNIR
+  A8: Note obligatoire pour les entités ayant un effectif de plus de 250 salariés
+  A9: Liste des informations sociales, environnementales et sociétales à fournir
+  A10: INFORMATIONS SOCIALES
+  A11: Emploi (2000 caractères maximum) :
+  A12: •  l'effectif total et la répartition des salariés par sexe, âge et zone géographique ;
+  A13: •  les embauches et les licenciements ;
+  A14: •  les rémunérations et leur évolution.
+  A16: Relations sociales (2000 caractères maximum) :
+  A17: •  l'organisation du dialogue social ;
+  A18: •  le bilan des accords collectifs.
+  A20: Santé et sécurité (2000 caractères maximum) :
+  A21: •  les conditions de santé et de sécurité au travail ;
+  A22: •  le bilan des accords signés avec les organisations syndicales ou les représentants du personnel e
+  A24: Formation (2000 caractères maximum) :
+  A25: •  les politiques mises en œuvre en matière de formation ;
+  A26: •  le nombre total d'heures de formation.
+  A28: Égalité de traitement (2000 caractères maximum) :
+  A29: •  les mesures prises en faveur de l'égalité entre les femmes et les hommes ;
+  A30: •  les mesures prises en faveur de l'emploi et de l'insertion des personnes handicapées ;
+  A32: INFORMATIONS ENVIRONNEMENTALES
+  A33: Politique générale en matière environnementale (2000 caractères maximum) :
+  A34: •  l'organisation de la société pour prendre en compte les questions environnementales et, le cas éc
+  A35: •  les actions de formation et d'information des salariés menées en matière de protection de l'envir
+  A36: •  les moyens consacrés à la prévention des risques environnementaux et des pollutions.
+  A38: Pollution et gestion des déchets (2000 caractères maximum) :
+  A39: •  les mesures de prévention, de réduction ou de réparation de rejets dans l'air, l'eau et le sol af
+  A40: •  les mesures de prévention, de recyclage et d'élimination des déchets ;
+  A41: •  la prise en compte des nuisances sonores et de toute autre forme de pollution spécifique à une ac
+  A43: Utilisation durable des ressources (2000 caractères maximum) :
+  A44: •  la consommation d'eau et l'approvisionnement en eau en fonction des contraintes locales ;
+  A45: •  la consommation de matières premières et les mesures prises pour améliorer l'efficacité dans leur
+  A46: •  la consommation d'énergie, les mesures prises pour améliorer l'efficacité énergétique et le recou
+  A48: Changement climatique (2000 caractères maximum) :
+  A49: •  les rejets de gaz à effet de serre.
+  A51: Protection de la biodiversité (2000 caractères maximum) :
+  A52: •  les mesures prises pour préserver ou développer la biodiversité.
+  A54: INFORMATIONS RELATIVES AUX ENGAGEMENTS SOCIÉTAUX EN FAVEUR DU DÉVELOPPEMENT DURABLE
+  A55: Impact territorial, économique et social de l'activité de la société (2000 caractères maximum) :
+  A56: •  en matière d'emploi et de développement régional ;
+  A57: •  sur les populations riveraines ou locales.
+  A59: Relations entretenues avec les personnes ou les organisations intéressées par l'activité de la socié
+  A60: •  les conditions du dialogue avec ces personnes ou organisations ;
+  A61: •  les actions de partenariat ou de mécénat.
+
+================================================================================
+FEUILLE: NOTE 37 (sheet69.xml)
+================================================================================
+  A1: - 0 -
+  G2: NOTE 37 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  G4: Sigle usuel :
+  H4: NEPER VENTURES
+  A5: N° de compte contribuable (NCC) :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  G5: Durée (en mois) :
+  H5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 37 : DETERMINATION IMPÔTS SUR LE RESULTAT (2)
+  A8: Libellés
+  H8: Montant
+  A9: 1 : RESULTAT NET COMPTABLE DE L'EXERCICE
+  A10: 2 : A REINTEGRER (1)
+  A11: Amortissements non déductibles
+  A12: Provisions non déductibles
+  A13: Intérêts excédentaires des comptes courants d'associés
+  A14: Rémunérations allouées à l'exploitant individuel et aux associés des sociétés de personnes
+  A15: Avantages en nature de l'exploitant individuel et des associés de personnes
+  A16: Impôts non déductibles (IMF - BIC - IGR...impôts non payés...)
+  A17: Amendes et pénalités de toute nature
+  A18: Plus-values exonérées non réinvesties
+  A19: Dons et subventions
+  A20: Rémunérations des gérants majoritaires de SARL
+  A21: Indemnités de fonction et autres rémunérations allouées aux administrateurs
+  A22: Autres charges non déductibles
+  A23: TOTAL DES REINTEGRATIONS
+  H23: 0
+  A24: 3 : A  DEDUIRE (1)
+  A25: Provisions antérieurement taxées ou définitivement exonérées réintégrées
+  A26: Réfactions sur produits financiers
+  A27: Réfactions sur produits d'actions
+  A28: Déductions Art. 110 du CGI
+  A29: Divers
+  A30: TOTAL DES DEDUCTIONS
+  H30: 0
+  A31: 4 : RESULTAT IMPOSABLE AVANT DEDUCTION DES DEFICITS ( 4 = 1+2-3)
+  H31: 0
+  A32: 5 : DEFICITS  ANTERIEURS A L'EXERCICE (1)
+  A33: 6 : AMORTISSEMENTS REGULIEREMENT DIFFERES (1)
+  A34: 7 : AMORTISSEMENTS DE L'EXERCICE A DIFFERER (1)
+  A35: 8 : RESULTAT FISCAL DE L'EXERCICE (8= 4-5-6+7)
+  H35: 0
+  A36: 9: IMPOTS SUR LE RESULTAT AU TAUX DE :
+  D36: 0
+  H36: 0
+  A38: (1) Les détails supplémentaires doivent être apportés dans l'onglet COMMENTAIRE ou ajoutés en pièce-
+  A39: (2) Insérer ici (ou en pièce-jointe sur e-impots) la déclaration de l'impôt sur le résultat.
+
+================================================================================
+FEUILLE: NOTE 38 (sheet70.xml)
+================================================================================
+  A1: - 0 -
+  H2: NOTE 38 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  H4: Sigle usuel :
+  I4: NEPER VENTURES
+  A5: N° de compte contribuable (NCC) :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  H5: Durée (en mois) :
+  I5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 38 : EVENEMENTS POSTERIEURS A LA CLOTURE DE L'EXERCICE
+  A8: Date d'arrêté des états financiers :
+  A10: Organe ayant autorisé la publication des comptes :
+  A12: A - EVENEMENTS POSTERIEURS A LA DATE DE CLOTURE DONNANT LIEU A DES AJUSTEMENTS DES ETATS FINANCIERS
+  A13: Commentaire (2000 caractères maximum) :
+  A14: Indiquer la nature des événements postérieurs à la date de clôture donnant lieu à des ajustements de
+  A15: Pour chaque événement, donnez des précisions sur les comptes qui ont fait l'objet d'un ajustement.
+  A17: B - EVENEMENTS POSTERIEURS A LA DATE DE CLOTURE NE DONNANT LIEU A DES AJUSTEMENTS DES ETATS FINANCIE
+  A18: Commentaire (2000 caractères maximum) :
+  A19: Procéder à une estimation de l'impact financier de chaque événement ou l'indication que cette estima
+  A21: C - EVENEMENTS REMETTANT  EN CAUSE L'HYPOTHESE DE BASE DE CONTINUITE D'EXPLOITATION
+  A22: Commentaire (2000 caractères maximum) :
+  A23: Indiquer la nature de l'événement (ou des événements) ayant entrainé la remise en cause de la contin
+  A24: Donner des précisions sur les valeurs liquidatives retenues
+
+================================================================================
+FEUILLE: NOTE 39 (sheet71.xml)
+================================================================================
+  A1: - 0 -
+  H2: NOTE 39 SYSTEME NORMAL
+  A3: Dénomination sociale de l'entité :
+  C3: NEPER VENTURES
+  A4: Adresse :
+  B4: 01 BP 6657 ABIDJAN 01
+  H4: Sigle usuel :
+  I4: NEPER VENTURES
+  A5: N° de compte contribuable (NCC) :
+  C5: 2302331Z
+  E5: Exercice clos le :
+  F5: 45657
+  H5: Durée (en mois) :
+  I5: 12
+  A6: N° de télédéclarant (NTD):
+  C6: 6549442542585
+  A7: NOTE 39 : CHANGEMENTS DE METHODES COMPTABLES, D'ESTIMATIONS ET CORRECTIONS D'ERREURS
+  A9: A – CHANGEMENTS DE METHODES COMPTABLES (2000 caractères maximum)
+  A10: 1.       Changement de réglementation comptable
+  A11: Commentaire :
+  A12: •   l’entité doit indiquer l’impact du changement  de réglementation comptable (par exemple lors du 
+  A13: au SYSCOHADA révisé) déterminé à l’ouverture en précisant les postes concernés ;
+  A14: •  l’entité doit présenter les  principaux postes des exercices antérieurs présentés, retraités selo
+  A15: nouvelle méthode en cas de changement de réglementation comptable appliqué de manière rétrospective,
+  A16: •  l’entité doit indiquer l’impact du changement sur les principaux postes concernés de l’exercice  
+  A17: de changement de réglementation comptable appliqué de manière prospective.
+  A18: 2.       Changement de méthode à l’initiative de l’entité
+  A19: Commentaire :
+  A20: •   l’entité doit indiquer et justifier le changement de méthode comptable ;
+  A21: •   l’entité doit indiquer l’impact du changement de méthode comptable déterminé à l’ouverture en pr
+  A22: les postes concernés ;
+  A23: •   l’entité doit présenter les  principaux postes des exercices antérieurs présentés, retraités sel
+  A24: nouvelle méthode en cas de changement de méthode comptable appliqué de manière rétrospective,
+  A25: •   l’entité doit indiquer les raisons d'une application prospective et  l’impact du changement sur 
+  A26: principaux postes concernés de l’exercice  en cas de changement deméthode comptable appliqué de mani
+  A27: prospective,
+  A29: B – CHANGEMENTS D’ESTIMATIONS (2000 caractères maximum)
+  A30: Commentaire : l’entité doit indiquer et justifier le changement d’estimation ;
+  A32: C – CORRECTIONS D’ERREURS (2000 caractères maximum)
+  A33: Commentaire :
+  A34: •  l’entité doit indiquer  la nature des erreurs corrigées (erreurs commises et découvertes sur l’ex
+  A35: et erreurs d’un exercice antérieur)  ;
+  A36: •  l’entité doit présenter les  principaux postes des exercices antérieurs présentés, corrigés des e
+  A37: d’un exercice antérieur.

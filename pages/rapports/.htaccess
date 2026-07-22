@@ -1,0 +1,5 @@
+# Augmenter le temps d'exécution pour les exports
+php_value max_execution_time 600
+php_value memory_limit 1024M
+php_value post_max_size 100M
+php_value upload_max_filesize 100M

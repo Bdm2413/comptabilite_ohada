@@ -1,0 +1,69 @@
+╔═══════════════════════════════════════════════════════════════════════╗
+║                                                                       ║
+║        GUIDE RAPIDE - REMISE À NEUF DE L'APPLICATION                ║
+║                                                                       ║
+╚═══════════════════════════════════════════════════════════════════════╝
+
+📋 CE QUI SERA CONSERVÉ :
+   ✅ Plan comptable SYSCOHADA
+   ✅ Table de correspondance
+   ✅ Codes journaux
+   ✅ Tiers (clients, fournisseurs, salariés)
+
+🗑️  CE QUI SERA SUPPRIMÉ :
+   ❌ Écritures comptables de test
+   ❌ Exercices comptables de test
+   ❌ Logs d'activité
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 PROCÉDURE EN 3 ÉTAPES :
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ ÉTAPE 1 : SAUVEGARDE                                                │
+└─────────────────────────────────────────────────────────────────────┘
+
+   Double-cliquez sur :  sauvegarde_avant_reset.bat
+
+   ⏱️  Durée : ~10 secondes
+   📁 Résultat : Fichier .sql dans le dossier "backups"
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ ÉTAPE 2 : RESET                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+   Double-cliquez sur :  executer_reset.bat
+
+   Tapez "OUI" quand on vous demande confirmation
+
+   ⏱️  Durée : ~5 secondes
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ ÉTAPE 3 : VÉRIFICATION                                              │
+└─────────────────────────────────────────────────────────────────────┘
+
+   1. Ouvrez l'application dans votre navigateur
+   2. Allez dans "Liste des écritures" → doit être vide ✅
+   3. Allez dans "Plan comptable" → doit contenir vos comptes ✅
+   4. Allez dans "Gestion des tiers" → doit contenir vos tiers ✅
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️  IMPORTANT :
+
+   • Fermez toutes les pages de l'application avant le reset
+   • Faites TOUJOURS une sauvegarde avant le reset
+   • Videz le cache du navigateur après le reset (Ctrl+F5)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📞 BESOIN D'AIDE ?
+
+   Consultez le fichier : README_RESET.md
+   Pour plus de détails et FAQ
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Bonne utilisation ! 🎉

@@ -140,6 +140,15 @@ $basePath = match($currentDir) {
             Tableau de bord
         </a>
 
+        <!-- Vue d'ensemble -->
+        <a href="<?php echo $basePath; ?>/dashboard/vue_ensemble.php" class="flex items-center gap-2 px-2 py-1.5 <?php echo isActive('vue_ensemble.php', 'dashboard'); ?> rounded-lg text-xs font-medium transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
+            </svg>
+            Vue d'ensemble
+        </a>
+
         <!-- Section Paramètres (Accordéon) -->
         <div class="pt-1.5">
             <button onclick="toggleAccordion('parametres')" class="w-full flex items-center justify-between px-2 py-1.5 text-xs font-semibold text-slate-400 hover:text-slate-300 transition rounded-lg hover:bg-slate-700/30">

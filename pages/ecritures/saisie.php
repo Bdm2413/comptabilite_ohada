@@ -654,20 +654,28 @@ $mois_list = [
                             <table class="w-full" id="lignesTable">
                                 <thead class="bg-slate-900/50 border-b border-slate-700">
                                     <tr>
-                                        <th class="px-3 py-2 text-left text-xs font-medium text-slate-400 uppercase" style="width: 16%">Compte</th>
+                                        <th class="px-2 py-2 text-center text-xs font-medium text-slate-400 uppercase" style="width: 4%">Ordre</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium text-slate-400 uppercase" style="width: 15%">Compte</th>
                                         <th class="px-3 py-2 text-left text-xs font-medium text-slate-400 uppercase" style="width: 8%">Cpte Tiers</th>
                                         <th class="px-3 py-2 text-left text-xs font-medium text-slate-400 uppercase" style="width: 9%">N° Facture</th>
                                         <th class="px-3 py-2 text-left text-xs font-medium text-slate-400 uppercase" style="width: 9%">Date Facture</th>
-                                        <th class="px-3 py-2 text-left text-xs font-medium text-slate-400 uppercase" style="width: 18%">Libellé</th>
-                                        <th class="px-3 py-2 text-right text-xs font-medium text-slate-400 uppercase" style="width: 12%">Débit</th>
-                                        <th class="px-3 py-2 text-right text-xs font-medium text-slate-400 uppercase" style="width: 12%">Crédit</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium text-slate-400 uppercase" style="width: 17%">Libellé</th>
+                                        <th class="px-3 py-2 text-right text-xs font-medium text-slate-400 uppercase" style="width: 11%">Débit</th>
+                                        <th class="px-3 py-2 text-right text-xs font-medium text-slate-400 uppercase" style="width: 11%">Crédit</th>
                                         <th class="px-3 py-2 text-center text-xs font-medium text-slate-400 uppercase" style="width: 6%">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="lignesBody">
                                     <?php if ($editMode && !empty($lignes)): ?>
                                         <?php foreach ($lignes as $index => $ligne): ?>
-                                            <tr class="border-b border-slate-700/50 ligne-row">
+                                            <tr class="border-b border-slate-700/50 ligne-row" draggable="true">
+                                                <td class="px-2 py-2 text-center">
+                                                    <div class="flex flex-col items-center gap-0.5">
+                                                        <button type="button" onclick="moveLine(this,-1)" class="text-slate-400 hover:text-white transition-colors text-xs leading-none" title="Monter">▲</button>
+                                                        <i class="fas fa-grip-vertical text-slate-600 text-xs drag-handle cursor-grab"></i>
+                                                        <button type="button" onclick="moveLine(this,1)" class="text-slate-400 hover:text-white transition-colors text-xs leading-none" title="Descendre">▼</button>
+                                                    </div>
+                                                </td>
                                                 <td class="px-3 py-2">
                                                     <select name="details[<?= $index ?>][compte]" required class="w-full px-2 py-1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm focus:outline-none focus:border-blue-500">
                                                         <option value="">Sélectionner</option>
@@ -728,7 +736,7 @@ $mois_list = [
                                 </tbody>
                                 <tfoot class="bg-slate-900/50 border-t-2 border-slate-700">
                                     <tr>
-                                        <td colspan="4" class="px-3 py-3 text-right font-semibold text-white">TOTAUX:</td>
+                                        <td colspan="5" class="px-3 py-3 text-right font-semibold text-white">TOTAUX:</td>
                                         <td class="px-3 py-3 text-right">
                                             <span id="totalDebit" class="font-bold text-cyan-400 text-lg">0</span>
                                             <span class="text-slate-400 text-sm ml-1">FCFA</span>
@@ -906,8 +914,16 @@ $mois_list = [
                     data.lignes.forEach((ligne, index) => {
                         const tr = document.createElement('tr');
                         tr.className = 'border-b border-slate-700/50 ligne-row';
+                        tr.draggable = true;
 
                         tr.innerHTML = `
+                            <td class="px-2 py-2 text-center">
+                                <div class="flex flex-col items-center gap-0.5">
+                                    <button type="button" onclick="moveLine(this,-1)" class="text-slate-400 hover:text-white transition-colors text-xs leading-none" title="Monter">▲</button>
+                                    <i class="fas fa-grip-vertical text-slate-600 text-xs drag-handle cursor-grab"></i>
+                                    <button type="button" onclick="moveLine(this,1)" class="text-slate-400 hover:text-white transition-colors text-xs leading-none" title="Descendre">▼</button>
+                                </div>
+                            </td>
                             <td class="px-3 py-2">
                                 <select name="details[${index}][compte]" required class="w-full px-2 py-1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 select-compte">
                                     <option value="">Sélectionner</option>
@@ -973,14 +989,22 @@ $mois_list = [
             const tbody = document.getElementById('lignesBody');
             const tr = document.createElement('tr');
             tr.className = 'border-b border-slate-700/50 ligne-row';
+            tr.draggable = true;
 
             // Récupérer les valeurs automatiques
             const dateEcriture = document.querySelector('input[name="date_ecriture"]').value || '';
             const autoLibelle = generateAutoLibelle() || '';
 
             tr.innerHTML = `
+                <td class="px-2 py-2 text-center">
+                    <div class="flex flex-col items-center gap-0.5">
+                        <button type="button" onclick="moveLine(this,-1)" class="text-slate-400 hover:text-white transition-colors text-xs leading-none" title="Monter">▲</button>
+                        <i class="fas fa-grip-vertical text-slate-600 text-xs drag-handle cursor-grab"></i>
+                        <button type="button" onclick="moveLine(this,1)" class="text-slate-400 hover:text-white transition-colors text-xs leading-none" title="Descendre">▼</button>
+                    </div>
+                </td>
                 <td class="px-3 py-2">
-                    <select name="details[${lineIndex}][compte]" required class="w-full px-2 py-1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 select-compte">
+                    <select name="details[${lineIndex}][compte]" required class="w-full px-2 py1.5 bg-slate-900/50 border border-slate-700 rounded text-white text-sm focus:outline-none focus:border-blue-500 select-compte">
                         <option value="">Sélectionner</option>
                         ${comptes.map(c => `<option value="${c.compte}">${c.compte} - ${c.intitule_compte.substring(0, 20)}</option>`).join('')}
                     </select>
@@ -1042,8 +1066,66 @@ $mois_list = [
                 return;
             }
             button.closest('tr').remove();
+            renumberLines();
             calculateTotals();
         }
+
+        function moveLine(button, direction) {
+            const row = button.closest('tr');
+            const tbody = row.parentNode;
+            if (direction === -1 && row.previousElementSibling) {
+                tbody.insertBefore(row, row.previousElementSibling);
+            } else if (direction === 1 && row.nextElementSibling) {
+                tbody.insertBefore(row.nextElementSibling, row);
+            }
+            renumberLines();
+        }
+
+        function renumberLines() {
+            document.querySelectorAll('#lignesBody .ligne-row').forEach((row, index) => {
+                row.querySelectorAll('[name]').forEach(input => {
+                    input.name = input.name.replace(/details\[\d+\]/, `details[${index}]`);
+                });
+            });
+        }
+
+        // Drag & drop
+        (function() {
+            const tbody = document.getElementById('lignesBody');
+            let dragSrc = null;
+
+            tbody.addEventListener('dragstart', e => {
+                const row = e.target.closest('tr.ligne-row');
+                if (!row) return;
+                dragSrc = row;
+                setTimeout(() => row.classList.add('opacity-40'), 0);
+            });
+
+            tbody.addEventListener('dragend', () => {
+                document.querySelectorAll('.ligne-row').forEach(r => {
+                    r.classList.remove('opacity-40', 'outline', 'outline-blue-400');
+                });
+                renumberLines();
+            });
+
+            tbody.addEventListener('dragover', e => {
+                e.preventDefault();
+                const target = e.target.closest('tr.ligne-row');
+                document.querySelectorAll('.ligne-row').forEach(r => r.classList.remove('outline', 'outline-blue-400'));
+                if (target && target !== dragSrc) {
+                    target.classList.add('outline', 'outline-blue-400');
+                }
+            });
+
+            tbody.addEventListener('drop', e => {
+                e.preventDefault();
+                const target = e.target.closest('tr.ligne-row');
+                if (target && target !== dragSrc) {
+                    tbody.insertBefore(dragSrc, target);
+                    renumberLines();
+                }
+            });
+        })();
 
         function calculateTotals() {
             let totalDebit = 0;

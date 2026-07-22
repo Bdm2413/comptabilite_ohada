@@ -350,6 +350,7 @@ $whereClause = implode(' AND ', $whereConditions);
 if ($lettrageParLigne) {
     $sql = "
         SELECT e.id as ecriture_id, e.numero_ecriture, e.date_ecriture, e.libelle as ecriture_libelle,
+               le.numero_facture,
                le.id as ligne_id,
                le.compte,
                pc.intitule_compte,
@@ -368,6 +369,7 @@ if ($lettrageParLigne) {
 } else {
     $sql = "
         SELECT e.id as ecriture_id, e.numero_ecriture, e.date_ecriture, e.libelle as ecriture_libelle,
+               le.numero_facture,
                le.id as ligne_id,
                le.compte,
                pc.intitule_compte,
@@ -656,6 +658,7 @@ $pageTitle = "Lettrage des écritures";
                                         </th>
                                         <th class="px-3 py-2 text-left text-xs font-medium text-slate-300 uppercase">Date</th>
                                         <th class="px-3 py-2 text-left text-xs font-medium text-slate-300 uppercase">N° Écriture</th>
+                                        <th class="px-3 py-2 text-left text-xs font-medium text-slate-300 uppercase">N° Facture</th>
                                         <th class="px-3 py-2 text-left text-xs font-medium text-slate-300 uppercase">Libellé</th>
                                         <th class="px-3 py-2 text-right text-xs font-medium text-slate-300 uppercase">Débit</th>
                                         <th class="px-3 py-2 text-right text-xs font-medium text-slate-300 uppercase">Crédit</th>
@@ -679,6 +682,9 @@ $pageTitle = "Lettrage des écritures";
                                                    title="Voir le détail de l'écriture">
                                                     <?= htmlspecialchars($ligne['numero_ecriture']) ?>
                                                 </a>
+                                            </td>
+                                            <td class="px-3 py-2 text-xs font-mono text-slate-300">
+                                                <?= htmlspecialchars($ligne['numero_facture'] ?? '-') ?>
                                             </td>
                                             <td class="px-3 py-2 text-xs max-w-xs truncate" title="<?= htmlspecialchars($ligne['libelle']) ?>"><?= htmlspecialchars($ligne['libelle']) ?></td>
                                             <td class="px-3 py-2 text-xs text-right font-mono">
@@ -708,7 +714,7 @@ $pageTitle = "Lettrage des écritures";
                                 </tbody>
                                 <tfoot class="bg-slate-900/50">
                                     <tr class="font-bold">
-                                        <td colspan="4" class="px-3 py-2 text-right text-xs">TOTAL SÉLECTION:</td>
+                                        <td colspan="5" class="px-3 py-2 text-right text-xs">TOTAL SÉLECTION:</td>
                                         <td class="px-3 py-2 text-right font-mono text-green-400 text-xs" id="totalDebitSelection">0</td>
                                         <td class="px-3 py-2 text-right font-mono text-red-400 text-xs" id="totalCreditSelection">0</td>
                                         <td class="px-3 py-2 text-right font-mono text-xs" id="totalSoldeSelection">0</td>
@@ -770,6 +776,7 @@ $pageTitle = "Lettrage des écritures";
                                         <tr>
                                             <th class="px-3 py-2 text-left text-xs font-medium text-slate-300 uppercase">Date</th>
                                             <th class="px-3 py-2 text-left text-xs font-medium text-slate-300 uppercase">N° Écriture</th>
+                                            <th class="px-3 py-2 text-left text-xs font-medium text-slate-300 uppercase">N° Facture</th>
                                             <th class="px-3 py-2 text-left text-xs font-medium text-slate-300 uppercase">Libellé</th>
                                             <th class="px-3 py-2 text-right text-xs font-medium text-slate-300 uppercase">Débit</th>
                                             <th class="px-3 py-2 text-right text-xs font-medium text-slate-300 uppercase">Crédit</th>
@@ -787,6 +794,9 @@ $pageTitle = "Lettrage des écritures";
                                                        title="Voir le détail de l'écriture">
                                                         <?= htmlspecialchars($ligne['numero_ecriture']) ?>
                                                     </a>
+                                                </td>
+                                                <td class="px-3 py-2 text-xs font-mono text-slate-300">
+                                                    <?= htmlspecialchars($ligne['numero_facture'] ?? '-') ?>
                                                 </td>
                                                 <td class="px-3 py-2 text-xs max-w-xs truncate" title="<?= htmlspecialchars($ligne['libelle']) ?>"><?= htmlspecialchars($ligne['libelle']) ?></td>
                                                 <td class="px-3 py-2 text-xs text-right font-mono">
@@ -816,7 +826,7 @@ $pageTitle = "Lettrage des écritures";
                                     </tbody>
                                     <tfoot class="bg-slate-900/50">
                                         <tr class="font-bold">
-                                            <td colspan="3" class="px-3 py-2 text-right text-xs">TOTAL:</td>
+                                            <td colspan="4" class="px-3 py-2 text-right text-xs">TOTAL:</td>
                                             <td class="px-3 py-2 text-right font-mono text-green-400 text-xs">
                                                 <?= number_format($total_debit_groupe, 0, ',', ' ') ?>
                                             </td>
@@ -870,8 +880,8 @@ $pageTitle = "Lettrage des écritures";
 
             document.querySelectorAll('.ligne-checkbox:checked').forEach(checkbox => {
                 const row = checkbox.closest('tr');
-                const debitCell = row.querySelector('td:nth-child(5)');
-                const creditCell = row.querySelector('td:nth-child(6)');
+                const debitCell = row.querySelector('td:nth-child(6)');
+                const creditCell = row.querySelector('td:nth-child(7)');
                 const solde = parseFloat(row.dataset.solde) || 0;
 
                 const debitText = debitCell.textContent.trim().replace(/\s/g, '').replace(',', '.');

@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($user && $user['totp_enabled'] && $user['totp_secret']) {
                 require_once '../../vendor/autoload.php';
-                $tfa   = new \RobThree\Auth\TwoFactorAuth(new \RobThree\Auth\Providers\Qr\EndroidQrCodeProvider());
+                $tfa   = new \RobThree\Auth\TwoFactorAuth(new \RobThree\Auth\Providers\Qr\QRServerProvider());
                 $valid = $tfa->verifyCode($user['totp_secret'], $code);
 
                 if ($valid) {

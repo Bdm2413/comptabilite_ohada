@@ -11,7 +11,7 @@ $stmt = $db->prepare("SELECT * FROM utilisateurs WHERE id_utilisateur = :id");
 $stmt->execute(['id' => $user_id]);
 $user = $stmt->fetch();
 
-$tfa     = new \RobThree\Auth\TwoFactorAuth(new \RobThree\Auth\Providers\Qr\EndroidQrCodeProvider());
+$tfa     = new \RobThree\Auth\TwoFactorAuth(new \RobThree\Auth\Providers\Qr\QRServerProvider());
 $success = '';
 $error   = '';
 

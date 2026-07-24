@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['mode'] ?? '') === 'totp_di
 
             if ($user) {
                 require_once '../../vendor/autoload.php';
-                $tfa    = new \RobThree\Auth\TwoFactorAuth(new \RobThree\Auth\Providers\Qr\EndroidQrCodeProvider());
+                $tfa    = new \RobThree\Auth\TwoFactorAuth(new \RobThree\Auth\Providers\Qr\QRServerProvider());
                 $valid  = $tfa->verifyCode($user['totp_secret'], $code);
 
                 if ($valid) {

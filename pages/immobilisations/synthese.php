@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 require_once '../../vendor/autoload.php';
 requireLogin();
@@ -127,7 +127,7 @@ foreach ($rows as $immo) {
 
     $lignes[] = [
         'id'               => $immo['id'],
-        'compte'           => $immo['compte_immobilisation'] ?? '—',
+        'compte'           => $immo['compte_immobilisation'] ?? '-',
         'designation'      => $immo['designation'],
         'reference'        => $immo['reference'],
         'categorie'        => $immo['categorie'],
@@ -172,7 +172,7 @@ if (!empty($ids_parents)) {
             ? round(100 / $comp['duree_amortissement'], 2) : 0;
         $composants_par_parent[$comp['parent_id']][] = [
             'id'                => $comp['id'],
-            'compte'            => $comp['compte_immobilisation'] ?? '—',
+            'compte'            => $comp['compte_immobilisation'] ?? '-',
             'designation'       => $comp['designation'],
             'valeur_brute'      => $comp_brute,
             'taux'              => $comp_taux,
@@ -241,7 +241,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
     $sheet->mergeCells('A1:K1');
     $sheet->setCellValue('A1', strtoupper($societe_nom));
     $sheet->mergeCells('A2:K2');
-    $sheet->setCellValue('A2', 'ÉTAT DES IMMOBILISATIONS — EXERCICE ' . $exercice);
+    $sheet->setCellValue('A2', 'ÉTAT DES IMMOBILISATIONS - EXERCICE ' . $exercice);
     $sheet->mergeCells('A3:K3');
     $sheet->setCellValue('A3', 'Édité le ' . date('d/m/Y à H:i'));
 
@@ -440,7 +440,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
                         <i class="fas fa-chart-bar text-amber-400"></i>
                         État des Immobilisations
                     </h1>
-                    <p class="text-slate-400 text-sm mt-1">Synthèse du patrimoine immobilisé — Exercice <?= $exercice ?></p>
+                    <p class="text-slate-400 text-sm mt-1">Synthèse du patrimoine immobilisé - Exercice <?= $exercice ?></p>
                 </div>
                 <div class="flex gap-2">
                     <a href="liste.php" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-xs transition flex items-center gap-2">
@@ -592,10 +592,10 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
                                 </td>
                                 <td class="px-3 py-2.5 text-center text-slate-400"><?= $g['count'] ?></td>
                                 <td class="px-3 py-2.5 text-right font-mono text-slate-300"><?= fmt($g['solde_initial']) ?></td>
-                                <td class="px-3 py-2.5 text-right font-mono text-cyan-400"><?= $g['acquisitions'] > 0 ? fmt($g['acquisitions']) : '—' ?></td>
-                                <td class="px-3 py-2.5 text-right font-mono text-red-400"><?= $g['sorties'] > 0 ? fmt($g['sorties']) : '—' ?></td>
+                                <td class="px-3 py-2.5 text-right font-mono text-cyan-400"><?= $g['acquisitions'] > 0 ? fmt($g['acquisitions']) : '-' ?></td>
+                                <td class="px-3 py-2.5 text-right font-mono text-red-400"><?= $g['sorties'] > 0 ? fmt($g['sorties']) : '-' ?></td>
                                 <td class="px-3 py-2.5 text-right font-mono font-semibold text-blue-400"><?= fmt($g['valeur_brute']) ?></td>
-                                <td class="px-3 py-2.5 text-right font-mono text-amber-400"><?= $g['dotation_exercice'] > 0 ? fmt($g['dotation_exercice']) : '—' ?></td>
+                                <td class="px-3 py-2.5 text-right font-mono text-amber-400"><?= $g['dotation_exercice'] > 0 ? fmt($g['dotation_exercice']) : '-' ?></td>
                                 <td class="px-3 py-2.5 text-right font-mono text-red-400"><?= fmt($g['amort_cumul']) ?></td>
                                 <td class="px-3 py-2.5 text-right font-mono font-bold <?= vnc_class($g['vnc'], $g['valeur_brute']) ?>"><?= fmt($g['vnc']) ?></td>
                             </tr>
@@ -614,11 +614,11 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
                                         echo '<tr class="cat-row border-t border-amber-500/20">';
                                         echo '<td class="px-3 py-1.5 text-amber-400/70 text-[10px] italic" colspan="2">Sous-total ' . htmlspecialchars($ct['cat_label']) . ' (' . $ct['count'] . ')</td>';
                                         echo '<td class="px-3 py-1.5 text-right font-mono text-slate-400 text-[10px]">' . fmt($ct['solde_initial']) . '</td>';
-                                        echo '<td class="px-3 py-1.5 text-right font-mono text-cyan-400/70 text-[10px]">' . ($ct['acquisitions'] > 0 ? fmt($ct['acquisitions']) : '—') . '</td>';
-                                        echo '<td class="px-3 py-1.5 text-right font-mono text-red-400/70 text-[10px]">' . ($ct['sorties'] > 0 ? fmt($ct['sorties']) : '—') . '</td>';
+                                        echo '<td class="px-3 py-1.5 text-right font-mono text-cyan-400/70 text-[10px]">' . ($ct['acquisitions'] > 0 ? fmt($ct['acquisitions']) : '-') . '</td>';
+                                        echo '<td class="px-3 py-1.5 text-right font-mono text-red-400/70 text-[10px]">' . ($ct['sorties'] > 0 ? fmt($ct['sorties']) : '-') . '</td>';
                                         echo '<td class="px-3 py-1.5 text-right font-mono font-semibold text-blue-400/70 text-[10px]">' . fmt($ct['valeur_brute']) . '</td>';
-                                        echo '<td class="px-3 py-1.5 text-center text-slate-600 text-[10px]">—</td>';
-                                        echo '<td class="px-3 py-1.5 text-right font-mono text-amber-400/70 text-[10px]">' . ($ct['dotation_exercice'] > 0 ? fmt($ct['dotation_exercice']) : '—') . '</td>';
+                                        echo '<td class="px-3 py-1.5 text-center text-slate-600 text-[10px]">-</td>';
+                                        echo '<td class="px-3 py-1.5 text-right font-mono text-amber-400/70 text-[10px]">' . ($ct['dotation_exercice'] > 0 ? fmt($ct['dotation_exercice']) : '-') . '</td>';
                                         echo '<td class="px-3 py-1.5 text-right font-mono text-red-400/70 text-[10px]">' . fmt($ct['amort_cumul']) . '</td>';
                                         echo '<td class="px-3 py-1.5 text-right font-mono font-bold text-[10px] ' . vnc_class($ct['vnc'], $ct['valeur_brute']) . '">' . fmt($ct['vnc']) . '</td>';
                                         echo '<td></td>';
@@ -671,12 +671,12 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
                                             <?php endif; ?>
                                         </div>
                                     </td>
-                                    <td class="px-3 py-2 text-right font-mono text-slate-400"><?= $l['solde_initial'] > 0 ? fmt($l['solde_initial']) : '—' ?></td>
-                                    <td class="px-3 py-2 text-right font-mono text-cyan-400"><?= $l['acquisitions'] > 0 ? fmt($l['acquisitions']) : '—' ?></td>
-                                    <td class="px-3 py-2 text-right font-mono text-red-400"><?= $l['sorties'] > 0 ? fmt($l['sorties']) : '—' ?></td>
+                                    <td class="px-3 py-2 text-right font-mono text-slate-400"><?= $l['solde_initial'] > 0 ? fmt($l['solde_initial']) : '-' ?></td>
+                                    <td class="px-3 py-2 text-right font-mono text-cyan-400"><?= $l['acquisitions'] > 0 ? fmt($l['acquisitions']) : '-' ?></td>
+                                    <td class="px-3 py-2 text-right font-mono text-red-400"><?= $l['sorties'] > 0 ? fmt($l['sorties']) : '-' ?></td>
                                     <td class="px-3 py-2 text-right font-mono font-semibold text-blue-400"><?= fmt($l['valeur_brute']) ?></td>
-                                    <td class="px-3 py-2 text-center text-slate-400"><?= $l['taux'] > 0 ? $l['taux'] . '%' : '—' ?></td>
-                                    <td class="px-3 py-2 text-right font-mono text-amber-400"><?= $l['dotation_exercice'] > 0 ? fmt($l['dotation_exercice']) : '—' ?></td>
+                                    <td class="px-3 py-2 text-center text-slate-400"><?= $l['taux'] > 0 ? $l['taux'] . '%' : '-' ?></td>
+                                    <td class="px-3 py-2 text-right font-mono text-amber-400"><?= $l['dotation_exercice'] > 0 ? fmt($l['dotation_exercice']) : '-' ?></td>
                                     <td class="px-3 py-2 text-right font-mono text-red-400"><?= fmt($l['amort_cumul']) ?></td>
                                     <td class="px-3 py-2 text-right font-mono font-bold <?= vnc_class($l['vnc'], $l['valeur_brute']) ?>">
                                         <?= fmt($l['vnc']) ?>
@@ -709,12 +709,12 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
                                             <span class="px-1 py-0 rounded text-[8px] bg-purple-500/20 text-purple-400">composant</span>
                                         </div>
                                     </td>
-                                    <td class="px-3 py-1.5 text-right text-slate-600 text-[10px]">—</td>
-                                    <td class="px-3 py-1.5 text-right text-slate-600 text-[10px]">—</td>
-                                    <td class="px-3 py-1.5 text-right text-slate-600 text-[10px]">—</td>
+                                    <td class="px-3 py-1.5 text-right text-slate-600 text-[10px]">-</td>
+                                    <td class="px-3 py-1.5 text-right text-slate-600 text-[10px]">-</td>
+                                    <td class="px-3 py-1.5 text-right text-slate-600 text-[10px]">-</td>
                                     <td class="px-3 py-1.5 text-right font-mono text-blue-400/80 text-[10px]"><?= fmt($comp['valeur_brute']) ?></td>
-                                    <td class="px-3 py-1.5 text-center text-purple-400/70 text-[10px]"><?= $comp['taux'] > 0 ? $comp['taux'] . '%' : '—' ?></td>
-                                    <td class="px-3 py-1.5 text-right font-mono text-amber-400/80 text-[10px]"><?= $comp['dotation_exercice'] > 0 ? fmt($comp['dotation_exercice']) : '—' ?></td>
+                                    <td class="px-3 py-1.5 text-center text-purple-400/70 text-[10px]"><?= $comp['taux'] > 0 ? $comp['taux'] . '%' : '-' ?></td>
+                                    <td class="px-3 py-1.5 text-right font-mono text-amber-400/80 text-[10px]"><?= $comp['dotation_exercice'] > 0 ? fmt($comp['dotation_exercice']) : '-' ?></td>
                                     <td class="px-3 py-1.5 text-right font-mono text-red-400/80 text-[10px]"><?= fmt($comp['amort_cumul']) ?></td>
                                     <td class="px-3 py-1.5 text-right font-mono font-semibold text-[10px] <?= vnc_class($comp['vnc'], $comp['valeur_brute']) ?>"><?= fmt($comp['vnc']) ?></td>
                                     <td class="px-3 py-1.5">
@@ -737,11 +737,11 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
                             <tr class="cat-row border-t border-amber-500/20">
                                 <td class="px-3 py-1.5 text-amber-400/70 text-[10px] italic" colspan="2">Sous-total <?= htmlspecialchars($ct['cat_label']) ?> (<?= $ct['count'] ?>)</td>
                                 <td class="px-3 py-1.5 text-right font-mono text-slate-400 text-[10px]"><?= fmt($ct['solde_initial']) ?></td>
-                                <td class="px-3 py-1.5 text-right font-mono text-cyan-400/70 text-[10px]"><?= $ct['acquisitions'] > 0 ? fmt($ct['acquisitions']) : '—' ?></td>
-                                <td class="px-3 py-1.5 text-right font-mono text-red-400/70 text-[10px]"><?= $ct['sorties'] > 0 ? fmt($ct['sorties']) : '—' ?></td>
+                                <td class="px-3 py-1.5 text-right font-mono text-cyan-400/70 text-[10px]"><?= $ct['acquisitions'] > 0 ? fmt($ct['acquisitions']) : '-' ?></td>
+                                <td class="px-3 py-1.5 text-right font-mono text-red-400/70 text-[10px]"><?= $ct['sorties'] > 0 ? fmt($ct['sorties']) : '-' ?></td>
                                 <td class="px-3 py-1.5 text-right font-mono font-semibold text-blue-400/70 text-[10px]"><?= fmt($ct['valeur_brute']) ?></td>
-                                <td class="px-3 py-1.5 text-center text-slate-600 text-[10px]">—</td>
-                                <td class="px-3 py-1.5 text-right font-mono text-amber-400/70 text-[10px]"><?= $ct['dotation_exercice'] > 0 ? fmt($ct['dotation_exercice']) : '—' ?></td>
+                                <td class="px-3 py-1.5 text-center text-slate-600 text-[10px]">-</td>
+                                <td class="px-3 py-1.5 text-right font-mono text-amber-400/70 text-[10px]"><?= $ct['dotation_exercice'] > 0 ? fmt($ct['dotation_exercice']) : '-' ?></td>
                                 <td class="px-3 py-1.5 text-right font-mono text-red-400/70 text-[10px]"><?= fmt($ct['amort_cumul']) ?></td>
                                 <td class="px-3 py-1.5 text-right font-mono font-bold text-[10px] <?= vnc_class($ct['vnc'], $ct['valeur_brute']) ?>"><?= fmt($ct['vnc']) ?></td>
                                 <td></td>
@@ -757,13 +757,13 @@ if (isset($_GET['export']) && $_GET['export'] === 'excel') {
                                     <i class="fas fa-sigma mr-1.5"></i>TOTAL GÉNÉRAL
                                 </td>
                                 <td class="px-3 py-3 text-right font-mono text-slate-300"><?= fmt(array_sum(array_column($lignes, 'solde_initial'))) ?></td>
-                                <td class="px-3 py-3 text-right font-mono text-cyan-400"><?= $total_acq > 0 ? fmt($total_acq) : '—' ?></td>
-                                <td class="px-3 py-3 text-right font-mono text-red-400"><?= $total_sort > 0 ? fmt($total_sort) : '—' ?></td>
+                                <td class="px-3 py-3 text-right font-mono text-cyan-400"><?= $total_acq > 0 ? fmt($total_acq) : '-' ?></td>
+                                <td class="px-3 py-3 text-right font-mono text-red-400"><?= $total_sort > 0 ? fmt($total_sort) : '-' ?></td>
                                 <td class="px-3 py-3 text-right font-mono text-blue-400"><?= fmt($total_brut) ?></td>
                                 <?php if ($vue === 'detail'): ?>
-                                <td class="px-3 py-3 text-center text-slate-500">—</td>
+                                <td class="px-3 py-3 text-center text-slate-500">-</td>
                                 <?php endif; ?>
-                                <td class="px-3 py-3 text-right font-mono text-amber-400"><?= $total_dotex > 0 ? fmt($total_dotex) : '—' ?></td>
+                                <td class="px-3 py-3 text-right font-mono text-amber-400"><?= $total_dotex > 0 ? fmt($total_dotex) : '-' ?></td>
                                 <td class="px-3 py-3 text-right font-mono text-red-400"><?= fmt($total_amort) ?></td>
                                 <td class="px-3 py-3 text-right font-mono text-emerald-400"><?= fmt($total_vnc) ?></td>
                                 <?php if ($vue === 'detail'): ?>

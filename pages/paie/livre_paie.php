@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -138,7 +138,7 @@ foreach ($bulletins as $b) {
             <!-- En-tête -->
             <div class="p-5 border-b border-slate-700/30 text-center">
                 <h2 class="text-lg font-bold text-white"><?php echo htmlspecialchars($societe['raison_sociale'] ?? 'Société'); ?></h2>
-                <h1 class="text-base font-semibold text-violet-300 mt-1">LIVRE DE PAIE — <?php echo strtoupper($MOIS_NOMS[$mois_sel]); ?> <?php echo $annee_sel; ?></h1>
+                <h1 class="text-base font-semibold text-violet-300 mt-1">LIVRE DE PAIE - <?php echo strtoupper($MOIS_NOMS[$mois_sel]); ?> <?php echo $annee_sel; ?></h1>
                 <p class="text-xs text-slate-500 mt-0.5"><?php echo count($bulletins); ?> employé(s)</p>
             </div>
 
@@ -151,7 +151,7 @@ foreach ($bulletins as $b) {
 
             <!-- Table principale : charges salariales -->
             <div class="p-4">
-                <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">I — CHARGES SALARIALES</p>
+                <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">I - CHARGES SALARIALES</p>
                 <div class="overflow-x-auto">
                     <table class="w-full text-xs border-collapse">
                         <thead>
@@ -169,7 +169,7 @@ foreach ($bulletins as $b) {
                         <tbody>
                             <?php foreach ($bulletins as $b): ?>
                             <tr class="border-b border-slate-700/30 hover:bg-slate-700/10">
-                                <td class="px-3 py-2 border border-slate-700/30 text-slate-500"><?php echo htmlspecialchars($b['matricule'] ?: '—'); ?></td>
+                                <td class="px-3 py-2 border border-slate-700/30 text-slate-500"><?php echo htmlspecialchars($b['matricule'] ?: '-'); ?></td>
                                 <td class="px-3 py-2 border border-slate-700/30 text-white font-medium">
                                     <?php echo htmlspecialchars($b['nom'] . ' ' . $b['prenom']); ?>
                                     <span class="text-[10px] text-slate-500 ml-1">(<?php echo $b['situation_famille']; ?>/<?php echo $b['nb_enfants']; ?>)</span>
@@ -200,7 +200,7 @@ foreach ($bulletins as $b) {
 
             <!-- Table : charges patronales -->
             <div class="p-4 border-t border-slate-700/30">
-                <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">II — CHARGES PATRONALES</p>
+                <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">II - CHARGES PATRONALES</p>
                 <div class="overflow-x-auto">
                     <table class="w-full text-xs border-collapse">
                         <thead>
@@ -247,7 +247,7 @@ foreach ($bulletins as $b) {
 
             <!-- Récapitulatif déclarations -->
             <div class="p-4 border-t border-slate-700/30">
-                <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-3">III — RÉCAPITULATIF DÉCLARATIONS</p>
+                <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-3">III - RÉCAPITULATIF DÉCLARATIONS</p>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                     <!-- CNPS -->
                     <div class="bg-slate-700/30 rounded-xl p-3">
@@ -275,7 +275,7 @@ foreach ($bulletins as $b) {
                     <div class="bg-slate-700/30 rounded-xl p-3">
                         <p class="text-[10px] font-semibold text-slate-400 mb-2 flex items-center gap-1.5">
                             <i class="fa-solid fa-receipt text-amber-400 text-[9px]"></i>
-                            DGI — ITS & Taxes
+                            DGI - ITS & Taxes
                         </p>
                         <div class="space-y-1 text-xs">
                             <div class="flex justify-between">

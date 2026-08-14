@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -236,7 +236,7 @@ $tot_part_benef = array_sum(array_column($participations, 'part_benefice_recue')
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Note 4 — Immobilisations financières <?= $annee_n ?></title>
+    <title>Note 4 - Immobilisations financières <?= $annee_n ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
@@ -270,7 +270,7 @@ $tot_part_benef = array_sum(array_column($participations, 'part_benefice_recue')
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 mb-1">
-                <i class="fas fa-chart-pie mr-3"></i>Note 4 — Immobilisations financières
+                <i class="fas fa-chart-pie mr-3"></i>Note 4 - Immobilisations financières
             </h1>
             <p class="text-slate-400 text-sm">
                 Exercice du <?= date('d/m/Y', strtotime($date_debut_n)) ?> au <?= date('d/m/Y', strtotime($date_fin_n)) ?>
@@ -313,12 +313,12 @@ $tot_part_benef = array_sum(array_column($participations, 'part_benefice_recue')
     </form>
 
     <!-- ═══════════════════════════════════════════════════════════════════════
-         SECTION I — TABLEAU MANUEL DES PARTICIPATIONS
+         SECTION I - TABLEAU MANUEL DES PARTICIPATIONS
     ═══════════════════════════════════════════════════════════════════════ -->
     <div class="mb-8">
         <h2 class="text-base font-bold text-slate-200 mb-4 flex items-center gap-2">
             <span class="w-7 h-7 rounded-full bg-violet-500/20 flex items-center justify-center text-violet-400 font-bold text-xs">I</span>
-            État des filiales et participations — Exercice <?= $annee_n ?>
+            État des filiales et participations - Exercice <?= $annee_n ?>
         </h2>
 
         <div class="xl:grid xl:grid-cols-3 xl:gap-6 space-y-6 xl:space-y-0">
@@ -434,7 +434,7 @@ $tot_part_benef = array_sum(array_column($participations, 'part_benefice_recue')
                 <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
                     <div class="px-5 py-4 border-b border-slate-700 flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-semibold text-slate-200">Liste des participations — <?= $annee_n ?></p>
+                            <p class="text-sm font-semibold text-slate-200">Liste des participations - <?= $annee_n ?></p>
                             <p class="text-xs text-slate-500 mt-0.5"><?= count($participations) ?> entrée(s) enregistrée(s)</p>
                         </div>
                     </div>
@@ -472,7 +472,7 @@ $tot_part_benef = array_sum(array_column($participations, 'part_benefice_recue')
                                     <td class="cell-num px-3 py-2 text-slate-300"><?= nfP($p['pourcentage']) ?></td>
                                     <td class="cell-num px-3 py-2 text-slate-300"><?= nfN($p['capitaux_propres']) ?></td>
                                     <td class="cell-num px-3 py-2 <?= $resColor ?>"><?= nfN($res) ?></td>
-                                    <td class="cell-num px-3 py-2 text-slate-400"><?= $p['annee_dernier_exercice'] ?? '—' ?></td>
+                                    <td class="cell-num px-3 py-2 text-slate-400"><?= $p['annee_dernier_exercice'] ?? '-' ?></td>
                                     <td class="cell-num px-3 py-2 text-emerald-400"><?= nfN($p['part_benefice_recue']) ?></td>
                                     <td class="px-3 py-2 no-print">
                                         <div class="flex gap-1">
@@ -514,14 +514,14 @@ $tot_part_benef = array_sum(array_column($participations, 'part_benefice_recue')
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════════════════
-         SECTION II — MOUVEMENTS (BALANCE AUTOMATIQUE)
+         SECTION II - MOUVEMENTS (BALANCE AUTOMATIQUE)
     ═══════════════════════════════════════════════════════════════════════ -->
     <h2 class="text-base font-bold text-slate-200 mb-4 flex items-center gap-2">
         <span class="w-7 h-7 rounded-full bg-sky-500/20 flex items-center justify-center text-sky-400 font-bold text-xs">II</span>
-        Mouvements comptables — Balance automatique
+        Mouvements comptables - Balance automatique
     </h2>
 
-    <!-- TABLE A — VALEURS BRUTES -->
+    <!-- TABLE A - VALEURS BRUTES -->
     <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden mb-6 section-card border-l-cyan-500">
         <div class="px-6 py-4 border-b border-slate-700 flex items-center gap-3">
             <span class="w-7 h-7 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold text-xs">A</span>
@@ -574,13 +574,13 @@ $tot_part_benef = array_sum(array_column($participations, 'part_benefice_recue')
         </div>
     </div>
 
-    <!-- TABLE B — DÉPRÉCIATIONS -->
+    <!-- TABLE B - DÉPRÉCIATIONS -->
     <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden mb-6 section-card border-l-amber-500">
         <div class="px-6 py-4 border-b border-slate-700 flex items-center gap-3">
             <span class="w-7 h-7 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-xs">B</span>
             <div>
                 <h3 class="text-sm font-bold text-slate-100">Dépréciations (en FCFA)</h3>
-                <p class="text-xs text-slate-400 mt-0.5">Comptes 296 et 297 — exercice <?= $annee_n ?></p>
+                <p class="text-xs text-slate-400 mt-0.5">Comptes 296 et 297 - exercice <?= $annee_n ?></p>
             </div>
         </div>
         <div class="overflow-x-auto">
@@ -622,7 +622,7 @@ $tot_part_benef = array_sum(array_column($participations, 'part_benefice_recue')
         </div>
     </div>
 
-    <!-- TABLE C — VALEURS NETTES -->
+    <!-- TABLE C - VALEURS NETTES -->
     <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden mb-4 section-card border-l-emerald-500">
         <div class="px-6 py-4 border-b border-slate-700 flex items-center gap-3">
             <span class="w-7 h-7 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-xs">C</span>
@@ -674,7 +674,7 @@ $tot_part_benef = array_sum(array_column($participations, 'part_benefice_recue')
     </div>
 
     <p class="text-xs text-slate-600 mt-3 no-print">
-        Source : Plan Comptable SYSCOHADA — Liasse DGI Système Normal, Note 4 — Balance comptable (comptes 26, 272-278, 296-297)
+        Source : Plan Comptable SYSCOHADA - Liasse DGI Système Normal, Note 4 - Balance comptable (comptes 26, 272-278, 296-297)
     </p>
 
 </main>

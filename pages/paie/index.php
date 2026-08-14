@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -291,7 +291,7 @@ $nbActifs = (int)$nbActifs->fetchColumn();
         <div class="flex items-center justify-between">
             <h2 class="text-sm font-semibold text-white">
                 Bulletins de paie
-                <span class="text-xs text-slate-400 font-normal ml-1">— <?php echo $MOIS_NOMS[$mois_sel]; ?> <?php echo $annee_sel; ?></span>
+                <span class="text-xs text-slate-400 font-normal ml-1">- <?php echo $MOIS_NOMS[$mois_sel]; ?> <?php echo $annee_sel; ?></span>
             </h2>
             <div class="flex gap-2">
                 <a href="bulletin.php?mois=<?php echo $mois_sel; ?>&annee=<?php echo $annee_sel; ?>" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition">
@@ -345,7 +345,7 @@ $nbActifs = (int)$nbActifs->fetchColumn();
                                     </div>
                                     <div>
                                         <p class="font-medium text-white"><?php echo htmlspecialchars($b['nom'] . ' ' . $b['prenom']); ?></p>
-                                        <p class="text-[10px] text-slate-500"><?php echo htmlspecialchars($b['poste'] ?: '—'); ?></p>
+                                        <p class="text-[10px] text-slate-500"><?php echo htmlspecialchars($b['poste'] ?: '-'); ?></p>
                                     </div>
                                 </div>
                             </td>

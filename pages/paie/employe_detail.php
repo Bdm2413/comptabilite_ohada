@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -70,10 +70,10 @@ $statutColors = [
 ];
 
 function fmtDate($d, $fmt = 'd/m/Y') {
-    return $d ? date($fmt, strtotime($d)) : '—';
+    return $d ? date($fmt, strtotime($d)) : '-';
 }
 function fmtMontant($n) {
-    return $n !== null ? number_format((float)$n, 0, ',', ' ') . ' FCFA' : '—';
+    return $n !== null ? number_format((float)$n, 0, ',', ' ') . ' FCFA' : '-';
 }
 function initiales($nom, $prenom = '') {
     return strtoupper(substr($nom,0,1) . substr($prenom,0,1));
@@ -315,7 +315,7 @@ function initiales($nom, $prenom = '') {
                         <div>
                             <div class="info-row">
                                 <span class="info-label"><i class="fa-solid fa-venus-mars text-[9px] mr-1 text-slate-600"></i>Sexe</span>
-                                <span class="info-value"><?php echo $emp['sexe'] === 'M' ? 'Masculin' : ($emp['sexe'] === 'F' ? 'Féminin' : '—'); ?></span>
+                                <span class="info-value"><?php echo $emp['sexe'] === 'M' ? 'Masculin' : ($emp['sexe'] === 'F' ? 'Féminin' : '-'); ?></span>
                             </div>
                             <div class="info-row">
                                 <span class="info-label"><i class="fa-solid fa-cake-candles text-[9px] mr-1 text-slate-600"></i>Date de naissance</span>
@@ -327,17 +327,17 @@ function initiales($nom, $prenom = '') {
                             </div>
                             <div class="info-row">
                                 <span class="info-label"><i class="fa-solid fa-location-dot text-[9px] mr-1 text-slate-600"></i>Lieu de naissance</span>
-                                <span class="info-value"><?php echo $emp['lieu_naissance'] ? htmlspecialchars($emp['lieu_naissance']) : '—'; ?></span>
+                                <span class="info-value"><?php echo $emp['lieu_naissance'] ? htmlspecialchars($emp['lieu_naissance']) : '-'; ?></span>
                             </div>
                         </div>
                         <div>
                             <div class="info-row">
                                 <span class="info-label"><i class="fa-solid fa-flag text-[9px] mr-1 text-slate-600"></i>Nationalité</span>
-                                <span class="info-value"><?php echo $emp['nationalite_civile'] ? htmlspecialchars($emp['nationalite_civile']) : '—'; ?></span>
+                                <span class="info-value"><?php echo $emp['nationalite_civile'] ? htmlspecialchars($emp['nationalite_civile']) : '-'; ?></span>
                             </div>
                             <div class="info-row">
                                 <span class="info-label"><i class="fa-solid fa-id-badge text-[9px] mr-1 text-slate-600"></i>Pièce d'identité</span>
-                                <span class="info-value font-mono"><?php echo $emp['num_piece_identite'] ? htmlspecialchars($emp['num_piece_identite']) : '—'; ?></span>
+                                <span class="info-value font-mono"><?php echo $emp['num_piece_identite'] ? htmlspecialchars($emp['num_piece_identite']) : '-'; ?></span>
                             </div>
                             <div class="info-row">
                                 <span class="info-label"><i class="fa-solid fa-heart text-[9px] mr-1 text-slate-600"></i>Situation de famille</span>
@@ -376,21 +376,21 @@ function initiales($nom, $prenom = '') {
                             <?php endif; ?>
                             <div class="info-row">
                                 <span class="info-label"><i class="fa-solid fa-hourglass text-[9px] mr-1 text-slate-600"></i>Ancienneté</span>
-                                <span class="info-value text-emerald-300"><?php echo $anciennete ?: '—'; ?></span>
+                                <span class="info-value text-emerald-300"><?php echo $anciennete ?: '-'; ?></span>
                             </div>
                         </div>
                         <div>
                             <div class="info-row">
                                 <span class="info-label"><i class="fa-solid fa-user-tie text-[9px] mr-1 text-slate-600"></i>Poste</span>
-                                <span class="info-value"><?php echo $emp['poste'] ? htmlspecialchars($emp['poste']) : '—'; ?></span>
+                                <span class="info-value"><?php echo $emp['poste'] ? htmlspecialchars($emp['poste']) : '-'; ?></span>
                             </div>
                             <div class="info-row">
                                 <span class="info-label"><i class="fa-solid fa-layer-group text-[9px] mr-1 text-slate-600"></i>Catégorie</span>
-                                <span class="info-value"><?php echo $emp['categorie'] ? htmlspecialchars($emp['categorie']) : '—'; ?></span>
+                                <span class="info-value"><?php echo $emp['categorie'] ? htmlspecialchars($emp['categorie']) : '-'; ?></span>
                             </div>
                             <div class="info-row">
                                 <span class="info-label"><i class="fa-solid fa-building text-[9px] mr-1 text-slate-600"></i>Département</span>
-                                <span class="info-value"><?php echo $emp['departement'] ? htmlspecialchars($emp['departement']) : '—'; ?></span>
+                                <span class="info-value"><?php echo $emp['departement'] ? htmlspecialchars($emp['departement']) : '-'; ?></span>
                             </div>
                         </div>
                     </div>
@@ -427,7 +427,7 @@ function initiales($nom, $prenom = '') {
                             </div>
                             <div class="info-row">
                                 <span class="info-label"><i class="fa-solid fa-shield text-[9px] mr-1 text-slate-600"></i>N° CNPS</span>
-                                <span class="info-value font-mono"><?php echo $emp['num_cnps'] ? htmlspecialchars($emp['num_cnps']) : '—'; ?></span>
+                                <span class="info-value font-mono"><?php echo $emp['num_cnps'] ? htmlspecialchars($emp['num_cnps']) : '-'; ?></span>
                             </div>
                         </div>
                         <div>
@@ -457,11 +457,11 @@ function initiales($nom, $prenom = '') {
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                         <div class="info-row">
                             <span class="info-label"><i class="fa-solid fa-university text-[9px] mr-1 text-slate-600"></i>Banque</span>
-                            <span class="info-value"><?php echo $emp['banque'] ? htmlspecialchars($emp['banque']) : '—'; ?></span>
+                            <span class="info-value"><?php echo $emp['banque'] ? htmlspecialchars($emp['banque']) : '-'; ?></span>
                         </div>
                         <div class="info-row">
                             <span class="info-label"><i class="fa-solid fa-credit-card text-[9px] mr-1 text-slate-600"></i>N° de compte</span>
-                            <span class="info-value font-mono"><?php echo $emp['num_compte_bancaire'] ? htmlspecialchars($emp['num_compte_bancaire']) : '—'; ?></span>
+                            <span class="info-value font-mono"><?php echo $emp['num_compte_bancaire'] ? htmlspecialchars($emp['num_compte_bancaire']) : '-'; ?></span>
                         </div>
                     </div>
                 </div>
@@ -478,7 +478,7 @@ function initiales($nom, $prenom = '') {
                         </div>
                         <div class="info-row">
                             <span class="info-label">Motif</span>
-                            <span class="info-value"><?php echo $emp['motif_depart'] ? htmlspecialchars($emp['motif_depart']) : '—'; ?></span>
+                            <span class="info-value"><?php echo $emp['motif_depart'] ? htmlspecialchars($emp['motif_depart']) : '-'; ?></span>
                         </div>
                     </div>
                 </div>

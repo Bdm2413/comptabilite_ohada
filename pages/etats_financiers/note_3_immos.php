@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -137,7 +137,7 @@ function amortClo(array $dots, array $pfx, array $excl, string $d1): float {
     }
     return $t;
 }
-// Amort des actifs cédés durant [d0,d1] — colonne "Réductions" Note 3C
+// Amort des actifs cédés durant [d0,d1] - colonne "Réductions" Note 3C
 function amortCessions(array $im, array $dots, array $pfx, array $excl, string $d0, string $d1): float {
     $ids = [];
     foreach ($im as $i) {
@@ -169,7 +169,7 @@ function cessionsPrix(array $im, array $pfx, array $excl, string $d0, string $d1
 }
 
 // =====================================================================
-// RUBRIQUES — Notes 3A / 3C / 3C BIS
+// RUBRIQUES - Notes 3A / 3C / 3C BIS
 // pfx : préfixes sur compte_immobilisation (ex. '244' capte 24423000)
 // =====================================================================
 $rubriques = [
@@ -232,7 +232,7 @@ foreach ($rubriques as $rub) {
 }
 
 // =====================================================================
-// Note 3D — Plus/moins-values de cession
+// Note 3D - Plus/moins-values de cession
 // =====================================================================
 $d3D_defs = [
     ['label'=>"Cessions d'immo. incorporelles",  'pfx'=>['21'],           'excl'=>[]],
@@ -263,7 +263,7 @@ $qs = http_build_query(['date_debut'=>$date_debut_n,'date_fin'=>$date_fin_n]);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notes Annexes — Immobilisations <?= $annee_n ?></title>
+    <title>Notes Annexes - Immobilisations <?= $annee_n ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
@@ -299,7 +299,7 @@ $qs = http_build_query(['date_debut'=>$date_debut_n,'date_fin'=>$date_fin_n]);
         <div class="flex items-center justify-between mb-2">
             <div>
                 <h1 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 mb-1">
-                    <i class="fas fa-clipboard-list mr-3"></i>Notes Annexes — Immobilisations (Notes 3A, 3B, 3C, 3C BIS, 3D)
+                    <i class="fas fa-clipboard-list mr-3"></i>Notes Annexes - Immobilisations (Notes 3A, 3B, 3C, 3C BIS, 3D)
                 </h1>
                 <p class="text-slate-400 text-sm">
                     Exercice du <?= date('d/m/Y', strtotime($date_debut_n)) ?> au <?= date('d/m/Y', strtotime($date_fin_n)) ?>
@@ -365,15 +365,15 @@ $qs = http_build_query(['date_debut'=>$date_debut_n,'date_fin'=>$date_fin_n]);
     </div>
 
     <!-- ================================================================
-         TAB 3A — Immobilisations brutes
+         TAB 3A - Immobilisations brutes
     ================================================================ -->
     <div id="tab-3a" class="tab-content <?= $activeTab==='3a' ? 'active' : '' ?>">
         <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-700 flex items-center gap-3">
                 <div class="w-2 h-6 bg-emerald-500 rounded-full"></div>
                 <div>
-                    <h2 class="text-base font-bold text-slate-100">Note 3A — Immobilisations brutes</h2>
-                    <p class="text-xs text-slate-400">Tableau de variation des valeurs brutes — Exercice <?= $annee_n ?> (en FCFA)</p>
+                    <h2 class="text-base font-bold text-slate-100">Note 3A - Immobilisations brutes</h2>
+                    <p class="text-xs text-slate-400">Tableau de variation des valeurs brutes - Exercice <?= $annee_n ?> (en FCFA)</p>
                 </div>
             </div>
             <div class="overflow-x-auto">
@@ -381,10 +381,10 @@ $qs = http_build_query(['date_debut'=>$date_debut_n,'date_fin'=>$date_fin_n]);
                     <thead>
                         <tr class="bg-slate-900 border-b border-slate-700">
                             <th class="text-left px-4 py-3 text-slate-300 w-80">Intitulé</th>
-                            <th class="cell-num px-4 py-3 text-sky-300">Brut ouverture<br><span class="text-slate-500 font-normal text-xs">(A) — <?= $annee_n1 ?></span></th>
-                            <th class="cell-num px-4 py-3 text-emerald-300">Acquisitions<br><span class="text-slate-500 font-normal text-xs">(B) — exercice N</span></th>
-                            <th class="cell-num px-4 py-3 text-rose-300">Cessions / Sorties<br><span class="text-slate-500 font-normal text-xs">(C) — exercice N</span></th>
-                            <th class="cell-num px-4 py-3 text-amber-300">Brut clôture<br><span class="text-slate-500 font-normal text-xs">(D=A+B-C) — <?= $annee_n ?></span></th>
+                            <th class="cell-num px-4 py-3 text-sky-300">Brut ouverture<br><span class="text-slate-500 font-normal text-xs">(A) - <?= $annee_n1 ?></span></th>
+                            <th class="cell-num px-4 py-3 text-emerald-300">Acquisitions<br><span class="text-slate-500 font-normal text-xs">(B) - exercice N</span></th>
+                            <th class="cell-num px-4 py-3 text-rose-300">Cessions / Sorties<br><span class="text-slate-500 font-normal text-xs">(C) - exercice N</span></th>
+                            <th class="cell-num px-4 py-3 text-amber-300">Brut clôture<br><span class="text-slate-500 font-normal text-xs">(D=A+B-C) - <?= $annee_n ?></span></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -433,15 +433,15 @@ $qs = http_build_query(['date_debut'=>$date_debut_n,'date_fin'=>$date_fin_n]);
     </div>
 
     <!-- ================================================================
-         TAB 3B — Biens pris en location-acquisition
+         TAB 3B - Biens pris en location-acquisition
     ================================================================ -->
     <div id="tab-3b" class="tab-content <?= $activeTab==='3b' ? 'active' : '' ?>">
         <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-700 flex items-center gap-3">
                 <div class="w-2 h-6 bg-sky-500 rounded-full"></div>
                 <div>
-                    <h2 class="text-base font-bold text-slate-100">Note 3B — Biens pris en location-acquisition (crédit-bail)</h2>
-                    <p class="text-xs text-slate-400">Immobilisations détenues sous contrat de location-financement — Exercice <?= $annee_n ?></p>
+                    <h2 class="text-base font-bold text-slate-100">Note 3B - Biens pris en location-acquisition (crédit-bail)</h2>
+                    <p class="text-xs text-slate-400">Immobilisations détenues sous contrat de location-financement - Exercice <?= $annee_n ?></p>
                 </div>
             </div>
             <div class="p-6">
@@ -476,7 +476,7 @@ $qs = http_build_query(['date_debut'=>$date_debut_n,'date_fin'=>$date_fin_n]);
                             <p class="text-xs font-semibold text-amber-300 uppercase mb-2">Configuration requise</p>
                             <p class="text-xs text-slate-400">
                                 Pour activer cette note, créez des sous-comptes dédiés au crédit-bail dans votre plan comptable
-                                (ex. 2151 — Matériel en crédit-bail) et signalez-les dans la configuration de l'application.
+                                (ex. 2151 - Matériel en crédit-bail) et signalez-les dans la configuration de l'application.
                             </p>
                         </div>
                     </div>
@@ -486,15 +486,15 @@ $qs = http_build_query(['date_debut'=>$date_debut_n,'date_fin'=>$date_fin_n]);
     </div>
 
     <!-- ================================================================
-         TAB 3C — Amortissements
+         TAB 3C - Amortissements
     ================================================================ -->
     <div id="tab-3c" class="tab-content <?= $activeTab==='3c' ? 'active' : '' ?>">
         <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-700 flex items-center gap-3">
                 <div class="w-2 h-6 bg-violet-500 rounded-full"></div>
                 <div>
-                    <h2 class="text-base font-bold text-slate-100">Note 3C — Amortissements des immobilisations</h2>
-                    <p class="text-xs text-slate-400">Tableau de variation des amortissements cumulés — Exercice <?= $annee_n ?> (en FCFA)</p>
+                    <h2 class="text-base font-bold text-slate-100">Note 3C - Amortissements des immobilisations</h2>
+                    <p class="text-xs text-slate-400">Tableau de variation des amortissements cumulés - Exercice <?= $annee_n ?> (en FCFA)</p>
                 </div>
             </div>
             <div class="overflow-x-auto">
@@ -502,10 +502,10 @@ $qs = http_build_query(['date_debut'=>$date_debut_n,'date_fin'=>$date_fin_n]);
                     <thead>
                         <tr class="bg-slate-900 border-b border-slate-700">
                             <th class="text-left px-4 py-3 text-slate-300 w-80">Intitulé</th>
-                            <th class="cell-num px-4 py-3 text-sky-300">Cumul ouverture<br><span class="text-slate-500 font-normal text-xs">(A) — <?= $annee_n1 ?></span></th>
-                            <th class="cell-num px-4 py-3 text-violet-300">Dotations N<br><span class="text-slate-500 font-normal text-xs">(B) — exercice N</span></th>
-                            <th class="cell-num px-4 py-3 text-rose-300">Réductions N<br><span class="text-slate-500 font-normal text-xs">(C) — sorties N</span></th>
-                            <th class="cell-num px-4 py-3 text-amber-300">Cumul clôture<br><span class="text-slate-500 font-normal text-xs">(D=A+B-C) — <?= $annee_n ?></span></th>
+                            <th class="cell-num px-4 py-3 text-sky-300">Cumul ouverture<br><span class="text-slate-500 font-normal text-xs">(A) - <?= $annee_n1 ?></span></th>
+                            <th class="cell-num px-4 py-3 text-violet-300">Dotations N<br><span class="text-slate-500 font-normal text-xs">(B) - exercice N</span></th>
+                            <th class="cell-num px-4 py-3 text-rose-300">Réductions N<br><span class="text-slate-500 font-normal text-xs">(C) - sorties N</span></th>
+                            <th class="cell-num px-4 py-3 text-amber-300">Cumul clôture<br><span class="text-slate-500 font-normal text-xs">(D=A+B-C) - <?= $annee_n ?></span></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -554,15 +554,15 @@ $qs = http_build_query(['date_debut'=>$date_debut_n,'date_fin'=>$date_fin_n]);
     </div>
 
     <!-- ================================================================
-         TAB 3C BIS — Dépréciations
+         TAB 3C BIS - Dépréciations
     ================================================================ -->
     <div id="tab-3cbis" class="tab-content <?= $activeTab==='3cbis' ? 'active' : '' ?>">
         <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-700 flex items-center gap-3">
                 <div class="w-2 h-6 bg-amber-500 rounded-full"></div>
                 <div>
-                    <h2 class="text-base font-bold text-slate-100">Note 3C BIS — Dépréciations des immobilisations</h2>
-                    <p class="text-xs text-slate-400">Tableau de variation des dépréciations — Exercice <?= $annee_n ?> (en FCFA)</p>
+                    <h2 class="text-base font-bold text-slate-100">Note 3C BIS - Dépréciations des immobilisations</h2>
+                    <p class="text-xs text-slate-400">Tableau de variation des dépréciations - Exercice <?= $annee_n ?> (en FCFA)</p>
                 </div>
             </div>
             <div class="overflow-x-auto">
@@ -570,10 +570,10 @@ $qs = http_build_query(['date_debut'=>$date_debut_n,'date_fin'=>$date_fin_n]);
                     <thead>
                         <tr class="bg-slate-900 border-b border-slate-700">
                             <th class="text-left px-4 py-3 text-slate-300 w-80">Intitulé</th>
-                            <th class="cell-num px-4 py-3 text-sky-300">Cumul ouverture<br><span class="text-slate-500 font-normal text-xs">(A) — <?= $annee_n1 ?></span></th>
-                            <th class="cell-num px-4 py-3 text-amber-300">Dotations N<br><span class="text-slate-500 font-normal text-xs">(B) — exercice N</span></th>
-                            <th class="cell-num px-4 py-3 text-rose-300">Reprises N<br><span class="text-slate-500 font-normal text-xs">(C) — exercice N</span></th>
-                            <th class="cell-num px-4 py-3 text-emerald-300">Cumul clôture<br><span class="text-slate-500 font-normal text-xs">(D=A+B-C) — <?= $annee_n ?></span></th>
+                            <th class="cell-num px-4 py-3 text-sky-300">Cumul ouverture<br><span class="text-slate-500 font-normal text-xs">(A) - <?= $annee_n1 ?></span></th>
+                            <th class="cell-num px-4 py-3 text-amber-300">Dotations N<br><span class="text-slate-500 font-normal text-xs">(B) - exercice N</span></th>
+                            <th class="cell-num px-4 py-3 text-rose-300">Reprises N<br><span class="text-slate-500 font-normal text-xs">(C) - exercice N</span></th>
+                            <th class="cell-num px-4 py-3 text-emerald-300">Cumul clôture<br><span class="text-slate-500 font-normal text-xs">(D=A+B-C) - <?= $annee_n ?></span></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -622,15 +622,15 @@ $qs = http_build_query(['date_debut'=>$date_debut_n,'date_fin'=>$date_fin_n]);
     </div>
 
     <!-- ================================================================
-         TAB 3D — Plus/moins-values de cession
+         TAB 3D - Plus/moins-values de cession
     ================================================================ -->
     <div id="tab-3d" class="tab-content <?= $activeTab==='3d' ? 'active' : '' ?>">
         <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-700 flex items-center gap-3">
                 <div class="w-2 h-6 bg-rose-500 rounded-full"></div>
                 <div>
-                    <h2 class="text-base font-bold text-slate-100">Note 3D — Plus-values et moins-values de cession</h2>
-                    <p class="text-xs text-slate-400">Analyse des cessions d'immobilisations — Exercice <?= $annee_n ?> (en FCFA)</p>
+                    <h2 class="text-base font-bold text-slate-100">Note 3D - Plus-values et moins-values de cession</h2>
+                    <p class="text-xs text-slate-400">Analyse des cessions d'immobilisations - Exercice <?= $annee_n ?> (en FCFA)</p>
                 </div>
             </div>
             <div class="overflow-x-auto">
@@ -687,7 +687,7 @@ $qs = http_build_query(['date_debut'=>$date_debut_n,'date_fin'=>$date_fin_n]);
             <div class="bg-slate-800 border border-slate-700 rounded-xl p-4">
                 <p class="text-xs font-semibold text-emerald-300 uppercase mb-2"><i class="fas fa-info-circle mr-1"></i>Cessions courantes (Activités Ordinaires)</p>
                 <ul class="text-xs text-slate-400 space-y-1">
-                    <li>• <span class="text-slate-300">VNC cédée</span> : compte 654 (charges HAO — VNC des immob. cédées)</li>
+                    <li>• <span class="text-slate-300">VNC cédée</span> : compte 654 (charges HAO - VNC des immob. cédées)</li>
                     <li>• <span class="text-slate-300">Prix de cession</span> : compte 754 (produits de cessions courantes)</li>
                     <li>• <span class="text-slate-300">Note</span> : les cessions courantes concernent les immobilisations ayant un caractère courant dans l'activité.</li>
                 </ul>
@@ -704,7 +704,7 @@ $qs = http_build_query(['date_debut'=>$date_debut_n,'date_fin'=>$date_fin_n]);
     <div class="mt-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6 no-print">
         <h3 class="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
             <i class="fas fa-balance-scale text-emerald-400"></i>
-            Synthèse VNC — Valeurs nettes comptables
+            Synthèse VNC - Valeurs nettes comptables
         </h3>
         <div class="overflow-x-auto">
             <table class="note-table w-full border-collapse">

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -69,7 +69,7 @@ if ($user['totp_enabled']) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sécurité — <?php echo APP_NAME; ?></title>
+    <title>Sécurité - <?php echo APP_NAME; ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -86,7 +86,7 @@ if ($user['totp_enabled']) {
                 </a>
                 <div>
                     <h1 class="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
-                        <i class="fas fa-shield-alt mr-2"></i>Sécurité — Authentification 2 facteurs
+                        <i class="fas fa-shield-alt mr-2"></i>Sécurité - Authentification 2 facteurs
                     </h1>
                     <p class="text-slate-400 text-xs mt-0.5">Protégez votre compte avec Google Authenticator ou Authy</p>
                 </div>
@@ -118,7 +118,7 @@ if ($user['totp_enabled']) {
                     <div>
                         <p class="font-semibold text-white text-sm">Authentification à deux facteurs</p>
                         <p class="text-xs mt-0.5 <?php echo $user['totp_enabled'] ? 'text-emerald-400' : 'text-slate-400'; ?>">
-                            <?php echo $user['totp_enabled'] ? '✓ Activée — votre compte est protégé' : 'Non activée'; ?>
+                            <?php echo $user['totp_enabled'] ? '✓ Activée - votre compte est protégé' : 'Non activée'; ?>
                         </p>
                     </div>
                 </div>

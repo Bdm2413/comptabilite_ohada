@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 require_once '../../vendor/autoload.php';
 requireLogin();
@@ -72,7 +72,7 @@ $pdf->setImageScale(1.25);
 $pdf->SetFont('helvetica', '', 8);
 
 // Header/Footer personnalisés
-$pdf->SetHeaderData('', 0, $societe, "Tableau de Flux de Trésorerie — Exercice {$annee_n}");
+$pdf->SetHeaderData('', 0, $societe, "Tableau de Flux de Trésorerie - Exercice {$annee_n}");
 
 $pdf->AddPage();
 

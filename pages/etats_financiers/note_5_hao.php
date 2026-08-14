@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -104,7 +104,7 @@ $tot_dettes_N1 = array_sum(array_column($dettes, 'val_N1'));
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Note 5 — Actif circulant et dettes HAO <?= $annee_n ?></title>
+    <title>Note 5 - Actif circulant et dettes HAO <?= $annee_n ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
@@ -137,7 +137,7 @@ $tot_dettes_N1 = array_sum(array_column($dettes, 'val_N1'));
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-400 mb-1">
-                <i class="fas fa-exchange-alt mr-3"></i>Note 5 — Actif circulant et dettes circulantes HAO
+                <i class="fas fa-exchange-alt mr-3"></i>Note 5 - Actif circulant et dettes circulantes HAO
             </h1>
             <p class="text-slate-400 text-sm">
                 Exercice du <?= date('d/m/Y', strtotime($date_debut_n)) ?> au <?= date('d/m/Y', strtotime($date_fin_n)) ?>
@@ -180,14 +180,14 @@ $tot_dettes_N1 = array_sum(array_column($dettes, 'val_N1'));
     </form>
 
     <!-- ═══════════════════════════════════════════════════════════════════════
-         TABLEAU I — ACTIF CIRCULANT HAO
+         TABLEAU I - ACTIF CIRCULANT HAO
     ═══════════════════════════════════════════════════════════════════════ -->
     <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden mb-8">
         <div class="px-6 py-4 border-b border-slate-700 flex items-center gap-3">
             <span class="w-8 h-8 rounded-full bg-sky-500/20 flex items-center justify-center text-sky-400 font-bold text-sm">I</span>
             <div>
                 <h2 class="text-base font-bold text-slate-100">Actif circulant HAO (en FCFA)</h2>
-                <p class="text-xs text-slate-400 mt-0.5">Créances hors activités ordinaires — soldes au <?= date('d/m/Y', strtotime($date_fin_n)) ?></p>
+                <p class="text-xs text-slate-400 mt-0.5">Créances hors activités ordinaires - soldes au <?= date('d/m/Y', strtotime($date_fin_n)) ?></p>
             </div>
         </div>
         <div class="overflow-x-auto">
@@ -245,14 +245,14 @@ $tot_dettes_N1 = array_sum(array_column($dettes, 'val_N1'));
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════════════════
-         TABLEAU II — DETTES CIRCULANTES HAO
+         TABLEAU II - DETTES CIRCULANTES HAO
     ═══════════════════════════════════════════════════════════════════════ -->
     <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden mb-4">
         <div class="px-6 py-4 border-b border-slate-700 flex items-center gap-3">
             <span class="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-sm">II</span>
             <div>
                 <h2 class="text-base font-bold text-slate-100">Dettes circulantes HAO (en FCFA)</h2>
-                <p class="text-xs text-slate-400 mt-0.5">Dettes hors activités ordinaires — soldes au <?= date('d/m/Y', strtotime($date_fin_n)) ?></p>
+                <p class="text-xs text-slate-400 mt-0.5">Dettes hors activités ordinaires - soldes au <?= date('d/m/Y', strtotime($date_fin_n)) ?></p>
             </div>
         </div>
         <div class="overflow-x-auto">
@@ -292,7 +292,7 @@ $tot_dettes_N1 = array_sum(array_column($dettes, 'val_N1'));
     </div>
 
     <p class="text-xs text-slate-600 mt-3 no-print">
-        Source : Plan Comptable SYSCOHADA — Liasse DGI Système Normal, Note 5 — Données issues de la balance comptable
+        Source : Plan Comptable SYSCOHADA - Liasse DGI Système Normal, Note 5 - Données issues de la balance comptable
     </p>
 
 </main>

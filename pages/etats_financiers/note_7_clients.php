@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -59,12 +59,12 @@ function nfN($n) {
     return number_format((float)$n, 0, ',', ' ');
 }
 
-// ── Rubriques CRÉANCES CLIENTS (actif — solde débiteur) ───────────────────────
+// ── Rubriques CRÉANCES CLIENTS (actif - solde débiteur) ───────────────────────
 $creances = [
     ['label' => 'Clients (hors réserves de propriété et Groupe)',              'pfx' => ['4111','4114','4115','4117','4118']],
     ['label' => 'Clients effets à recevoir (hors réserves et Groupe)',         'pfx' => ['4121','4124','4125']],
     ['label' => 'Clients avec réserves de propriété',                          'pfx' => ['4116']],
-    ['label' => 'Clients et effets à recevoir — Groupe',                       'pfx' => ['4112','4122']],
+    ['label' => 'Clients et effets à recevoir - Groupe',                       'pfx' => ['4112','4122']],
     ['label' => 'Créances sur cessions courantes d\'immobilisations',          'pfx' => ['414']],
     ['label' => 'Clients effets escomptés non échus',                          'pfx' => ['415']],
     ['label' => 'Créances litigieuses ou douteuses',                           'pfx' => ['416']],
@@ -87,10 +87,10 @@ $dep_N1      = scNet($comptes, ['491'], 'N1');
 $net_N       = max(0.0, $tot_brut_N  - $dep_N);
 $net_N1      = max(0.0, $tot_brut_N1 - $dep_N1);
 
-// ── Rubriques CLIENTS CRÉDITEURS (passif — solde créditeur) ──────────────────
+// ── Rubriques CLIENTS CRÉDITEURS (passif - solde créditeur) ──────────────────
 $crediteurs = [
     ['label' => 'Clients, avances et acomptes reçus (hors Groupe)',   'pfx' => ['4191']],
-    ['label' => 'Clients — Groupe, avances et acomptes reçus',        'pfx' => ['4192']],
+    ['label' => 'Clients - Groupe, avances et acomptes reçus',        'pfx' => ['4192']],
     ['label' => 'Autres clients créditeurs',                          'pfx' => ['4194','4198']],
 ];
 
@@ -109,7 +109,7 @@ $tot_cred_N1 = scNet($comptes, $pfx_all_cred, 'N1');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Note 7 — Clients <?= $annee_n ?></title>
+    <title>Note 7 - Clients <?= $annee_n ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
@@ -142,7 +142,7 @@ $tot_cred_N1 = scNet($comptes, $pfx_all_cred, 'N1');
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 mb-1">
-                <i class="fas fa-users mr-3"></i>Note 7 — Clients
+                <i class="fas fa-users mr-3"></i>Note 7 - Clients
             </h1>
             <p class="text-slate-400 text-sm">
                 Exercice du <?= date('d/m/Y', strtotime($date_debut_n)) ?> au <?= date('d/m/Y', strtotime($date_fin_n)) ?>
@@ -185,14 +185,14 @@ $tot_cred_N1 = scNet($comptes, $pfx_all_cred, 'N1');
     </form>
 
     <!-- ═══════════════════════════════════════════════════════════════════════
-         TABLEAU I — CRÉANCES CLIENTS
+         TABLEAU I - CRÉANCES CLIENTS
     ═══════════════════════════════════════════════════════════════════════ -->
     <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden mb-8">
         <div class="px-6 py-4 border-b border-slate-700 flex items-center gap-3">
             <span class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-sm">I</span>
             <div>
                 <h2 class="text-base font-bold text-slate-100">Créances clients (en FCFA)</h2>
-                <p class="text-xs text-slate-400 mt-0.5">Soldes débiteurs au <?= date('d/m/Y', strtotime($date_fin_n)) ?> — Dépréciations compte 491</p>
+                <p class="text-xs text-slate-400 mt-0.5">Soldes débiteurs au <?= date('d/m/Y', strtotime($date_fin_n)) ?> - Dépréciations compte 491</p>
             </div>
         </div>
         <div class="overflow-x-auto">
@@ -247,14 +247,14 @@ $tot_cred_N1 = scNet($comptes, $pfx_all_cred, 'N1');
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════════════════
-         TABLEAU II — CLIENTS CRÉDITEURS
+         TABLEAU II - CLIENTS CRÉDITEURS
     ═══════════════════════════════════════════════════════════════════════ -->
     <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden mb-4">
         <div class="px-6 py-4 border-b border-slate-700 flex items-center gap-3">
             <span class="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-sm">II</span>
             <div>
                 <h2 class="text-base font-bold text-slate-100">Clients créditeurs (en FCFA)</h2>
-                <p class="text-xs text-slate-400 mt-0.5">Avances et acomptes reçus — soldes créditeurs au <?= date('d/m/Y', strtotime($date_fin_n)) ?></p>
+                <p class="text-xs text-slate-400 mt-0.5">Avances et acomptes reçus - soldes créditeurs au <?= date('d/m/Y', strtotime($date_fin_n)) ?></p>
             </div>
         </div>
         <div class="overflow-x-auto">
@@ -294,7 +294,7 @@ $tot_cred_N1 = scNet($comptes, $pfx_all_cred, 'N1');
     </div>
 
     <p class="text-xs text-slate-600 mt-3 no-print">
-        Source : Plan Comptable SYSCOHADA — Liasse DGI Système Normal, Note 7 — Données issues de la balance comptable (comptes 411x-418, 491, 4191-4198)
+        Source : Plan Comptable SYSCOHADA - Liasse DGI Système Normal, Note 7 - Données issues de la balance comptable (comptes 411x-418, 491, 4191-4198)
     </p>
 
 </main>

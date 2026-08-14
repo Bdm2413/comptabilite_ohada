@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 
 // Doit avoir passé l'étape 1 (mot de passe)
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vérification — <?php echo APP_NAME; ?></title>
+    <title>Vérification - <?php echo APP_NAME; ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="fade-up w-full max-w-sm">
 
             <h1 class="text-white text-2xl font-bold text-center mb-2">Vérification en 2 étapes</h1>
-            <p class="text-blue-200 text-sm text-center mb-6">Étape 2 sur 2 — Code d'authentification</p>
+            <p class="text-blue-200 text-sm text-center mb-6">Étape 2 sur 2 - Code d'authentification</p>
 
             <div class="card rounded-xl shadow-2xl p-6">
 

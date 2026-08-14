@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -55,7 +55,7 @@ function nfN($n) {
 }
 
 // ── Rubriques de la Note 1 ────────────────────────────────────────────────────
-// Source : DGI Liasse Système Normal — Note 1 (comptes SYSCOHADA)
+// Source : DGI Liasse Système Normal - Note 1 (comptes SYSCOHADA)
 $rubriques = [
     ['type' => 'section', 'label' => 'EMPRUNTS ET DETTES FINANCIÈRES'],
     ['label' => 'Emprunts obligataires convertibles',              'pfx' => ['1612']],
@@ -102,7 +102,7 @@ foreach ($rubriques as $rub) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Note 1 — État des dettes <?= $annee_n ?></title>
+    <title>Note 1 - État des dettes <?= $annee_n ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
@@ -134,7 +134,7 @@ foreach ($rubriques as $rub) {
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400 mb-1">
-                <i class="fas fa-file-invoice-dollar mr-3"></i>Note 1 — État des dettes
+                <i class="fas fa-file-invoice-dollar mr-3"></i>Note 1 - État des dettes
             </h1>
             <p class="text-slate-400 text-sm">
                 Exercice du <?= date('d/m/Y', strtotime($date_debut_n)) ?> au <?= date('d/m/Y', strtotime($date_fin_n)) ?>
@@ -179,8 +179,8 @@ foreach ($rubriques as $rub) {
     <!-- Tableau -->
     <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-700">
-            <h2 class="text-base font-bold text-slate-100">Note 1 — État des dettes (en FCFA)</h2>
-            <p class="text-xs text-slate-400 mt-0.5">Soldes créditeurs nets au <?= date('d/m/Y', strtotime($date_fin_n)) ?> — Source : balance comptable</p>
+            <h2 class="text-base font-bold text-slate-100">Note 1 - État des dettes (en FCFA)</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Soldes créditeurs nets au <?= date('d/m/Y', strtotime($date_fin_n)) ?> - Source : balance comptable</p>
         </div>
         <div class="overflow-x-auto">
             <table class="note-table w-full border-collapse">
@@ -229,7 +229,7 @@ foreach ($rubriques as $rub) {
     </div>
 
     <p class="text-xs text-slate-600 mt-3 no-print">
-        Source : Plan Comptable SYSCOHADA — Liasse DGI Système Normal, Note 1
+        Source : Plan Comptable SYSCOHADA - Liasse DGI Système Normal, Note 1
     </p>
 
 </main>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 require_once '../../vendor/autoload.php';
 requireLogin();
@@ -56,7 +56,7 @@ try {
     $stmt->execute([$date_debut, $date_fin, $date_debut, $date_fin, $societe_id]);
     $comptes = $stmt->fetchAll();
 
-    // Organiser les comptes par rubrique — solde net (crédit − débit)
+    // Organiser les comptes par rubrique - solde net (crédit − débit)
     foreach ($comptes as $compte) {
         $solde_net = $compte['total_credit'] - $compte['total_debit'];
         if (abs($solde_net) < 0.01) continue;

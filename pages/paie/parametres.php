@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -149,7 +149,7 @@ function pct(float $v): string {
                         <div class="space-y-2">
                             <div class="grid grid-cols-12 gap-1.5 text-[10px] text-slate-500 px-1">
                                 <div class="col-span-4">De (FCFA)</div>
-                                <div class="col-span-4">À (FCFA — vide = illimité)</div>
+                                <div class="col-span-4">À (FCFA - vide = illimité)</div>
                                 <div class="col-span-3">Taux (%)</div>
                                 <div class="col-span-1"></div>
                             </div>
@@ -215,7 +215,7 @@ function pct(float $v): string {
                     <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 mb-4">
                         <h3 class="text-xs font-semibold text-white mb-3 flex items-center gap-2">
                             <i class="fa-solid fa-building-columns text-violet-400 text-[10px]"></i>
-                            CNPS — Retraite
+                            CNPS - Retraite
                         </h3>
                         <div class="grid grid-cols-3 gap-2">
                             <div>
@@ -279,7 +279,7 @@ function pct(float $v): string {
                     <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 mb-4">
                         <h3 class="text-xs font-semibold text-white mb-3 flex items-center gap-2">
                             <i class="fa-solid fa-heart-pulse text-emerald-400 text-[10px]"></i>
-                            CMU — Couverture Maladie Universelle
+                            CMU - Couverture Maladie Universelle
                         </h3>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
@@ -333,22 +333,22 @@ function pct(float $v): string {
                         </h3>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[10px] text-slate-400 mb-1">CE — Contribution Employeur (expatriés, %)</label>
+                                <label class="block text-[10px] text-slate-400 mb-1">CE - Contribution Employeur (expatriés, %)</label>
                                 <input type="number" name="ce_taux" value="<?php echo pct($p['ce_taux']); ?>" step="0.0001" min="0"
                                     class="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-violet-500 font-mono">
                             </div>
                             <div>
-                                <label class="block text-[10px] text-slate-400 mb-1">CN — Contribution Nationale (%)</label>
+                                <label class="block text-[10px] text-slate-400 mb-1">CN - Contribution Nationale (%)</label>
                                 <input type="number" name="cn_taux" value="<?php echo pct($p['cn_taux']); ?>" step="0.0001" min="0"
                                     class="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-violet-500 font-mono">
                             </div>
                             <div>
-                                <label class="block text-[10px] text-slate-400 mb-1">TA — Taxe d'Apprentissage (%)</label>
+                                <label class="block text-[10px] text-slate-400 mb-1">TA - Taxe d'Apprentissage (%)</label>
                                 <input type="number" name="ta_taux" value="<?php echo pct($p['ta_taux']); ?>" step="0.0001" min="0"
                                     class="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-violet-500 font-mono">
                             </div>
                             <div>
-                                <label class="block text-[10px] text-slate-400 mb-1">FDFP — Formation professionnelle (%)</label>
+                                <label class="block text-[10px] text-slate-400 mb-1">FDFP - Formation professionnelle (%)</label>
                                 <input type="number" name="fdfp_taux" value="<?php echo pct($p['fdfp_taux']); ?>" step="0.0001" min="0"
                                     class="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-violet-500 font-mono">
                             </div>
@@ -368,7 +368,7 @@ function pct(float $v): string {
                                     class="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-violet-500 font-mono">
                             </div>
                             <div>
-                                <label class="block text-[10px] text-slate-400 mb-1">RICF — Valeur par part (FCFA)</label>
+                                <label class="block text-[10px] text-slate-400 mb-1">RICF - Valeur par part (FCFA)</label>
                                 <input type="number" name="ricf_valeur_part" value="<?php echo (int)$p['ricf_valeur_part']; ?>" min="0"
                                     class="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-violet-500 font-mono">
                                 <p class="text-[10px] text-slate-500 mt-1">RICF = parts × valeur. Déduit de l'ITS brut pour obtenir l'ITS net.</p>

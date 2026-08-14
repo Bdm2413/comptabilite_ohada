@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 /**
- * tft_calculs.php — Fonctions et calculs partagés du Tableau de Flux de Trésorerie
+ * tft_calculs.php - Fonctions et calculs partagés du Tableau de Flux de Trésorerie
  * Inclure APRÈS avoir défini $comptes, $date_debut_n, $date_fin_n, $date_debut_n1, $date_fin_n1
  */
 
@@ -219,7 +219,7 @@ $RQ_N1 = $chrgN1['RQ'] ?? 0;
 $RS_N  = $chrgN['RS']  ?? 0;
 $RS_N1 = $chrgN1['RS'] ?? 0;
 
-// VNC (654) et produits de cession (754) — ajustements retraitement
+// VNC (654) et produits de cession (754) - ajustements retraitement
 $vnc_N       = sdPx($comptes, ['654'], 'N');
 $vnc_N1      = sdPx($comptes, ['654'], 'N1');
 $prodCess_N  = scPx($comptes, ['754'], 'N');
@@ -298,12 +298,12 @@ $c47xx_N  = netPx($comptes, ['4781','4782','4791','4792'], 'N');
 $c47xx_N1 = netPx($comptes, ['4781','4782','4791','4792'], 'N1');
 $c47xx_N2 = netPx_N2($comptes, ['4781','4782','4791','4792']);
 
-// Créances à exclure (liées investissement/financement) — soldes débiteurs
+// Créances à exclure (liées investissement/financement) - soldes débiteurs
 $excl_N  = sdPx($comptes, $PFX_CRED_EXCL, 'N');
 $excl_N1 = sdPx($comptes, $PFX_CRED_EXCL, 'N1');
 $excl_N2 = sdPx_N2($comptes, $PFX_CRED_EXCL);
 
-// Compte 2714 — total mouvements débiteurs (créances sur cessions immos financières)
+// Compte 2714 - total mouvements débiteurs (créances sur cessions immos financières)
 $mvt2714_N  = sumPx($comptes, ['2714'], 'mvt_debit_N');
 $mvt2714_N1 = sumPx($comptes, ['2714'], 'mvt_debit_N1');
 
@@ -329,13 +329,13 @@ $DP_N  = scBc($comptes, $dP_bc, 'N');
 $DP_N1 = scBc($comptes, $dP_bc, 'N1');
 $DP_N2 = scBc_N2($comptes, $dP_bc);
 
-// Dettes à exclure (liées investissement/financement) — soldes créditeurs
+// Dettes à exclure (liées investissement/financement) - soldes créditeurs
 $PFX_PASS_EXCL = ['404','461','465','4726','481','482'];
 $pexcl_N  = scPx($comptes, $PFX_PASS_EXCL, 'N');
 $pexcl_N1 = scPx($comptes, $PFX_PASS_EXCL, 'N1');
 $pexcl_N2 = scPx_N2($comptes, $PFX_PASS_EXCL);
 
-// 4793 (créditeur) et 4783 (débiteur) — ajustements cessions/acquisitions
+// 4793 (créditeur) et 4783 (débiteur) - ajustements cessions/acquisitions
 $c4793_N  = scPx($comptes, ['4793'], 'N');
 $d4783_N  = sdPx($comptes, ['4783'], 'N');
 $c4793_N1 = scPx($comptes, ['4793'], 'N1');
@@ -343,7 +343,7 @@ $d4783_N1 = sdPx($comptes, ['4783'], 'N1');
 $c4793_N2 = scPx_N2($comptes, ['4793']);
 $d4783_N2 = sdPx_N2($comptes, ['4783']);
 
-// 4752 — total mouvements débiteurs + créditeurs (subventions)
+// 4752 - total mouvements débiteurs + créditeurs (subventions)
 $mvt4752_N  = sumPx($comptes, ['4752'], 'mvt_debit_N')  + sumPx($comptes, ['4752'], 'mvt_credit_N');
 $mvt4752_N1 = sumPx($comptes, ['4752'], 'mvt_debit_N1') + sumPx($comptes, ['4752'], 'mvt_credit_N1');
 

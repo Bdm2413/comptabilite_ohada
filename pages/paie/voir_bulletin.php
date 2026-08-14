@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -181,7 +181,7 @@ $statut_label = match($b['statut']) {
             </div>
             <h1 class="text-sm font-semibold text-white">Bulletin de paie</h1>
             <span class="text-slate-500 text-xs">/</span>
-            <span class="text-slate-400 text-xs"><?php echo htmlspecialchars($b['nom'] . ' ' . $b['prenom']); ?> — <?php echo $MOIS_NOMS[$b['mois']]; ?> <?php echo $b['annee']; ?></span>
+            <span class="text-slate-400 text-xs"><?php echo htmlspecialchars($b['nom'] . ' ' . $b['prenom']); ?> - <?php echo $MOIS_NOMS[$b['mois']]; ?> <?php echo $b['annee']; ?></span>
         </div>
         <div class="flex items-center gap-2">
             <span class="text-[10px] border px-2 py-1 rounded-full <?php echo $statut_class; ?>"><?php echo $statut_label; ?></span>
@@ -244,7 +244,7 @@ $statut_label = match($b['statut']) {
                 <div class="space-y-1.5">
                     <div class="flex gap-3">
                         <span class="text-[10px] text-slate-500 w-24 flex-shrink-0">Matricule</span>
-                        <span class="text-xs text-slate-300"><?php echo htmlspecialchars($b['matricule'] ?: '—'); ?></span>
+                        <span class="text-xs text-slate-300"><?php echo htmlspecialchars($b['matricule'] ?: '-'); ?></span>
                     </div>
                     <div class="flex gap-3">
                         <span class="text-[10px] text-slate-500 w-24 flex-shrink-0">Nom et prénom</span>
@@ -252,21 +252,21 @@ $statut_label = match($b['statut']) {
                     </div>
                     <div class="flex gap-3">
                         <span class="text-[10px] text-slate-500 w-24 flex-shrink-0">Poste</span>
-                        <span class="text-xs text-slate-300"><?php echo htmlspecialchars($b['poste'] ?: '—'); ?></span>
+                        <span class="text-xs text-slate-300"><?php echo htmlspecialchars($b['poste'] ?: '-'); ?></span>
                     </div>
                     <div class="flex gap-3">
                         <span class="text-[10px] text-slate-500 w-24 flex-shrink-0">Catégorie</span>
-                        <span class="text-xs text-slate-300"><?php echo htmlspecialchars($b['categorie'] ?: '—'); ?></span>
+                        <span class="text-xs text-slate-300"><?php echo htmlspecialchars($b['categorie'] ?: '-'); ?></span>
                     </div>
                 </div>
                 <div class="space-y-1.5">
                     <div class="flex gap-3">
                         <span class="text-[10px] text-slate-500 w-28 flex-shrink-0">N° CNPS</span>
-                        <span class="text-xs text-slate-300"><?php echo htmlspecialchars($b['num_cnps'] ?: '—'); ?></span>
+                        <span class="text-xs text-slate-300"><?php echo htmlspecialchars($b['num_cnps'] ?: '-'); ?></span>
                     </div>
                     <div class="flex gap-3">
                         <span class="text-[10px] text-slate-500 w-28 flex-shrink-0">Situation</span>
-                        <span class="text-xs text-slate-300"><?php echo $b['situation_famille'] === 'M' ? 'Marié(e)' : 'Célibataire'; ?> — <?php echo $b['nb_enfants']; ?> enfant(s)</span>
+                        <span class="text-xs text-slate-300"><?php echo $b['situation_famille'] === 'M' ? 'Marié(e)' : 'Célibataire'; ?> - <?php echo $b['nb_enfants']; ?> enfant(s)</span>
                     </div>
                     <div class="flex gap-3">
                         <span class="text-[10px] text-slate-500 w-28 flex-shrink-0">Parts fiscales</span>
@@ -274,7 +274,7 @@ $statut_label = match($b['statut']) {
                     </div>
                     <div class="flex gap-3">
                         <span class="text-[10px] text-slate-500 w-28 flex-shrink-0">Date embauche</span>
-                        <span class="text-xs text-slate-300"><?php echo $b['date_embauche'] ? date('d/m/Y', strtotime($b['date_embauche'])) : '—'; ?></span>
+                        <span class="text-xs text-slate-300"><?php echo $b['date_embauche'] ? date('d/m/Y', strtotime($b['date_embauche'])) : '-'; ?></span>
                     </div>
                 </div>
             </div>
@@ -288,12 +288,12 @@ $statut_label = match($b['statut']) {
                 </tr>
                 <tr class="border-b border-slate-700/20">
                     <td class="px-5 py-2.5 text-slate-300">Salaire de base</td>
-                    <td class="px-5 py-2.5 text-center text-slate-500">—</td>
+                    <td class="px-5 py-2.5 text-center text-slate-500">-</td>
                     <td class="px-5 py-2.5 text-right font-mono text-slate-200"><?php echo number_format($b['salaire_base'], 0, ',', ' '); ?></td>
                 </tr>
                 <tr class="border-b border-slate-700/20">
                     <td class="px-5 py-2.5 text-slate-300">Indemnité de transport</td>
-                    <td class="px-5 py-2.5 text-center text-slate-500">—</td>
+                    <td class="px-5 py-2.5 text-center text-slate-500">-</td>
                     <td class="px-5 py-2.5 text-right font-mono text-slate-200"><?php echo number_format($b['indemnite_transport'], 0, ',', ' '); ?></td>
                 </tr>
 
@@ -303,31 +303,31 @@ $statut_label = match($b['statut']) {
                 </tr>
                 <tr class="border-b border-slate-700/20">
                     <td class="px-5 py-2.5 text-slate-300">CNPS - Cotisation retraite (<?php echo number_format($p['cnps_salarie_taux']*100, 1); ?>% plafonné)</td>
-                    <td class="px-5 py-2.5 text-center text-slate-500">—</td>
+                    <td class="px-5 py-2.5 text-center text-slate-500">-</td>
                     <td class="px-5 py-2.5 text-right font-mono text-red-400">- <?php echo number_format($b['cnps_salarie'], 0, ',', ' '); ?></td>
                 </tr>
                 <tr class="border-b border-slate-700/20">
                     <td class="px-5 py-2.5 text-slate-300">CMU - Couverture maladie universelle</td>
-                    <td class="px-5 py-2.5 text-center text-slate-500">—</td>
+                    <td class="px-5 py-2.5 text-center text-slate-500">-</td>
                     <td class="px-5 py-2.5 text-right font-mono text-red-400">- <?php echo number_format($b['cmu_salarie'], 0, ',', ' '); ?></td>
                 </tr>
                 <tr class="border-b border-slate-700/20">
                     <td class="px-5 py-2.5 text-slate-300 pl-7 text-slate-500 italic">
                         ITS avant RICF (brut)
                     </td>
-                    <td class="px-5 py-2.5 text-center text-slate-500">—</td>
+                    <td class="px-5 py-2.5 text-center text-slate-500">-</td>
                     <td class="px-5 py-2.5 text-right font-mono text-slate-500"><?php echo number_format($b['its_avant_ricf'], 0, ',', ' '); ?></td>
                 </tr>
                 <tr class="border-b border-slate-700/20">
                     <td class="px-5 py-2.5 text-slate-300 pl-7 text-slate-500 italic">
                         RICF (<?php echo number_format($parts, 1); ?> parts × <?php echo number_format($p['ricf_valeur_part'], 0, ',', ' '); ?> FCFA)
                     </td>
-                    <td class="px-5 py-2.5 text-center text-slate-500">—</td>
+                    <td class="px-5 py-2.5 text-center text-slate-500">-</td>
                     <td class="px-5 py-2.5 text-right font-mono text-emerald-500">- <?php echo number_format($b['ricf'], 0, ',', ' '); ?></td>
                 </tr>
                 <tr class="border-b border-slate-700/30">
                     <td class="px-5 py-2.5 text-slate-300">ITS - Impôt sur les Traitements et Salaires (net après RICF)</td>
-                    <td class="px-5 py-2.5 text-center text-slate-500">—</td>
+                    <td class="px-5 py-2.5 text-center text-slate-500">-</td>
                     <td class="px-5 py-2.5 text-right font-mono text-red-400">- <?php echo number_format($b['its_net'], 0, ',', ' '); ?></td>
                 </tr>
 
@@ -364,7 +364,7 @@ $statut_label = match($b['statut']) {
                 </tr>
                 <?php if ($b['ce_patronal'] > 0): ?>
                 <tr class="border-b border-slate-700/20">
-                    <td class="px-5 py-2 text-slate-400">Contribution Employeur - CE (<?php echo number_format($p['ce_taux']*100, 1); ?>% — expatrié)</td>
+                    <td class="px-5 py-2 text-slate-400">Contribution Employeur - CE (<?php echo number_format($p['ce_taux']*100, 1); ?>% - expatrié)</td>
                     <td></td>
                     <td class="px-5 py-2 text-right font-mono text-orange-400"><?php echo number_format($b['ce_patronal'], 0, ',', ' '); ?></td>
                 </tr>

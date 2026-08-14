@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -314,7 +314,7 @@ $tcColors = [
                             </td>
                             <!-- Poste -->
                             <td class="px-3 py-3 hidden md:table-cell">
-                                <p class="text-slate-200"><?php echo htmlspecialchars($emp['poste'] ?: '—'); ?></p>
+                                <p class="text-slate-200"><?php echo htmlspecialchars($emp['poste'] ?: '-'); ?></p>
                                 <?php if ($emp['departement']): ?>
                                 <p class="text-[10px] text-slate-500 mt-0.5"><i class="fa-solid fa-building text-[9px] mr-1"></i><?php echo htmlspecialchars($emp['departement']); ?></p>
                                 <?php endif; ?>
@@ -340,7 +340,7 @@ $tcColors = [
                                     </div>
                                     <span class="text-slate-400"><?php echo htmlspecialchars($sup['nom'].' '.$sup['prenom']); ?></span>
                                 </div>
-                                <?php else: ?><span class="text-slate-600">—</span><?php endif; ?>
+                                <?php else: ?><span class="text-slate-600">-</span><?php endif; ?>
                             </td>
                             <!-- Salaire -->
                             <td class="px-3 py-3 text-right">

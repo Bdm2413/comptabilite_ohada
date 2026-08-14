@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 $societe_id = getCurrentSocieteId();
@@ -112,7 +112,7 @@ $pct           = $total_notes > 0 ? round($total_ok / $total_notes * 100) : 0;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notes Annexes — <?= htmlspecialchars($annee) ?></title>
+    <title>Notes Annexes - <?= htmlspecialchars($annee) ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
@@ -128,9 +128,9 @@ $pct           = $total_notes > 0 ? round($total_ok / $total_notes * 100) : 0;
             <a href="../dashboard/index.php" class="text-slate-400 hover:text-emerald-400 transition text-xs">← Retour</a>
         </div>
         <h1 class="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-            Notes Annexes — SYSCOHADA Révisé
+            Notes Annexes - SYSCOHADA Révisé
         </h1>
-        <p class="text-slate-400 text-sm mt-1">Exercice <?= $annee ?> — Liasse DGI Côte d'Ivoire (Système Normal)</p>
+        <p class="text-slate-400 text-sm mt-1">Exercice <?= $annee ?> - Liasse DGI Côte d'Ivoire (Système Normal)</p>
     </div>
 
     <!-- Barre de progression globale -->
@@ -236,7 +236,7 @@ $pct           = $total_notes > 0 ? round($total_ok / $total_notes * 100) : 0;
     </div>
 
     <p class="text-xs text-slate-600 text-center mt-8">
-        Source : Liasse DGI Côte d'Ivoire — Système Normal — Plan Comptable OHADA 2017
+        Source : Liasse DGI Côte d'Ivoire - Système Normal - Plan Comptable OHADA 2017
     </p>
 </main>
 <script>

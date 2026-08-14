@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -107,7 +107,7 @@ $textes->execute([$societe_id, $annee_n]);
 $txt = [];
 foreach ($textes->fetchAll(PDO::FETCH_ASSOC) as $r) $txt[$r['cle']] = $r['contenu'];
 
-function nfN($n) { return abs((float)$n)<0.5 ? '—' : number_format((float)$n,0,',',' '); }
+function nfN($n) { return abs((float)$n)<0.5 ? '-' : number_format((float)$n,0,',',' '); }
 function hsc($v) { return htmlspecialchars($v ?? ''); }
 ?>
 <!DOCTYPE html>
@@ -115,7 +115,7 @@ function hsc($v) { return htmlspecialchars($v ?? ''); }
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Note 3E — Réévaluations <?= $annee_n ?></title>
+    <title>Note 3E - Réévaluations <?= $annee_n ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
@@ -144,9 +144,9 @@ function hsc($v) { return htmlspecialchars($v ?? ''); }
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400 mb-1">
-                <i class="fas fa-balance-scale mr-3"></i>Note 3E — Informations sur les réévaluations
+                <i class="fas fa-balance-scale mr-3"></i>Note 3E - Informations sur les réévaluations
             </h1>
-            <p class="text-slate-400 text-sm">Exercice <?= $annee_n ?> — Réévaluations effectuées par l'entité</p>
+            <p class="text-slate-400 text-sm">Exercice <?= $annee_n ?> - Réévaluations effectuées par l'entité</p>
         </div>
         <div class="flex gap-2 no-print">
             <a href="notes_annexes.php?<?= $qs ?>"
@@ -251,7 +251,7 @@ function hsc($v) { return htmlspecialchars($v ?? ''); }
                 <div class="px-5 py-3 border-b border-slate-700">
                     <h2 class="text-sm font-bold text-slate-100">
                         <i class="fas fa-table mr-2 text-teal-400"></i>
-                        Éléments réévalués par postes du bilan — Exercice <?= $annee_n ?> (en FCFA)
+                        Éléments réévalués par postes du bilan - Exercice <?= $annee_n ?> (en FCFA)
                     </h2>
                 </div>
                 <div class="overflow-x-auto">

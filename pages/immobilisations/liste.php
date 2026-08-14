@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -495,10 +495,10 @@ $preselect_parent = (int)($_GET['parent_id'] ?? 0);
             <div>
                 <label class="block text-xs text-slate-400 mb-1">
                     <i class="fas fa-puzzle-piece mr-1 text-purple-400"></i>
-                    Composant de <span class="text-slate-500">(optionnel — laisser vide si bien principal)</span>
+                    Composant de <span class="text-slate-500">(optionnel - laisser vide si bien principal)</span>
                 </label>
                 <select name="parent_id" id="formParentId" class="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm text-white focus:ring-2 focus:ring-amber-500">
-                    <option value="">— Bien principal (indépendant) —</option>
+                    <option value="">- Bien principal (indépendant) -</option>
                     <?php foreach ($parents_possibles as $p): ?>
                     <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['designation']) ?><?= $p['reference'] ? ' (' . htmlspecialchars($p['reference']) . ')' : '' ?></option>
                     <?php endforeach; ?>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -366,7 +366,7 @@ $json_tranches = json_encode($tranches);
                                     class="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none focus:border-violet-500">
                             </div>
                         </div>
-                        <p id="parts_display" class="text-[10px] text-slate-400 mt-2">Parts fiscales : <span id="parts_val" class="text-violet-300 font-semibold">—</span></p>
+                        <p id="parts_display" class="text-[10px] text-slate-400 mt-2">Parts fiscales : <span id="parts_val" class="text-violet-300 font-semibold">-</span></p>
                     </div>
                 </div>
 
@@ -388,15 +388,15 @@ $json_tranches = json_encode($tranches);
                             <div class="space-y-1.5">
                                 <div class="flex justify-between text-xs">
                                     <span class="text-slate-400">Salaire de base</span>
-                                    <span id="r_brut" class="font-mono text-slate-300">—</span>
+                                    <span id="r_brut" class="font-mono text-slate-300">-</span>
                                 </div>
                                 <div class="flex justify-between text-xs">
                                     <span class="text-slate-400">Indemnité transport</span>
-                                    <span id="r_transport" class="font-mono text-slate-300">—</span>
+                                    <span id="r_transport" class="font-mono text-slate-300">-</span>
                                 </div>
                                 <div class="flex justify-between text-xs font-semibold border-t border-slate-700/50 pt-1.5 mt-1.5">
                                     <span class="text-white">Brut + Transport</span>
-                                    <span id="r_brut_transport" class="font-mono text-white">—</span>
+                                    <span id="r_brut_transport" class="font-mono text-white">-</span>
                                 </div>
                             </div>
                         </div>
@@ -407,23 +407,23 @@ $json_tranches = json_encode($tranches);
                             <div class="space-y-1.5">
                                 <div class="flex justify-between text-xs">
                                     <span class="text-slate-400">CNPS retraite (<span id="r_cnps_pct"><?php echo number_format($p['cnps_salarie_taux']*100, 1); ?>%</span>)</span>
-                                    <span id="r_cnps_sal" class="font-mono text-red-400">—</span>
+                                    <span id="r_cnps_sal" class="font-mono text-red-400">-</span>
                                 </div>
                                 <div class="flex justify-between text-xs">
                                     <span class="text-slate-400">CMU salarié</span>
-                                    <span id="r_cmu_sal" class="font-mono text-red-400">—</span>
+                                    <span id="r_cmu_sal" class="font-mono text-red-400">-</span>
                                 </div>
                                 <div class="flex justify-between text-xs text-slate-500">
                                     <span>ITS avant RICF</span>
-                                    <span id="r_its_avant" class="font-mono">—</span>
+                                    <span id="r_its_avant" class="font-mono">-</span>
                                 </div>
                                 <div class="flex justify-between text-xs text-slate-500">
-                                    <span>RICF (<span id="r_parts">—</span> parts × <?php echo number_format($p['ricf_valeur_part'], 0, ',', ' '); ?> FCFA)</span>
-                                    <span id="r_ricf" class="font-mono text-emerald-500">— </span>
+                                    <span>RICF (<span id="r_parts">-</span> parts × <?php echo number_format($p['ricf_valeur_part'], 0, ',', ' '); ?> FCFA)</span>
+                                    <span id="r_ricf" class="font-mono text-emerald-500">- </span>
                                 </div>
                                 <div class="flex justify-between text-xs">
                                     <span class="text-slate-400">ITS net (après RICF)</span>
-                                    <span id="r_its_net" class="font-mono text-red-400">—</span>
+                                    <span id="r_its_net" class="font-mono text-red-400">-</span>
                                 </div>
                             </div>
                         </div>
@@ -432,7 +432,7 @@ $json_tranches = json_encode($tranches);
                         <div class="p-4 bg-emerald-500/5 border-b border-slate-700/30">
                             <div class="flex justify-between items-center">
                                 <span class="text-sm font-bold text-white">NET À PAYER</span>
-                                <span id="r_net" class="text-xl font-bold font-mono text-emerald-300">—</span>
+                                <span id="r_net" class="text-xl font-bold font-mono text-emerald-300">-</span>
                             </div>
                         </div>
 
@@ -442,31 +442,31 @@ $json_tranches = json_encode($tranches);
                             <div class="space-y-1.5">
                                 <div class="flex justify-between text-xs">
                                     <span class="text-slate-400">CNPS retraite (<?php echo number_format($p['cnps_patronal_taux']*100, 1); ?>%)</span>
-                                    <span id="r_cnps_pat" class="font-mono text-orange-400">—</span>
+                                    <span id="r_cnps_pat" class="font-mono text-orange-400">-</span>
                                 </div>
                                 <div class="flex justify-between text-xs">
                                     <span class="text-slate-400">PF (<?php echo number_format($p['pf_taux']*100, 1); ?>%)</span>
-                                    <span id="r_pf" class="font-mono text-orange-400">—</span>
+                                    <span id="r_pf" class="font-mono text-orange-400">-</span>
                                 </div>
                                 <div class="flex justify-between text-xs">
                                     <span class="text-slate-400">AM (<?php echo number_format($p['am_taux']*100, 2); ?>%)</span>
-                                    <span id="r_am" class="font-mono text-orange-400">—</span>
+                                    <span id="r_am" class="font-mono text-orange-400">-</span>
                                 </div>
                                 <div class="flex justify-between text-xs">
                                     <span class="text-slate-400">AT (<?php echo number_format($p['at_taux']*100, 1); ?>%)</span>
-                                    <span id="r_at" class="font-mono text-orange-400">—</span>
+                                    <span id="r_at" class="font-mono text-orange-400">-</span>
                                 </div>
                                 <div class="flex justify-between text-xs">
                                     <span class="text-slate-400">CMU patronal</span>
-                                    <span id="r_cmu_pat" class="font-mono text-orange-400">—</span>
+                                    <span id="r_cmu_pat" class="font-mono text-orange-400">-</span>
                                 </div>
                                 <div id="row_ce" class="flex justify-between text-xs hidden">
-                                    <span class="text-slate-400">CE (<?php echo number_format($p['ce_taux']*100, 1); ?>% — expatrié)</span>
-                                    <span id="r_ce" class="font-mono text-orange-400">—</span>
+                                    <span class="text-slate-400">CE (<?php echo number_format($p['ce_taux']*100, 1); ?>% - expatrié)</span>
+                                    <span id="r_ce" class="font-mono text-orange-400">-</span>
                                 </div>
                                 <div class="flex justify-between text-xs">
                                     <span class="text-slate-400">CN+TA+FDFP (<?php echo number_format(($p['cn_taux']+$p['ta_taux']+$p['fdfp_taux'])*100, 1); ?>%)</span>
-                                    <span id="r_cntafdfp" class="font-mono text-orange-400">—</span>
+                                    <span id="r_cntafdfp" class="font-mono text-orange-400">-</span>
                                 </div>
                             </div>
                         </div>
@@ -475,7 +475,7 @@ $json_tranches = json_encode($tranches);
                         <div class="p-4 bg-rose-500/5">
                             <div class="flex justify-between items-center">
                                 <span class="text-sm font-bold text-white">COÛT TOTAL EMPLOYEUR</span>
-                                <span id="r_cout" class="text-lg font-bold font-mono text-rose-300">—</span>
+                                <span id="r_cout" class="text-lg font-bold font-mono text-rose-300">-</span>
                             </div>
                         </div>
                     </div>

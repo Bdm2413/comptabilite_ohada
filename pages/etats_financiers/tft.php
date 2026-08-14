@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -91,14 +91,14 @@ $detail_rows = [
         'formula' => 'XD + D(654) − C(754) + XF + TO − RP − RQ − RS',
         'cols'    => ['Composante', $annee_n, $annee_n1],
         'items'   => [
-            ['XD — Excédent Brut d\'Exploitation', $XD_N, $XD_N1],
+            ['XD - Excédent Brut d\'Exploitation', $XD_N, $XD_N1],
             ['+ D(654) VNC cessions incorporelles', $vnc_N, $vnc_N1],
             ['− C(754) Produits de cession', -$prodCess_N, -$prodCess_N1],
-            ['+ XF — Résultat financier', $XF_N, $XF_N1],
-            ['+ TO — Produits HAO', $TO_N, $TO_N1],
-            ['− RP — Charges HAO', -$RP_N, -$RP_N1],
-            ['− RQ — Participation des travailleurs', -$RQ_N, -$RQ_N1],
-            ['− RS — Impôt sur le résultat', -$RS_N, -$RS_N1],
+            ['+ XF - Résultat financier', $XF_N, $XF_N1],
+            ['+ TO - Produits HAO', $TO_N, $TO_N1],
+            ['− RP - Charges HAO', -$RP_N, -$RP_N1],
+            ['− RQ - Participation des travailleurs', -$RQ_N, -$RQ_N1],
+            ['− RS - Impôt sur le résultat', -$RS_N, -$RS_N1],
         ],
     ],
     'FB' => [
@@ -397,7 +397,7 @@ $check_zf_ok  = abs(($ZD_N + $ZE_N) - $ZF_N) < 1;
             <div class="flex items-center justify-between mb-2">
                 <div>
                     <h1 class="page-title font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 mb-1">
-                        <i class="fas fa-stream mr-3"></i>Tableau de Flux de Trésorerie — SYSCOHADA Révisé
+                        <i class="fas fa-stream mr-3"></i>Tableau de Flux de Trésorerie - SYSCOHADA Révisé
                     </h1>
                     <p class="text-slate-400 text-sm">
                         Flux de trésorerie de l'exercice du <?= date('d/m/Y', strtotime($date_debut_n)) ?> au <?= date('d/m/Y', strtotime($date_fin_n)) ?>
@@ -528,7 +528,7 @@ $check_zf_ok  = abs(($ZD_N + $ZE_N) - $ZF_N) < 1;
         <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl overflow-hidden print-table">
             <div class="bg-slate-700/50 px-4 py-3 text-center">
                 <h2 class="text-sm font-bold text-white uppercase tracking-wider">Tableau de Flux de Trésorerie</h2>
-                <p class="text-xs text-slate-400 mt-0.5">SYSCOHADA Révisé — En vigueur depuis le 01/01/2018</p>
+                <p class="text-xs text-slate-400 mt-0.5">SYSCOHADA Révisé - En vigueur depuis le 01/01/2018</p>
             </div>
             <table class="w-full text-xs border-collapse" id="tftTable">
                 <thead>
@@ -720,7 +720,7 @@ function bf_row($label, $val_n, $val_n1) {
         <!-- ── Graphique en cascade ── -->
         <div class="no-print mt-4 bg-slate-800/50 border border-slate-700/50 rounded-xl p-4">
             <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">
-                <i class="fas fa-chart-bar mr-1 text-emerald-400"></i>Cascade de trésorerie — Exercice <?= $annee_n ?>
+                <i class="fas fa-chart-bar mr-1 text-emerald-400"></i>Cascade de trésorerie - Exercice <?= $annee_n ?>
             </h3>
             <div style="height:240px">
                 <canvas id="waterfallChart"></canvas>
@@ -732,7 +732,7 @@ function bf_row($label, $val_n, $val_n1) {
             <p class="text-[10px] text-slate-500">
                 <strong class="text-slate-400">Note :</strong> Tableau généré par méthode indirecte (additive) conformément au SYSCOHADA révisé (01/01/2018).
                 Cliquez sur une ligne pour afficher le détail du calcul. Survolez les codes REF pour une description pédagogique.
-                Rubriques selon le Plan Comptable OHADA et le livre « Tout sur le TFT dans l'espace OHADA » — DA CHARLY.
+                Rubriques selon le Plan Comptable OHADA et le livre « Tout sur le TFT dans l'espace OHADA » - DA CHARLY.
             </p>
         </div>
 

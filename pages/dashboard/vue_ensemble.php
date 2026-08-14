@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -324,7 +324,7 @@ function fmt($n) {
                 <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5">
                     <div class="flex items-center gap-2 mb-4">
                         <i class="fas fa-calendar-alt text-blue-400"></i>
-                        <h3 class="font-semibold text-white text-sm">Activité — <?php
+                        <h3 class="font-semibold text-white text-sm">Activité - <?php
                             $moisNoms = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
                             echo $moisNoms[(int)date('n') - 1] . ' ' . date('Y');
                         ?></h3>

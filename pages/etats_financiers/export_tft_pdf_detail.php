@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 require_once '../../vendor/autoload.php';
 requireLogin();
@@ -54,7 +54,7 @@ $detail_rows = [
     'ZA' => ['formula' => 'Tréso. actif N-1 + D(4726) − C(4726) − Tréso. passif N-1',
         'items' => [['Trésorerie actif (50→58)', $tresoAct_N1, null], ['+ D(4726)', $t4726d_N1, null], ['− C(4726)', -$t4726c_N1, null], ['− Trésorerie passif', -$tresoPass_N1, null]]],
     'FA' => ['formula' => 'XD + D(654) − C(754) + XF + TO − RP − RQ − RS',
-        'items' => [['XD — Excédent Brut d\'Exploitation', $XD_N, $XD_N1], ['+ D(654) VNC cessions', $vnc_N, $vnc_N1], ['− C(754) Produits cessions', -$prodCess_N, -$prodCess_N1], ['+ XF Résultat financier', $XF_N, $XF_N1], ['+ TO Produits HAO', $TO_N, $TO_N1], ['− RP Charges HAO', -$RP_N, -$RP_N1], ['− RQ Participation', -$RQ_N, -$RQ_N1], ['− RS Impôt', -$RS_N, -$RS_N1]]],
+        'items' => [['XD - Excédent Brut d\'Exploitation', $XD_N, $XD_N1], ['+ D(654) VNC cessions', $vnc_N, $vnc_N1], ['− C(754) Produits cessions', -$prodCess_N, -$prodCess_N1], ['+ XF Résultat financier', $XF_N, $XF_N1], ['+ TO Produits HAO', $TO_N, $TO_N1], ['− RP Charges HAO', -$RP_N, -$RP_N1], ['− RQ Participation', -$RQ_N, -$RQ_N1], ['− RS Impôt', -$RS_N, -$RS_N1]]],
     'FB' => ['formula' => 'BA(N) − BA(N-1) − 485(N) + 485(N-1) + D(4781) − C(4791)',
         'items' => [['Rubrique BA (fin N)', $BA_N, $BA_N1], ['− Rubrique BA (fin N-1)', -$BA_N1, -$BA_N2], ['− sdD 485 (N)', -$s485_N, -$s485_N1], ['+ sdD 485 (N-1)', $s485_N1, $s485_N2], ['+ sdD 4781', $d4781_N, $d4781_N1], ['− sdC 4791', -$c4791_N, -$c4791_N1]]],
     'FC' => ['formula' => 'BB(N) − BB(N-1)',
@@ -112,7 +112,7 @@ $pdf->setHeaderFont(['helvetica', 'B', 9]);
 $pdf->setFooterFont(['helvetica', '', 7]);
 $pdf->SetAutoPageBreak(true, 15);
 $pdf->SetFont('helvetica', '', 7.5);
-$pdf->SetHeaderData('', 0, $societe, "Tableau de Flux de Trésorerie DÉTAILLÉ — Exercice {$annee_n}");
+$pdf->SetHeaderData('', 0, $societe, "Tableau de Flux de Trésorerie DÉTAILLÉ - Exercice {$annee_n}");
 $pdf->AddPage();
 
 // ─── Helpers HTML ────────────────────────────────────────────────────
@@ -207,7 +207,7 @@ $emitRow('FI', '+ Encaissements cessions immos incorp. et corp.', '', $FI_N, $FI
 $emitRow('FJ', '+ Encaissements cessions immos financières', '', $FJ_N, $FJ_N1);
 $emitRow('ZC', 'Flux de trésorerie provenant des activités d\'investissement', 'C', $ZC_N, $ZC_N1, 'total');
 
-$rows .= $trMain('', 'Flux de trésorerie — financement capitaux propres', '', null, null, 'section');
+$rows .= $trMain('', 'Flux de trésorerie - financement capitaux propres', '', null, null, 'section');
 $emitRow('FK', '+ Augmentations de capital par apports nouveaux', '', $FK_N, $FK_N1);
 $emitRow('FL', '+ Subventions d\'investissement reçues', '', $FL_N, $FL_N1);
 $emitRow('FM', '- Prélèvements sur le capital', '', -$FM_N, -$FM_N1);

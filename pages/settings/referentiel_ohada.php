@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -76,7 +76,7 @@ $niveauColors = [1=>'bg-violet-900/40 text-violet-300',2=>'bg-sky-900/40 text-sk
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Référentiel OHADA — Plan Comptable SYSCOHADA 2017</title>
+    <title>Référentiel OHADA - Plan Comptable SYSCOHADA 2017</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
@@ -100,9 +100,9 @@ $niveauColors = [1=>'bg-violet-900/40 text-violet-300',2=>'bg-sky-900/40 text-sk
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-sky-400 mb-1">
-                <i class="fas fa-book mr-3"></i>Référentiel OHADA — Plan Comptable SYSCOHADA Révisé 2017
+                <i class="fas fa-book mr-3"></i>Référentiel OHADA - Plan Comptable SYSCOHADA Révisé 2017
             </h1>
-            <p class="text-slate-400 text-sm">Base de référence officielle des comptes — Classes 1 à 8</p>
+            <p class="text-slate-400 text-sm">Base de référence officielle des comptes - Classes 1 à 8</p>
         </div>
         <?php if (!$tableExists): ?>
         <a href="../../setup/migration_ohada_referentiel.php"
@@ -169,7 +169,7 @@ $niveauColors = [1=>'bg-violet-900/40 text-violet-300',2=>'bg-sky-900/40 text-sk
                 <select name="classe" class="px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg focus:ring-2 focus:ring-violet-500 text-slate-100 text-sm">
                     <option value="">Toutes</option>
                     <?php foreach ($classeLabels as $k => $v): ?>
-                    <option value="<?= $k ?>" <?= $classe==$k?'selected':'' ?>>Classe <?= $k ?> — <?= $v ?></option>
+                    <option value="<?= $k ?>" <?= $classe==$k?'selected':'' ?>>Classe <?= $k ?> - <?= $v ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -197,7 +197,7 @@ $niveauColors = [1=>'bg-violet-900/40 text-violet-300',2=>'bg-sky-900/40 text-sk
         <div class="px-6 py-3 border-b border-slate-700 flex items-center justify-between">
             <p class="text-sm text-slate-400">
                 <span class="text-slate-200 font-medium"><?= number_format($totalFiltre) ?></span> entrée(s)
-                — page <span class="text-slate-200 font-medium"><?= $page ?></span> / <?= $totalPages ?>
+                - page <span class="text-slate-200 font-medium"><?= $page ?></span> / <?= $totalPages ?>
                 (<?= $perPage ?> par page)
             </p>
             <div class="flex gap-2 text-xs">
@@ -247,7 +247,7 @@ $niveauColors = [1=>'bg-violet-900/40 text-violet-300',2=>'bg-sky-900/40 text-sk
                         <span class="<?= $niveauColors[$n] ?> text-xs px-1.5 py-0.5 rounded font-medium">N<?= $n ?></span>
                     </td>
                     <td class="px-4 py-1.5">
-                        <span class="text-xs text-slate-400"><?= $r['classe'] ?> — <?= $classeLabels[$r['classe']] ?? '' ?></span>
+                        <span class="text-xs text-slate-400"><?= $r['classe'] ?> - <?= $classeLabels[$r['classe']] ?? '' ?></span>
                     </td>
                     <td class="px-4 py-1.5">
                         <?php if ($r['compte_2']): ?>
@@ -270,22 +270,22 @@ $niveauColors = [1=>'bg-violet-900/40 text-violet-300',2=>'bg-sky-900/40 text-sk
                     <td class="px-3 py-1.5 text-center">
                         <?php if ($r['bd']): ?>
                         <span class="text-xs font-mono font-semibold text-sky-300"><?= htmlspecialchars($r['bd']) ?></span>
-                        <?php else: ?><span class="text-slate-700">—</span><?php endif; ?>
+                        <?php else: ?><span class="text-slate-700">-</span><?php endif; ?>
                     </td>
                     <td class="px-3 py-1.5 text-center">
                         <?php if ($r['bc']): ?>
                         <span class="text-xs font-mono font-semibold text-emerald-300"><?= htmlspecialchars($r['bc']) ?></span>
-                        <?php else: ?><span class="text-slate-700">—</span><?php endif; ?>
+                        <?php else: ?><span class="text-slate-700">-</span><?php endif; ?>
                     </td>
                     <td class="px-3 py-1.5 text-center">
                         <?php if ($r['rd']): ?>
                         <span class="text-xs font-mono font-semibold text-amber-300"><?= htmlspecialchars($r['rd']) ?></span>
-                        <?php else: ?><span class="text-slate-700">—</span><?php endif; ?>
+                        <?php else: ?><span class="text-slate-700">-</span><?php endif; ?>
                     </td>
                     <td class="px-3 py-1.5 text-center">
                         <?php if ($r['rc']): ?>
                         <span class="text-xs font-mono font-semibold text-rose-300"><?= htmlspecialchars($r['rc']) ?></span>
-                        <?php else: ?><span class="text-slate-700">—</span><?php endif; ?>
+                        <?php else: ?><span class="text-slate-700">-</span><?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -341,7 +341,7 @@ $niveauColors = [1=>'bg-violet-900/40 text-violet-300',2=>'bg-sky-900/40 text-sk
 
     <!-- Note -->
     <p class="text-xs text-slate-600 mt-3 text-right">
-        Source : Plan Comptable SYSCOHADA Révisé — OHADA 2017
+        Source : Plan Comptable SYSCOHADA Révisé - OHADA 2017
     </p>
 
     <?php endif; ?>

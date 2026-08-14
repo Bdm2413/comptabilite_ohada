@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -274,7 +274,7 @@ $pageTitle = $isEdit ? 'Modifier l\'employé' : 'Nouvel employé';
                                 <div>
                                     <label class="field-label">Sexe</label>
                                     <select name="sexe" class="fi">
-                                        <option value="">—</option>
+                                        <option value="">-</option>
                                         <option value="M" <?php echo fsel('sexe','M'); ?>>Masculin</option>
                                         <option value="F" <?php echo fsel('sexe','F'); ?>>Féminin</option>
                                     </select>
@@ -388,11 +388,11 @@ $pageTitle = $isEdit ? 'Modifier l\'employé' : 'Nouvel employé';
                                 <div>
                                     <label class="field-label">Supérieur hiérarchique</label>
                                     <select name="superieur_id" class="fi">
-                                        <option value="">— Aucun —</option>
+                                        <option value="">- Aucun -</option>
                                         <?php foreach ($tous_employes as $sup):
                                             if (($editEmploye['id'] ?? 0) == $sup['id']) continue; ?>
                                         <option value="<?php echo $sup['id']; ?>" <?php echo ($formData['superieur_id'] ?? null) == $sup['id'] ? 'selected' : ''; ?>>
-                                            <?php echo htmlspecialchars($sup['nom'].' '.$sup['prenom'].($sup['poste'] ? ' — '.$sup['poste'] : '')); ?>
+                                            <?php echo htmlspecialchars($sup['nom'].' '.$sup['prenom'].($sup['poste'] ? ' - '.$sup['poste'] : '')); ?>
                                         </option>
                                         <?php endforeach; ?>
                                     </select>

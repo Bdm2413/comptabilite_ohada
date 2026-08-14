@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 require_once '../../vendor/autoload.php';
 requireLogin();
@@ -76,7 +76,7 @@ $row = 1;
 
 // Titre
 $ws->mergeCells("A{$row}:E{$row}");
-$ws->setCellValue("A{$row}", 'TABLEAU DE FLUX DE TRÉSORERIE — SYSCOHADA RÉVISÉ');
+$ws->setCellValue("A{$row}", 'TABLEAU DE FLUX DE TRÉSORERIE - SYSCOHADA RÉVISÉ');
 $ws->getStyle("A{$row}")->applyFromArray([
     'font'      => ['bold' => true, 'size' => 13, 'color' => ['argb' => $C_WHITE]],
     'fill'      => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => $C_HEADER]],

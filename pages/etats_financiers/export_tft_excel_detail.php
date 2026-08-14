@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 require_once '../../vendor/autoload.php';
 requireLogin();
@@ -63,7 +63,7 @@ $detail_rows = [
     'ZA' => ['formula' => 'Tréso. actif N-1 + D(4726) − C(4726) − Tréso. passif N-1',
         'items' => [['Trésorerie actif (50→58)', $tresoAct_N1, null], ['+ D(4726)', $t4726d_N1, null], ['− C(4726)', -$t4726c_N1, null], ['− Trésorerie passif', -$tresoPass_N1, null]]],
     'FA' => ['formula' => 'XD + D(654) − C(754) + XF + TO − RP − RQ − RS',
-        'items' => [['XD — Excédent Brut d\'Exploitation', $XD_N, $XD_N1], ['+ D(654) VNC cessions', $vnc_N, $vnc_N1], ['− C(754) Produits cessions', -$prodCess_N, -$prodCess_N1], ['+ XF Résultat financier', $XF_N, $XF_N1], ['+ TO Produits HAO', $TO_N, $TO_N1], ['− RP Charges HAO', -$RP_N, -$RP_N1], ['− RQ Participation', -$RQ_N, -$RQ_N1], ['− RS Impôt', -$RS_N, -$RS_N1]]],
+        'items' => [['XD - Excédent Brut d\'Exploitation', $XD_N, $XD_N1], ['+ D(654) VNC cessions', $vnc_N, $vnc_N1], ['− C(754) Produits cessions', -$prodCess_N, -$prodCess_N1], ['+ XF Résultat financier', $XF_N, $XF_N1], ['+ TO Produits HAO', $TO_N, $TO_N1], ['− RP Charges HAO', -$RP_N, -$RP_N1], ['− RQ Participation', -$RQ_N, -$RQ_N1], ['− RS Impôt', -$RS_N, -$RS_N1]]],
     'FB' => ['formula' => 'BA(N) − BA(N-1) − 485(N) + 485(N-1) + D(4781) − C(4791)',
         'items' => [['Rubrique BA (fin N)', $BA_N, $BA_N1], ['− Rubrique BA (fin N-1)', -$BA_N1, -$BA_N2], ['− sdD 485 (N)', -$s485_N, -$s485_N1], ['+ sdD 485 (N-1)', $s485_N1, $s485_N2], ['+ sdD 4781', $d4781_N, $d4781_N1], ['− sdC 4791', -$c4791_N, -$c4791_N1]]],
     'FC' => ['formula' => 'BB(N) − BB(N-1)',
@@ -122,8 +122,8 @@ $C_SECTION = 'FF374151';
 $C_TOTAL   = 'FF0D5C3A';
 $C_SUBTOT  = 'FF1A3A2E';
 $C_WHITE   = 'FFFFFFFF';
-$C_FORMULA = 'FFDBEAFE'; // bleu clair — ligne formule
-$C_DETAIL  = 'FFEFF6FF'; // bleu très clair — lignes composantes
+$C_FORMULA = 'FFDBEAFE'; // bleu clair - ligne formule
+$C_DETAIL  = 'FFEFF6FF'; // bleu très clair - lignes composantes
 $C_RED     = 'FFDC2626';
 $C_BLUE    = 'FF1E40AF';
 $C_GRAY    = 'FF374151';
@@ -132,7 +132,7 @@ $row = 1;
 
 // Titre principal
 $ws->mergeCells("A{$row}:E{$row}");
-$ws->setCellValue("A{$row}", 'TABLEAU DE FLUX DE TRÉSORERIE DÉTAILLÉ — SYSCOHADA RÉVISÉ');
+$ws->setCellValue("A{$row}", 'TABLEAU DE FLUX DE TRÉSORERIE DÉTAILLÉ - SYSCOHADA RÉVISÉ');
 $ws->getStyle("A{$row}")->applyFromArray([
     'font'      => ['bold' => true, 'size' => 13, 'color' => ['argb' => $C_WHITE]],
     'fill'      => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => $C_HEADER]],
@@ -143,7 +143,7 @@ $row++;
 
 // Sous-titre
 $ws->mergeCells("A{$row}:E{$row}");
-$ws->setCellValue("A{$row}", $societe . '  —  Période : ' . date('d/m/Y', strtotime($date_debut_n)) . ' au ' . date('d/m/Y', strtotime($date_fin_n)));
+$ws->setCellValue("A{$row}", $societe . '  -  Période : ' . date('d/m/Y', strtotime($date_debut_n)) . ' au ' . date('d/m/Y', strtotime($date_fin_n)));
 $ws->getStyle("A{$row}")->applyFromArray([
     'font'      => ['italic' => true, 'size' => 9, 'color' => ['argb' => $C_WHITE]],
     'fill'      => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => $C_HEADER]],

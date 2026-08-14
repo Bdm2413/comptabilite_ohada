@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -694,13 +694,13 @@ if ($immo['id_ecriture_cession']) {
                                 <?php if ($periodicite === 'mensuelle'): ?>
                                 <select name="periode_key" class="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm text-white focus:ring-2 focus:ring-amber-500">
                                     <?php foreach ($periodes_disponibles as $p): ?>
-                                    <option value="<?= $p['key'] ?>"><?= $p['label'] ?> — <?= number_format($p['montant'], 0, ',', ' ') ?> FCFA</option>
+                                    <option value="<?= $p['key'] ?>"><?= $p['label'] ?> - <?= number_format($p['montant'], 0, ',', ' ') ?> FCFA</option>
                                     <?php endforeach; ?>
                                 </select>
                                 <?php else: ?>
                                 <select name="exercice" class="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm text-white focus:ring-2 focus:ring-amber-500">
                                     <?php foreach ($periodes_disponibles as $p): ?>
-                                    <option value="<?= $p['key'] ?>"><?= $p['label'] ?> — <?= number_format($p['montant'], 0, ',', ' ') ?> FCFA</option>
+                                    <option value="<?= $p['key'] ?>"><?= $p['label'] ?> - <?= number_format($p['montant'], 0, ',', ' ') ?> FCFA</option>
                                     <?php endforeach; ?>
                                 </select>
                                 <?php endif; ?>
@@ -759,7 +759,7 @@ if ($immo['id_ecriture_cession']) {
                                             <i class="fas fa-external-link-alt text-[9px] ml-0.5 opacity-60"></i>
                                         </a>
                                         <?php else: ?>
-                                        <span class="text-slate-500">—</span>
+                                        <span class="text-slate-500">-</span>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -832,10 +832,10 @@ if ($immo['id_ecriture_cession']) {
                             <?php endif; ?>
                         </td>
                         <td class="px-4 py-2 text-slate-400">
-                            <?= $c['amortissable'] && $c['duree_amortissement'] ? $c['duree_amortissement'] . ' ans' : '<span class="text-slate-600">—</span>' ?>
+                            <?= $c['amortissable'] && $c['duree_amortissement'] ? $c['duree_amortissement'] . ' ans' : '<span class="text-slate-600">-</span>' ?>
                         </td>
                         <td class="px-4 py-2 text-right font-mono text-blue-400"><?= number_format($c['valeur_brute'], 0, ',', ' ') ?></td>
-                        <td class="px-4 py-2 text-right font-mono text-red-400"><?= $c['amort_cumul'] > 0 ? number_format($c['amort_cumul'], 0, ',', ' ') : '—' ?></td>
+                        <td class="px-4 py-2 text-right font-mono text-red-400"><?= $c['amort_cumul'] > 0 ? number_format($c['amort_cumul'], 0, ',', ' ') : '-' ?></td>
                         <td class="px-4 py-2 text-right font-mono font-semibold text-emerald-400"><?= number_format($c_vnc, 0, ',', ' ') ?></td>
                         <td class="px-4 py-2 text-center">
                             <span class="px-2 py-0.5 rounded text-xs <?= $cStatusColors[$c['statut']] ?>">
@@ -940,7 +940,7 @@ if ($immo['id_ecriture_cession']) {
                         <p class="text-xs text-slate-400 mb-3 uppercase font-semibold tracking-wide">Schéma des écritures à générer</p>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                             <div class="space-y-1.5">
-                                <p class="text-slate-500 font-semibold mb-2">Écriture 1 — Sortie du bilan</p>
+                                <p class="text-slate-500 font-semibold mb-2">Écriture 1 - Sortie du bilan</p>
                                 <?php if ($amort_cumul_total > 0): ?>
                                 <div class="flex justify-between">
                                     <span class="text-amber-400 font-mono">Débit <?= $immo['compte_amortissement'] ?></span>
@@ -960,7 +960,7 @@ if ($immo['id_ecriture_cession']) {
                             </div>
                             <?php if ($immo['valeur_cession']): ?>
                             <div class="space-y-1.5">
-                                <p class="text-slate-500 font-semibold mb-2">Écriture 2 — Produit de cession</p>
+                                <p class="text-slate-500 font-semibold mb-2">Écriture 2 - Produit de cession</p>
                                 <div class="flex justify-between">
                                     <span class="text-amber-400 font-mono">Débit <?= $suggest_contrep ?> <span class="text-slate-500">(Banque)</span></span>
                                     <span class="text-slate-300"><?= number_format($immo['valeur_cession'], 0, ',', ' ') ?></span>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 require_once '../../vendor/autoload.php';
 requireLogin();
@@ -190,7 +190,7 @@ try {
                       $rubriques_actif, $rubriques_passif, $is_with_comptes);
     calculerTotauxActif($actif);
 
-    // CF (Réserves indisponibles) — compte 11 cumulatif
+    // CF (Réserves indisponibles) - compte 11 cumulatif
     $stmt_cf = $db->prepare("
         SELECT COALESCE(SUM(le.credit - le.debit), 0)
         FROM plan_comptable pc
@@ -203,7 +203,7 @@ try {
     $stmt_cf->execute([$date_fin, $societe_id, $societe_id]);
     $passif['CF']['net'] = (float)$stmt_cf->fetchColumn();
 
-    // CH (Report à nouveau) — compte 12 (affectations) + compte 13 (résultats antérieurs avant N)
+    // CH (Report à nouveau) - compte 12 (affectations) + compte 13 (résultats antérieurs avant N)
     $stmt_ch12 = $db->prepare("
         SELECT COALESCE(SUM(le.credit - le.debit), 0)
         FROM plan_comptable pc
@@ -229,7 +229,7 @@ try {
     $resultat_n1_pour_ch = (float)$stmt_ch13->fetchColumn();
     $passif['CH']['net'] = $report_12 + $resultat_n1_pour_ch;
 
-    // CJ (Résultat net exercice N) — classes 6, 7, 8 cumulatif jusqu'à date_fin
+    // CJ (Résultat net exercice N) - classes 6, 7, 8 cumulatif jusqu'à date_fin
     $stmt_cj = $db->prepare("
         SELECT COALESCE(SUM(le.credit - le.debit), 0)
         FROM plan_comptable pc
@@ -265,7 +265,7 @@ try {
     $stmt_ch13->execute([$date_debut_n1, $societe_id, $societe_id]);
     $passif_n1['CH']['net'] = $report_12_n1 + (float)$stmt_ch13->fetchColumn();
 
-    // CJ N-1 = compte 13 (<= fin N-1) — le résultat N-1 est déjà clôturé dans le compte 13
+    // CJ N-1 = compte 13 (<= fin N-1) - le résultat N-1 est déjà clôturé dans le compte 13
     // (on n'utilise PAS les classes 6/7/8 pour N-1, contrairement à N)
     $stmt_cj_n1 = $db->prepare("
         SELECT COALESCE(SUM(le.credit - le.debit), 0)

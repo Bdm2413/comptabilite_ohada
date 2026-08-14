@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -68,7 +68,7 @@ function val(array $d, string $k): string {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Note 2 — Informations obligatoires <?= $annee_n ?></title>
+    <title>Note 2 - Informations obligatoires <?= $annee_n ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
@@ -96,9 +96,9 @@ function val(array $d, string $k): string {
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 mb-1">
-                <i class="fas fa-info-circle mr-3"></i>Note 2 — Informations obligatoires
+                <i class="fas fa-info-circle mr-3"></i>Note 2 - Informations obligatoires
             </h1>
-            <p class="text-slate-400 text-sm">Exercice <?= $annee_n ?> — SYSCOHADA Système Normal</p>
+            <p class="text-slate-400 text-sm">Exercice <?= $annee_n ?> - SYSCOHADA Système Normal</p>
         </div>
         <div class="flex gap-2 no-print">
             <a href="notes_annexes.php?<?= $qs ?>"
@@ -140,7 +140,7 @@ function val(array $d, string $k): string {
     <form method="POST">
 
     <!-- ══════════════════════════════════════════════════════════
-         SECTION A — Déclaration de conformité & faits marquants
+         SECTION A - Déclaration de conformité & faits marquants
     ══════════════════════════════════════════════════════════ -->
     <div class="section-card print-section bg-slate-800 border border-slate-700 rounded-xl mb-5 overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-700 flex items-center gap-3">
@@ -171,7 +171,7 @@ function val(array $d, string $k): string {
     </div>
 
     <!-- ══════════════════════════════════════════════════════════
-         SECTION B — Règles et méthodes comptables
+         SECTION B - Règles et méthodes comptables
     ══════════════════════════════════════════════════════════ -->
     <div class="section-card print-section bg-slate-800 border border-slate-700 rounded-xl mb-5 overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-700 flex items-center gap-3">
@@ -186,7 +186,7 @@ function val(array $d, string $k): string {
             <!-- B1 -->
             <div class="border-l-2 border-purple-700/50 pl-4">
                 <label class="block text-xs font-semibold text-purple-300 mb-2 uppercase tracking-wide">
-                    B1 — Bases générales d'évaluation
+                    B1 - Bases générales d'évaluation
                 </label>
                 <textarea name="B_bases" rows="3"
                           placeholder="Ex. : Les états financiers sont établis selon la convention du coût historique. Les actifs sont évalués à leur coût d'acquisition ou de production."
@@ -196,7 +196,7 @@ function val(array $d, string $k): string {
             <!-- B2 -->
             <div class="border-l-2 border-purple-700/50 pl-4">
                 <label class="block text-xs font-semibold text-purple-300 mb-2 uppercase tracking-wide">
-                    B2 — Immobilisations incorporelles
+                    B2 - Immobilisations incorporelles
                 </label>
                 <textarea name="B_immos_inc" rows="3"
                           placeholder="Méthode d'évaluation et d'amortissement (linéaire, dégressif...). Durée d'utilité retenue. Traitement des frais de développement, logiciels, fonds commercial..."
@@ -206,7 +206,7 @@ function val(array $d, string $k): string {
             <!-- B3 -->
             <div class="border-l-2 border-purple-700/50 pl-4">
                 <label class="block text-xs font-semibold text-purple-300 mb-2 uppercase tracking-wide">
-                    B3 — Immobilisations corporelles
+                    B3 - Immobilisations corporelles
                 </label>
                 <textarea name="B_immos_corp" rows="4"
                           placeholder="Méthode d'amortissement (linéaire / dégressif). Durées d'utilité retenues par catégorie (bâtiments, matériels, véhicules...). Traitement des révisions de valeur résiduelle. Critères d'activation des dépenses ultérieures."
@@ -216,7 +216,7 @@ function val(array $d, string $k): string {
             <!-- B4 -->
             <div class="border-l-2 border-purple-700/50 pl-4">
                 <label class="block text-xs font-semibold text-purple-300 mb-2 uppercase tracking-wide">
-                    B4 — Stocks et en-cours
+                    B4 - Stocks et en-cours
                 </label>
                 <textarea name="B_stocks" rows="3"
                           placeholder="Méthode de valorisation : CMUP (Coût Moyen Unitaire Pondéré), PEPS (FIFO), ou autre. Règle de dépréciation (valeur nette de réalisation)..."
@@ -226,7 +226,7 @@ function val(array $d, string $k): string {
             <!-- B5 -->
             <div class="border-l-2 border-purple-700/50 pl-4">
                 <label class="block text-xs font-semibold text-purple-300 mb-2 uppercase tracking-wide">
-                    B5 — Créances et dettes
+                    B5 - Créances et dettes
                 </label>
                 <textarea name="B_creances" rows="3"
                           placeholder="Créances enregistrées à leur valeur nominale. Dépréciations constituées pour les créances douteuses sur la base du risque de non-recouvrement estimé. Dettes enregistrées à leur valeur de remboursement..."
@@ -236,7 +236,7 @@ function val(array $d, string $k): string {
             <!-- B6 -->
             <div class="border-l-2 border-purple-700/50 pl-4">
                 <label class="block text-xs font-semibold text-purple-300 mb-2 uppercase tracking-wide">
-                    B6 — Provisions pour risques et charges
+                    B6 - Provisions pour risques et charges
                 </label>
                 <textarea name="B_provisions" rows="3"
                           placeholder="Les provisions sont constituées dès lors qu'il existe une obligation probable envers un tiers et que son montant peut être estimé de manière fiable..."
@@ -246,7 +246,7 @@ function val(array $d, string $k): string {
             <!-- B7 -->
             <div class="border-l-2 border-purple-700/50 pl-4">
                 <label class="block text-xs font-semibold text-purple-300 mb-2 uppercase tracking-wide">
-                    B7 — Opérations en devises étrangères
+                    B7 - Opérations en devises étrangères
                 </label>
                 <textarea name="B_devises" rows="3"
                           placeholder="Les opérations en devises sont converties au cours de change en vigueur à la date de l'opération. Les écarts de conversion sont enregistrés en compte d'attente...&#10;Laisser vide si l'entité n'a pas d'opérations en devises."
@@ -256,7 +256,7 @@ function val(array $d, string $k): string {
             <!-- B8 -->
             <div class="border-l-2 border-purple-700/50 pl-4">
                 <label class="block text-xs font-semibold text-purple-300 mb-2 uppercase tracking-wide">
-                    B8 — Autres méthodes et principes
+                    B8 - Autres méthodes et principes
                 </label>
                 <textarea name="B_autres" rows="3"
                           placeholder="Contrats pluriannuels, concessions, comptes intermédiaires, fusions, méthodes spécifiques au secteur d'activité..."
@@ -266,7 +266,7 @@ function val(array $d, string $k): string {
     </div>
 
     <!-- ══════════════════════════════════════════════════════════
-         SECTION C — Dérogations aux postulats et conventions
+         SECTION C - Dérogations aux postulats et conventions
     ══════════════════════════════════════════════════════════ -->
     <div class="section-card print-section bg-slate-800 border border-slate-700 rounded-xl mb-6 overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-700 flex items-center gap-3">

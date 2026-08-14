@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * migration_ohada_referentiel.php
  * Crée et peuple la table ohada_plan_comptable
@@ -54,7 +54,7 @@ CREATE TABLE ohada_plan_comptable (
 $rows = [
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CLASSE 1 — Comptes de ressources durables
+// CLASSE 1 - Comptes de ressources durables
 // ══════════════════════════════════════════════════════════════════════════════
 [1,'1','Comptes de ressources durables',null,null,null,null,null,null],
 // 10 Capital
@@ -150,7 +150,7 @@ $rows = [
 [3,'1','Comptes de ressources durables','19','Provisions pour risques et charges','198','Autres provisions pour risques et charges',null,null],
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CLASSE 2 — Comptes d'actif immobilisé
+// CLASSE 2 - Comptes d'actif immobilisé
 // ══════════════════════════════════════════════════════════════════════════════
 [1,'2',"Comptes d'actif immobilisé",null,null,null,null,null,null],
 // 21 Immobilisations incorporelles
@@ -341,7 +341,7 @@ $rows = [
 [3,'2',"Comptes d'actif immobilisé",'29','Dépréciations des immobilisations','297','Dépréciations des autres immobilisations financières',null,null],
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CLASSE 3 — Comptes de stocks
+// CLASSE 3 - Comptes de stocks
 // ══════════════════════════════════════════════════════════════════════════════
 [1,'3','Comptes de stocks',null,null,null,null,null,null],
 [2,'3','Comptes de stocks','31','Marchandises',null,null,null,null],
@@ -374,7 +374,7 @@ $rows = [
 [3,'3','Comptes de stocks','39','Dépréciations des stocks et encours de production','396','Dépréciations des stocks de produits finis',null,null],
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CLASSE 4 — Comptes de tiers
+// CLASSE 4 - Comptes de tiers
 // ══════════════════════════════════════════════════════════════════════════════
 [1,'4','Comptes de tiers',null,null,null,null,null,null],
 [2,'4','Comptes de tiers','40','Fournisseurs et comptes rattachés',null,null,null,null],
@@ -434,7 +434,7 @@ $rows = [
 [3,'4','Comptes de tiers','49','Dépréciations et provisions pour risques à court terme (tiers)','491','Dépréciations des comptes clients',null,null],
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CLASSE 5 — Comptes de trésorerie
+// CLASSE 5 - Comptes de trésorerie
 // ══════════════════════════════════════════════════════════════════════════════
 [1,'5','Comptes de trésorerie',null,null,null,null,null,null],
 [2,'5','Comptes de trésorerie','50','Titres de placement',null,null,null,null],
@@ -467,7 +467,7 @@ $rows = [
 [3,'5','Comptes de trésorerie','59','Dépréciations et provisions pour risque à court terme','590','Dépréciations des titres de placement',null,null],
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CLASSE 6 — Comptes de charges des activités ordinaires
+// CLASSE 6 - Comptes de charges des activités ordinaires
 // ══════════════════════════════════════════════════════════════════════════════
 [1,'6','Comptes de charges des activités ordinaires',null,null,null,null,null,null],
 [2,'6','Comptes de charges des activités ordinaires','60','Achats et variations de stocks',null,null,null,null],
@@ -529,7 +529,7 @@ $rows = [
 [3,'6','Comptes de charges des activités ordinaires','69','Dotations aux provisions et aux dépréciations','691','Dotations aux provisions et aux dépréciations d\'exploitation',null,null],
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CLASSE 7 — Comptes de produits des activités ordinaires
+// CLASSE 7 - Comptes de produits des activités ordinaires
 // ══════════════════════════════════════════════════════════════════════════════
 [1,'7','Comptes de produits des activités ordinaires',null,null,null,null,null,null],
 [2,'7','Comptes de produits des activités ordinaires','70','Ventes',null,null,null,null],
@@ -567,7 +567,7 @@ $rows = [
 [3,'7','Comptes de produits des activités ordinaires','79','Reprises de provisions, de dépréciations et autres','799',"Reprises de subventions d'investissement",null,null],
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CLASSE 8 — Comptes des autres charges et des autres produits
+// CLASSE 8 - Comptes des autres charges et des autres produits
 // ══════════════════════════════════════════════════════════════════════════════
 [1,'8','Comptes des autres charges et des autres produits',null,null,null,null,null,null],
 [2,'8','Comptes des autres charges et des autres produits','81',"Valeurs comptables des cessions d'immobilisations",null,null,null,null],
@@ -754,7 +754,7 @@ $countCorrespondances = (int)$db->query("
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Migration — Référentiel OHADA</title>
+<title>Migration - Référentiel OHADA</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 p-8">

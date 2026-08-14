@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 requireLogin();
 
@@ -38,7 +38,7 @@ if (!function_exists('matchPx')) {
         return false;
     }
 }
-// Solde débiteur net (stocks — actif)
+// Solde débiteur net (stocks - actif)
 function sdNet(array $c, array $pfx, string $p = 'N'): float {
     $t = 0.0;
     foreach ($c as $r) {
@@ -47,7 +47,7 @@ function sdNet(array $c, array $pfx, string $p = 'N'): float {
     }
     return max(0.0, $t);
 }
-// Solde créditeur net (dépréciations — passif)
+// Solde créditeur net (dépréciations - passif)
 function scNet(array $c, array $pfx, string $p = 'N'): float {
     $t = 0.0;
     foreach ($c as $r) {
@@ -108,7 +108,7 @@ $tot_net_N1  = max(0.0, $tot_brut_N1 - $tot_dep_N1);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Note 6 — Stocks et en-cours <?= $annee_n ?></title>
+    <title>Note 6 - Stocks et en-cours <?= $annee_n ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
@@ -139,7 +139,7 @@ $tot_net_N1  = max(0.0, $tot_brut_N1 - $tot_dep_N1);
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-400 mb-1">
-                <i class="fas fa-boxes mr-3"></i>Note 6 — Stocks et en-cours
+                <i class="fas fa-boxes mr-3"></i>Note 6 - Stocks et en-cours
             </h1>
             <p class="text-slate-400 text-sm">
                 Exercice du <?= date('d/m/Y', strtotime($date_debut_n)) ?> au <?= date('d/m/Y', strtotime($date_fin_n)) ?>
@@ -184,9 +184,9 @@ $tot_net_N1  = max(0.0, $tot_brut_N1 - $tot_dep_N1);
     <!-- Tableau stocks -->
     <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden mb-4">
         <div class="px-6 py-4 border-b border-slate-700">
-            <h2 class="text-base font-bold text-slate-100">Note 6 — Stocks et en-cours (en FCFA)</h2>
+            <h2 class="text-base font-bold text-slate-100">Note 6 - Stocks et en-cours (en FCFA)</h2>
             <p class="text-xs text-slate-400 mt-0.5">
-                Soldes au <?= date('d/m/Y', strtotime($date_fin_n)) ?> — Dépréciations comptes 391 à 398
+                Soldes au <?= date('d/m/Y', strtotime($date_fin_n)) ?> - Dépréciations comptes 391 à 398
             </p>
         </div>
         <div class="overflow-x-auto">
@@ -237,7 +237,7 @@ $tot_net_N1  = max(0.0, $tot_brut_N1 - $tot_dep_N1);
     </div>
 
     <p class="text-xs text-slate-600 mt-3 no-print">
-        Source : Plan Comptable SYSCOHADA — Liasse DGI Système Normal, Note 6 — Données issues de la balance comptable (comptes 31-38, 391-398)
+        Source : Plan Comptable SYSCOHADA - Liasse DGI Système Normal, Note 6 - Données issues de la balance comptable (comptes 31-38, 391-398)
     </p>
 
 </main>

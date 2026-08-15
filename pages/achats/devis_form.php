@@ -427,7 +427,7 @@ $pageTitle = $isEdit ? "Devis " . htmlspecialchars($devis['numero_devis']) : "No
             }
 
             try {
-                const response = await fetch(`api_catalogue.php?action=liste&fournisseur_id=${fournisseurId}`);
+                const response = await fetch(`../settings/api_catalogue.php?action=liste&fournisseur_id=${fournisseurId}`);
                 const data = await response.json();
                 if (data.success) {
                     catalogueArticles = data.articles;

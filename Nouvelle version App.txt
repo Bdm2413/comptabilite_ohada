@@ -1,0 +1,23 @@
+Le but est de faire une application qui s'aligne sur le fonctionnement des ERP célèbres et en même temps avoir un outil moderne, fluide qui comble les lacunes de ces ERP. Alors tu pourras aussi me faire des propositions en ce sens. Mon souhait est de faire le premier ERP vraiment adapté à l'OHADA.
+
+Alors, on doit avoir notre ERP SAAS, qui exécute des traitements automatiques avec aussi des requêtes comme dans Oracle et chaque requête doit être expliquée, comme si on avait un recueil ou un glossaire de requêtes. Et comme par exemple dans Oracle Fusion, on doit avoir les modules :
+
+General Ledger (GL) en devise locale : Le cœur du système qui centralise les écritures, gère le plan de comptes et produit les bilans et comptes de résultat.
+General Ledger (GL) en autre devise : Le cœur du système qui centralise les écritures, gère le plan de comptes et produit les bilans et comptes de résultat. On doit donc avoir une gestion multidevise.
+Accounts Payables (AP) : Automatise la réception des factures fournisseurs, la validation et les paiements.
+Module Paie et RH : pour la gestion des salariés et de la paie.
+Accounts Receivables (AR) : Gère la facturation des clients, le suivi des créances et les encaissements.
+Asset Management / Fixed Assets (FA) : Assure le suivi du cycle de vie des immobilisations et le calcul des amortissements.
+Cash Management (CM) : Permet le rapprochement bancaire automatique et la visibilité sur la position de trésorerie.
+Expenses : Simplifie la saisie, le contrôle et le remboursement des notes de frais des collaborateurs.
+Il faut aussi un module de gestition des archives : pour conserver des documents de tout type et de façon sécurisée. Pouvoir également les partager à quelqu'un en interne ou à l'extérieure.
+
+On doit pouvoir ouvrir et clôturer les périodes comptables mensuelles.
+
+En même temps, il ne faut pas perdre de vue ce que la version actuelle v1.0.0 contient déjà. C'est vrai que l'on fait une refonte, mais il ne faut pas ignorer que cette version a déjà des outils ou rapports ou menu qu'il serait avantageux de conserver ou même de s'en servir pour les améliorer pour la suite. Par exemple le référentiel ohada, la gestion multi société, la page de login et aussi l'authentification à double facteur. Bilan, compte de résultat, Flux de trésorerie, notes annexes, balance âgées, balance auxiliaire, Grand livre, Journal, Rapport de caisse, Rapprochement bancaire, report à nouveau, Exercices... Il y en a tellement. Mais je pense qu'on pourra au fur et à mesure qu'on avance, définir ce qu'on conserve ou pas et aussi ce qu'on améliore. Ne pas oublier aussi les bons de commandes, catalogue, devis, budget...
+
+Par exemple, il faut des paramètres pour gérer la taille de la police dans toute l'application. Il faut que la gestion multi société soit encore plus taillée. Par exemple, imaginons que la BDD est vide et que l'application vient d'être installée sur un nouveau poste, alors nouvelle entreprise, nouvel utilisateur et etc. Il faut donc ajouter comme une étape de démarrage et de paramétrage de tout ce qui est nécessaire pour commencer à utiliser l'application. Tu peux me guider en ce sens.
+Le contenu de la page Tableau de bord doit être remplacé par celui de la page Vue d'ensemble et supprimer la page Vue d'ensemble par la suite.
+Le menu doit être réorganisé et bien structuré. On vise l'excellence, l'innovation et la distinction en Côte d'Ivoire, en Afrique et dans le monde. Une indentité et une particularité forte. Et nous sommes à l'aire de l'IA. L'outil doit faire bien plus que de la compta, il doit être intelligent. Apprendre de lui même, proposer, interpeller, aider avec les normes comptables, fiscales, sociales, IFRS, US GAAP et bien d'autres points d'attention. Même juridique.
+
+Pour finir, cette précision est petite mais importante pour moi. Ne jamais utiliser le caractère "—" dans l'application mais plutôt "-".

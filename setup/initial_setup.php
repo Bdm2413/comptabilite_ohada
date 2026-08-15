@@ -65,11 +65,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$societe_id) throw new Exception("Impossible de créer la société.");
 
             // Créer l'utilisateur admin
+            $role_choisi = $_POST['role_utilisateur'] ?? 'admin';
+            $roles_valides = ['admin' => 'super_admin', 'comptable' => 'admin', 'consultant' => 'utilisateur'];
+            $role         = array_key_exists($role_choisi, $roles_valides) ? $role_choisi : 'admin';
+            $role_global  = $roles_valides[$role];
+
             $stmt = $db->prepare("
-                INSERT INTO utilisateurs (nom_utilisateur, email, mot_de_passe, role_global, dernier_societe_id, actif)
-                VALUES (?, ?, ?, 'super_admin', ?, 1)
+                INSERT INTO utilisateurs (nom_utilisateur, email, mot_de_passe, role, role_global, dernier_societe_id, actif)
+                VALUES (?, ?, ?, ?, ?, ?, 1)
             ");
-            $stmt->execute([$nom_utilisateur, $email, password_hash($password, PASSWORD_DEFAULT), $societe_id]);
+            $stmt->execute([$nom_utilisateur, $email, password_hash($password, PASSWORD_DEFAULT), $role, $role_global, $societe_id]);
             $user_id = (int)$db->lastInsertId();
 
             if (!grantUserAccessToSociete($user_id, $societe_id, 'admin', true)) {
@@ -169,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id']    = $user_id;
             $_SESSION['user_name']  = $nom_utilisateur;
             $_SESSION['user_email'] = $email;
-            $_SESSION['user_role']  = 'super_admin';
+            $_SESSION['user_role']  = $role;
             $_SESSION['societe_id'] = $societe_id;
 
             $succes = true;
@@ -897,6 +902,37 @@ $devises = [
                 </div>
 
                 <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Rôle <span class="text-red-500">*</span></label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="role-card cursor-pointer" id="rc-admin">
+                            <input type="radio" name="role_utilisateur" value="admin" class="hidden" checked>
+                            <div class="border-2 border-violet-500 bg-violet-50 rounded-xl p-3 text-center transition role-card-inner">
+                                <i class="fas fa-shield-alt text-violet-600 text-lg mb-1 block"></i>
+                                <p class="text-xs font-bold text-violet-700">Administrateur</p>
+                                <p class="text-[10px] text-slate-500 mt-0.5">Accès complet</p>
+                            </div>
+                        </label>
+                        <label class="role-card cursor-pointer" id="rc-comptable">
+                            <input type="radio" name="role_utilisateur" value="comptable" class="hidden">
+                            <div class="border-2 border-slate-200 bg-white rounded-xl p-3 text-center transition role-card-inner">
+                                <i class="fas fa-calculator text-slate-500 text-lg mb-1 block"></i>
+                                <p class="text-xs font-bold text-slate-600">Comptable</p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Saisie et rapports</p>
+                            </div>
+                        </label>
+                        <label class="role-card cursor-pointer" id="rc-consultant">
+                            <input type="radio" name="role_utilisateur" value="consultant" class="hidden">
+                            <div class="border-2 border-slate-200 bg-white rounded-xl p-3 text-center transition role-card-inner">
+                                <i class="fas fa-eye text-slate-500 text-lg mb-1 block"></i>
+                                <p class="text-xs font-bold text-slate-600">Consultant</p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Lecture seule</p>
+                            </div>
+                        </label>
+                    </div>
+                    <p class="text-slate-400 text-xs mt-1.5"><i class="fas fa-info-circle mr-1"></i>Le premier compte est recommandé en Administrateur.</p>
+                </div>
+
+                <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1.5">Mot de passe <span class="text-red-500">*</span></label>
                     <div class="relative">
                         <input type="password" name="password" id="f_password" class="input-field pr-10" placeholder="Minimum 8 caractères">
@@ -1137,6 +1173,27 @@ function validateStep4() {
 // Force du mot de passe
 // Initialisation de l'info longueur au chargement
 updateLongueurInfo();
+
+// Sélection des cartes de rôle
+document.querySelectorAll('.role-card input[type="radio"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('.role-card .role-card-inner').forEach(function(inner) {
+            inner.classList.remove('border-violet-500','bg-violet-50');
+            inner.classList.add('border-slate-200','bg-white');
+            inner.querySelector('i').classList.remove('text-violet-600');
+            inner.querySelector('i').classList.add('text-slate-500');
+            inner.querySelectorAll('p')[0].classList.remove('text-violet-700');
+            inner.querySelectorAll('p')[0].classList.add('text-slate-600');
+        });
+        var inner = radio.closest('.role-card').querySelector('.role-card-inner');
+        inner.classList.remove('border-slate-200','bg-white');
+        inner.classList.add('border-violet-500','bg-violet-50');
+        inner.querySelector('i').classList.remove('text-slate-500');
+        inner.querySelector('i').classList.add('text-violet-600');
+        inner.querySelectorAll('p')[0].classList.remove('text-slate-600');
+        inner.querySelectorAll('p')[0].classList.add('text-violet-700');
+    });
+});
 
 document.getElementById('f_password').addEventListener('input', function() {
     const pwd = this.value;

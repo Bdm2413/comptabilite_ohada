@@ -257,23 +257,33 @@ Bulletin de paie  ──►    Débit 66xxxx / Crédit 421xxx
 
 ### 4.6 Catalogue (référentiel opérationnel)
 
-Le catalogue est le pont entre les opérations métier et la comptabilité. Il se décompose en trois niveaux :
+Le catalogue est le pont entre les opérations métier et la comptabilité.
 
-**Articles & Services (Catalogue Vente / Achat)**
-- Produits vendus ou achetés avec compte de produit/charge par défaut
-- Prix unitaire, unité de mesure, TVA applicable
-- Utilisé dans : Factures clients, Factures fournisseurs, Devis, Bons de commande
+**Existant (table `catalogues_fournisseurs`) :**
+- Articles liés à un fournisseur spécifique (reference, designation, description, type_article, unite, prix_unitaire_ht, actif)
+- Utilisé dans les devis fournisseurs et bons de commande via `api_catalogue.php`
+- Taxes gérées au niveau de la ligne de devis (TVA 18%, PPSSI 2%, BNC 7.5%)
 
-**Charges récurrentes**
-- Loyers, abonnements, électricité, charges connues d'avance
-- Compte de charge par défaut, ventilation analytique optionnelle
-- Utilisé dans : saisie rapide, import groupé
+**Evolutions prévues (Phase 3) :**
+- Ajouter `compte_produit` et `compte_charge` (comptes OHADA pour comptabilisation auto)
+- Ajouter `type_taxe_defaut` (TVA / PPSSI / BNC / Aucune - pré-sélectionné à la ligne)
+- Ajouter `usage` ENUM('vente','achat','les_deux') - ouvrir le catalogue aux articles de vente
+- Rendre `id_fournisseur` nullable pour un catalogue général non lié à un fournisseur unique
 
-**Modèles d'écritures (gabarits)**
+**Modèles d'écritures (nouveau - Phase 3) :**
 - Gabarits débit/crédit complets pour les opérations non documentaires
 - Exemples : dotation aux amortissements, écriture de paie, provision, régularisation
 - L'utilisateur remplit uniquement les montants, les comptes sont pré-câblés
 - Utilisé dans : saisie des écritures (onglet dédié "Depuis un modèle")
+
+**Taxes gérées dans le système (à paramétrer en BDD en Phase 4) :**
+
+| Taxe | Taux | Nature | Sens comptable |
+|---|---|---|---|
+| TVA | 18% | Taxe collectée / déductible | Ajoutée au HT |
+| PPSSI | 2% | Retenue à la source sur services hors CI | Déduite du net à payer |
+| BNC/RIBNC | 7.5% | Retenue sur Bénéfices Non Commerciaux | Déduite du net à payer |
+| ITS | Barème progressif | Retenue sur salaires | Via module paie |
 
 ### 4.7 Tableau de bord des échéances fiscales et sociales
 
@@ -611,15 +621,35 @@ L'outil doit être proactif et apprenant :
 ### PHASE 3 - Document-First : Catalogue + Factures (priorité haute)
 
 > **Principe :** le Catalogue est le prérequis. Sans lui, pas d'automatisation de la comptabilisation sur les factures.
+> **Approche :** évolution de l'existant, pas de remplacement. La table `catalogues_fournisseurs` et les modules devis/BC sont conservés et enrichis.
 
-- [ ] **Catalogue - Articles & Services :** produits/prestations avec compte de produit/charge par défaut, TVA applicable, prix unitaire
-- [ ] **Catalogue - Charges récurrentes :** charges connues avec compte de charge pré-câblé
-- [ ] **Catalogue - Modèles d'écritures :** gabarits débit/crédit complets pour amortissements, paie, provisions
-- [ ] **Factures clients (AR) :** création, numérotation automatique, PDF, envoi email, suivi statut (Brouillon/Envoyée/Payée), comptabilisation automatique
-- [ ] **Factures fournisseurs (AP) :** saisie, validation, suivi paiement, balance âgée, comptabilisation automatique
-- [ ] **Encaissements clients :** liaison facture - règlement - lettrage automatique
-- [ ] **Paiements fournisseurs :** liaison facture - virement - lettrage automatique
-- [ ] **Devis et bons de commande :** (existants à améliorer et lier aux factures)
+**Etat de l'existant (inventaire avant codage) :**
+- Table `catalogues_fournisseurs` : catalogue lié aux fournisseurs, sans compte comptable ni taxe par défaut
+- Table `lignes_devis` : champ `type_taxe` ENUM('Aucune','TVA','PPSSI','BNC') - 3 taxes déjà gérées dans les devis
+- Taxes déjà codées dans `devis_form.php` :
+  - TVA 18% : ajoutée au montant HT
+  - PPSSI 2% : Prélèvement sur Paiements à Prestataires hors CI (retenue, déduite du net à payer)
+  - BNC/RIBNC 7.5% : Retenue sur Bénéfices Non Commerciaux (retenue, déduite du net à payer)
+- Flux devis existant : Devis fournisseur → Approuvé → Bon de commande (`bc_form.php`)
+- API catalogue : `api_catalogue.php?action=liste&fournisseur_id=X`
+
+**Ce qui manque et doit être ajouté :**
+- Comptes comptables dans le catalogue (`compte_produit`, `compte_charge`)
+- Taxe par défaut par article (`type_taxe_defaut`)
+- Usage vente/achat/les_deux (catalogue actuellement achat uniquement, lié à un fournisseur)
+- Module Factures clients (AR) - inexistant
+- Module Factures fournisseurs (AP) - inexistant (seuls les devis/BC existent)
+- Connexion Bon de commande → Facture fournisseur
+- Module Règlements (encaissements et paiements avec écriture comptable auto)
+
+**Tâches :**
+- [ ] **Catalogue - évolution :** ajouter `compte_produit`, `compte_charge`, `type_taxe_defaut`, `usage`(vente/achat/les_deux) à `catalogues_fournisseurs`; permettre un catalogue général (id_fournisseur nullable)
+- [ ] **Catalogue - Modèles d'écritures :** nouvelle table `catalogue_modeles` + `catalogue_modeles_lignes` - gabarits débit/crédit complets pour amortissements, paie, provisions
+- [ ] **Factures clients (AR) :** création, numérotation auto (FAC-AAAA-NNNN), lignes depuis catalogue, taxe TVA, statuts (Brouillon/Envoyée/Partiellement payée/Payée/Annulée), comptabilisation automatique
+- [ ] **Factures fournisseurs (AP) :** saisie avec numéro fournisseur, lignes depuis catalogue, taxes (TVA/PPSSI/BNC), statuts, comptabilisation automatique; bouton "Convertir en facture" depuis BC approuvé
+- [ ] **Encaissements clients :** modal règlement depuis la facture, écriture 521/411 auto, lettrage auto
+- [ ] **Paiements fournisseurs :** modal règlement depuis la facture, écriture 401/521 auto, lettrage auto
+- [ ] **Devis et bons de commande :** améliorer le flux existant, lier BC approuvé vers facture fournisseur
 
 ### PHASE 4 - Fiscal & Social (différenciateur marché)
 

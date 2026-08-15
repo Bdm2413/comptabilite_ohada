@@ -11,7 +11,9 @@ $messageType = '';
 
 // ─── POST : édition d'un compte du référentiel ───────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $isAdmin) {
-    if (($_POST['action'] ?? '') === 'edit') {
+    $action = $_POST['action'] ?? '';
+
+    if ($action === 'edit') {
         $id       = (int)($_POST['id'] ?? 0);
         $libelle  = trim($_POST['libelle'] ?? '');
         $type     = $_POST['type_compte'] ?? null;
@@ -46,6 +48,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $isAdmin) {
             } catch (Exception $e) {
                 $db->rollBack();
                 $message = "Erreur : " . $e->getMessage(); $messageType = 'error';
+            }
+        }
+
+    } elseif ($action === 'add') {
+        $compte  = (int)($_POST['compte'] ?? 0);
+        $libelle = trim($_POST['libelle'] ?? '');
+        $type    = $_POST['type_compte'] ?? null;
+        $tableau = trim($_POST['tableau'] ?? 'ND');
+        $bd      = trim($_POST['bd'] ?? '') ?: null;
+        $bc      = trim($_POST['bc'] ?? '') ?: null;
+        $rd      = trim($_POST['rd'] ?? '') ?: null;
+        $rc      = trim($_POST['rc'] ?? '') ?: null;
+        $classe  = $compte > 0 ? (int)substr((string)$compte, 0, 1) : 0;
+
+        if ($compte < 1000 || $compte > 9999 || empty($libelle)) {
+            $message = "Le numéro de compte doit être un entier à 4 chiffres et le libellé est obligatoire.";
+            $messageType = 'error';
+        } else {
+            try {
+                $ck = $db->prepare("SELECT id FROM table_correspondance WHERE compte = ?");
+                $ck->execute([$compte]);
+                if ($ck->fetch()) {
+                    $message = "Le compte $compte existe déjà dans le référentiel.";
+                    $messageType = 'error';
+                } else {
+                    $db->prepare("INSERT INTO table_correspondance (compte, classe, libelle, type_compte, tableau, bd, bc, rd, rc)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+                        ->execute([$compte, $classe, $libelle, $type ?: null, $tableau, $bd, $bc, $rd, $rc]);
+                    $message = "Compte $compte ajouté au référentiel.";
+                    $messageType = 'success';
+                }
+            } catch (Exception $e) {
+                $message = "Erreur : " . $e->getMessage();
+                $messageType = 'error';
+            }
+        }
+
+    } elseif ($action === 'delete') {
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id <= 0) {
+            $message = "Compte introuvable."; $messageType = 'error';
+        } else {
+            try {
+                $db->prepare("DELETE FROM table_correspondance WHERE id = ?")->execute([$id]);
+                $message = "Compte supprimé du référentiel.";
+                $messageType = 'success';
+            } catch (Exception $e) {
+                $message = "Erreur : " . $e->getMessage();
+                $messageType = 'error';
             }
         }
     }
@@ -472,7 +523,12 @@ $typeColors = [
                 <span class="text-slate-200 font-medium"><?= number_format($totalC) ?></span> compte(s)
                 - page <span class="text-slate-200 font-medium"><?= $page2 ?></span> / <?= $totalPagesC ?>
             </p>
-            <p class="text-xs text-amber-400"><i class="fas fa-pencil mr-1"></i>Cliquez sur un compte pour le modifier</p>
+            <div class="flex items-center gap-3">
+                <p class="text-xs text-amber-400"><i class="fas fa-pencil mr-1"></i>Cliquez sur un compte pour le modifier</p>
+                <button onclick="openAdd()" class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-lg text-xs font-medium transition flex items-center gap-1.5">
+                    <i class="fas fa-plus"></i>Nouveau compte
+                </button>
+            </div>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm border-collapse">
@@ -527,8 +583,17 @@ $typeColors = [
                     <td class="px-3 py-1.5 text-center text-xs font-mono font-semibold text-rose-300">
                         <?= $c['rc'] ? htmlspecialchars($c['rc']) : '<span class="text-slate-700">-</span>' ?>
                     </td>
-                    <td class="px-2 py-1.5 text-center">
-                        <i class="fas fa-pencil text-slate-600 hover:text-violet-400 text-xs transition"></i>
+                    <td class="px-2 py-1.5 text-center" onclick="event.stopPropagation()">
+                        <div class="flex items-center gap-1.5 justify-center">
+                            <button type="button" onclick="openEdit(<?= htmlspecialchars(json_encode($c), ENT_QUOTES) ?>)"
+                                    class="text-slate-600 hover:text-violet-400 transition" title="Modifier">
+                                <i class="fas fa-pencil text-xs"></i>
+                            </button>
+                            <button type="button" onclick="confirmDelete(<?= $c['id'] ?>, '<?= $c['compte'] ?>')"
+                                    class="text-slate-600 hover:text-rose-400 transition" title="Supprimer">
+                                <i class="fas fa-trash text-xs"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -684,9 +749,121 @@ function openEdit(c) {
 function closeEdit() {
     document.getElementById('editModal').classList.add('hidden');
 }
+function openAdd() {
+    document.getElementById('addModal').classList.remove('hidden');
+    document.getElementById('addCompte').focus();
+}
+function closeAdd() {
+    document.getElementById('addModal').classList.add('hidden');
+    document.getElementById('addForm').reset();
+}
+function confirmDelete(id, compte) {
+    if (!confirm('Supprimer le compte ' + compte + ' du référentiel ?\n\nCette action ne supprime pas les comptes du plan comptable déjà créés.')) return;
+    document.getElementById('deleteId').value = id;
+    document.getElementById('deleteForm').submit();
+}
 document.getElementById('editModal').addEventListener('click', function(e) { if(e.target===this) closeEdit(); });
-document.addEventListener('keydown', function(e) { if(e.key==='Escape') closeEdit(); });
+document.getElementById('addModal').addEventListener('click', function(e) { if(e.target===this) closeAdd(); });
+document.addEventListener('keydown', function(e) { if(e.key==='Escape') { closeEdit(); closeAdd(); } });
 </script>
+
+<!-- Modal ajout -->
+<div id="addModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div class="bg-slate-800 border border-slate-600 rounded-2xl w-full max-w-lg mx-4 shadow-2xl">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-700">
+            <h2 class="font-semibold text-slate-100">
+                <i class="fas fa-plus text-emerald-400 mr-2"></i>Ajouter un compte au référentiel
+            </h2>
+            <button onclick="closeAdd()" class="text-slate-400 hover:text-white text-xl transition">&times;</button>
+        </div>
+        <form id="addForm" method="POST" class="px-6 py-5 space-y-4">
+            <input type="hidden" name="action" value="add">
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Numéro de compte (4 chiffres) <span class="text-rose-400">*</span></label>
+                    <input type="number" name="compte" id="addCompte" required min="1000" max="9999"
+                           class="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-amber-300 font-mono text-sm focus:ring-2 focus:ring-emerald-500"
+                           placeholder="ex: 1011">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Tableau</label>
+                    <select name="tableau"
+                            class="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500">
+                        <option value="Bilan">Bilan</option>
+                        <option value="Compte de résultat">Compte de résultat</option>
+                        <option value="ND" selected>ND</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Libellé <span class="text-rose-400">*</span></label>
+                <input type="text" name="libelle" required
+                       class="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500"
+                       placeholder="Intitulé du compte">
+            </div>
+
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Type de compte</label>
+                <select name="type_compte"
+                        class="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500">
+                    <option value="">- Aucun -</option>
+                    <?php foreach ($typeOptions as $t): ?>
+                    <option value="<?= $t ?>"><?= $t ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs text-slate-400 mb-2">Rubriques BD / BC / RD / RC</label>
+                <div class="grid grid-cols-4 gap-2">
+                    <div>
+                        <label class="block text-xs text-sky-400 mb-1">BD</label>
+                        <input type="text" name="bd" maxlength="10"
+                               class="w-full px-2 py-1.5 bg-slate-900 border border-slate-600 rounded text-sky-300 text-sm font-mono text-center focus:ring-2 focus:ring-sky-500"
+                               placeholder="ex: CA">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-emerald-400 mb-1">BC</label>
+                        <input type="text" name="bc" maxlength="10"
+                               class="w-full px-2 py-1.5 bg-slate-900 border border-slate-600 rounded text-emerald-300 text-sm font-mono text-center focus:ring-2 focus:ring-emerald-500"
+                               placeholder="ex: CA">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-amber-400 mb-1">RD</label>
+                        <input type="text" name="rd" maxlength="10"
+                               class="w-full px-2 py-1.5 bg-slate-900 border border-slate-600 rounded text-amber-300 text-sm font-mono text-center focus:ring-2 focus:ring-amber-500"
+                               placeholder="ex: RA">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-rose-400 mb-1">RC</label>
+                        <input type="text" name="rc" maxlength="10"
+                               class="w-full px-2 py-1.5 bg-slate-900 border border-slate-600 rounded text-rose-300 text-sm font-mono text-center focus:ring-2 focus:ring-rose-500"
+                               placeholder="ex: RA">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-1">
+                <button type="button" onclick="closeAdd()"
+                        class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-sm transition">
+                    Annuler
+                </button>
+                <button type="submit"
+                        class="px-5 py-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white rounded-lg text-sm font-semibold transition">
+                    <i class="fas fa-plus mr-1"></i>Ajouter
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Formulaire suppression caché -->
+<form id="deleteForm" method="POST" class="hidden">
+    <input type="hidden" name="action" value="delete">
+    <input type="hidden" name="id" id="deleteId">
+</form>
 <?php endif; ?>
 
 <script>

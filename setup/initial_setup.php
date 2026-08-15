@@ -21,7 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // --- Validation société ---
         $raison_sociale = trim($_POST['raison_sociale'] ?? '');
         $code_societe   = strtoupper(trim($_POST['code_societe'] ?? ''));
-        $type_entite    = $_POST['type_entite']    ?? 'entreprise_individuelle';
+        $mode           = $_POST['mode'] ?? 'entreprise';
+        $type_entite    = ($mode === 'cabinet') ? 'cabinet' : ($_POST['type_entite'] ?? 'entreprise_individuelle');
         $devise         = $_POST['devise_principale'] ?? 'XOF';
 
         if (empty($raison_sociale)) $erreurs[] = "La raison sociale est obligatoire.";
@@ -51,9 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'pays'                  => $_POST['pays']               ?? "Côte d'Ivoire",
                 'telephone'             => $_POST['telephone']          ?? null,
                 'email'                 => $_POST['email_societe']      ?? null,
+                'site_web'              => $_POST['site_web']           ?? null,
                 'numero_rccm'           => $_POST['numero_rccm']        ?? null,
                 'numero_contribuable'   => $_POST['numero_contribuable'] ?? null,
                 'forme_juridique'       => $_POST['forme_juridique']    ?? null,
+                'secteur_activite'      => $_POST['secteur_activite']   ?? null,
+                'capital'               => $_POST['capital']            ?? null,
                 'regime_fiscal'         => $_POST['regime_fiscal']      ?? 'reel_normal',
                 'actif'                 => 1,
             ]);
@@ -84,6 +88,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$societe_id, "Exercice $annee", $exercice_debut, $exercice_fin]);
             } catch (Exception $e) {
                 // Table exercices peut ne pas exister, on continue
+            }
+
+            // Sauvegarder le mode d'installation
+            $db->prepare("
+                INSERT INTO parametres_systeme (cle, valeur, type_valeur, modifiable, description)
+                VALUES ('mode_installation', ?, 'string', 0, 'Mode installation : entreprise ou cabinet')
+                ON DUPLICATE KEY UPDATE valeur = ?
+            ")->execute([$mode, $mode]);
+
+            // Sauvegarder la longueur des numéros de compte
+            $longueur_compte = max(4, (int)($_POST['longueur_compte'] ?? 4));
+            $db->prepare("
+                INSERT INTO parametres_systeme (cle, valeur, type_valeur, modifiable, description)
+                VALUES ('longueur_compte', ?, 'int', 0, 'Longueur des numéros de compte - non modifiable après installation')
+                ON DUPLICATE KEY UPDATE valeur = ?
+            ")->execute([$longueur_compte, $longueur_compte]);
+
+            // Import du plan comptable SYSCOHADA Révisé
+            // Seuls les comptes à 4 chiffres (niveau 4) sont importés :
+            // 2 chiffres = compte principal, 3 chiffres = divisionnaire, 4 chiffres = sous-compte saisissable
+            $plan_type = $_POST['plan_type'] ?? 'ohada';
+            if ($plan_type === 'ohada') {
+                $comptes_ohada = $db->query("
+                    SELECT * FROM ohada_plan_comptable
+                    WHERE niveau = 4 AND compte_4 IS NOT NULL AND libelle_4 IS NOT NULL
+                    ORDER BY compte_4
+                ")->fetchAll();
+
+                $insComp = $db->prepare("
+                    INSERT INTO plan_comptable
+                        (societe_id, compte, intitule_compte, classe, quatre_chiffres, tableau, bd, bc, rd, rc, type, actif)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Oui')
+                ");
+
+                foreach ($comptes_ohada as $c) {
+                    $num4 = (string)$c['compte_4'];
+                    $lib  = $c['libelle_4'];
+                    if (empty($num4) || empty($lib)) continue;
+
+                    // Appliquer le padding si longueur choisie > 4
+                    $num_final = ($longueur_compte > 4)
+                        ? str_pad($num4, $longueur_compte, '0', STR_PAD_RIGHT)
+                        : $num4;
+
+                    $classe_int  = (int)$c['classe'];
+                    $quatre_int  = (int)$num4;
+                    $tableau_val = $c['bd'] ?? 'ND';
+
+                    // Type lu directement depuis le referentiel ohada_plan_comptable
+                    $type_compte = $c['type_compte'] ?? null;
+
+                    $insComp->execute([
+                        $societe_id,
+                        (int)$num_final,
+                        $lib,
+                        $classe_int,
+                        $quatre_int,
+                        $tableau_val,
+                        $c['bd'],
+                        $c['bc'],
+                        $c['rd'],
+                        $c['rc'],
+                        $type_compte,
+                    ]);
+                }
             }
 
             // Sauvegarder la taille de police
@@ -121,24 +190,158 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Devises disponibles
-$devises = [];
-try {
-    $devises = getDevisesActives();
-} catch (Exception $e) {}
-
-if (empty($devises)) {
-    $devises = [
-        ['code_devise' => 'XOF', 'libelle' => 'Franc CFA UEMOA',     'symbole' => 'FCFA'],
-        ['code_devise' => 'XAF', 'libelle' => 'Franc CFA CEMAC',     'symbole' => 'FCFA'],
-        ['code_devise' => 'EUR', 'libelle' => 'Euro',                 'symbole' => '€'],
-        ['code_devise' => 'USD', 'libelle' => 'Dollar américain',     'symbole' => '$'],
-        ['code_devise' => 'GBP', 'libelle' => 'Livre sterling',       'symbole' => '£'],
-        ['code_devise' => 'MAD', 'libelle' => 'Dirham marocain',      'symbole' => 'MAD'],
-        ['code_devise' => 'NGN', 'libelle' => 'Naira nigérian',       'symbole' => '₦'],
-        ['code_devise' => 'GHS', 'libelle' => 'Cedi ghanéen',         'symbole' => '₵'],
-    ];
-}
+// Devises disponibles - liste exhaustive ISO 4217
+$devises = [
+    // Afrique
+    ['code_devise' => 'XOF', 'libelle' => 'Franc CFA UEMOA (Bénin, Burkina, CI, Guinée-Bissau, Mali, Niger, Sénégal, Togo)', 'symbole' => 'FCFA'],
+    ['code_devise' => 'XAF', 'libelle' => 'Franc CFA CEMAC (Cameroun, Centrafrique, Congo, Gabon, Guinée éq., Tchad)',        'symbole' => 'FCFA'],
+    ['code_devise' => 'DZD', 'libelle' => 'Dinar algérien',                 'symbole' => 'DA'],
+    ['code_devise' => 'AOA', 'libelle' => 'Kwanza angolais',                'symbole' => 'Kz'],
+    ['code_devise' => 'BIF', 'libelle' => 'Franc burundais',                'symbole' => 'BIF'],
+    ['code_devise' => 'CVE', 'libelle' => 'Escudo cap-verdien',             'symbole' => 'Esc'],
+    ['code_devise' => 'KMF', 'libelle' => 'Franc comorien',                 'symbole' => 'FC'],
+    ['code_devise' => 'CDF', 'libelle' => 'Franc congolais (RDC)',          'symbole' => 'FC'],
+    ['code_devise' => 'DJF', 'libelle' => 'Franc djiboutien',              'symbole' => 'Fdj'],
+    ['code_devise' => 'EGP', 'libelle' => 'Livre égyptienne',              'symbole' => 'EGP'],
+    ['code_devise' => 'ERN', 'libelle' => 'Nakfa érythréen',               'symbole' => 'Nkf'],
+    ['code_devise' => 'ETB', 'libelle' => 'Birr éthiopien',                'symbole' => 'Br'],
+    ['code_devise' => 'GMD', 'libelle' => 'Dalasi gambien',                'symbole' => 'D'],
+    ['code_devise' => 'GHS', 'libelle' => 'Cedi ghanéen',                  'symbole' => 'GH₵'],
+    ['code_devise' => 'GNF', 'libelle' => 'Franc guinéen',                 'symbole' => 'FG'],
+    ['code_devise' => 'KES', 'libelle' => 'Shilling kényan',               'symbole' => 'KSh'],
+    ['code_devise' => 'LSL', 'libelle' => 'Loti lésothien',                'symbole' => 'L'],
+    ['code_devise' => 'LRD', 'libelle' => 'Dollar libérien',               'symbole' => 'L$'],
+    ['code_devise' => 'LYD', 'libelle' => 'Dinar libyen',                  'symbole' => 'LYD'],
+    ['code_devise' => 'MGA', 'libelle' => 'Ariary malgache',               'symbole' => 'Ar'],
+    ['code_devise' => 'MWK', 'libelle' => 'Kwacha malawien',               'symbole' => 'MK'],
+    ['code_devise' => 'MAD', 'libelle' => 'Dirham marocain',               'symbole' => 'MAD'],
+    ['code_devise' => 'MRU', 'libelle' => 'Ouguiya mauritanien',           'symbole' => 'UM'],
+    ['code_devise' => 'MUR', 'libelle' => 'Roupie mauricienne',            'symbole' => 'Rs'],
+    ['code_devise' => 'MZN', 'libelle' => 'Metical mozambicain',           'symbole' => 'MT'],
+    ['code_devise' => 'NAD', 'libelle' => 'Dollar namibien',               'symbole' => 'N$'],
+    ['code_devise' => 'NGN', 'libelle' => 'Naira nigérian',                'symbole' => '₦'],
+    ['code_devise' => 'RWF', 'libelle' => 'Franc rwandais',                'symbole' => 'RF'],
+    ['code_devise' => 'STN', 'libelle' => 'Dobra de São Tomé-et-Príncipe', 'symbole' => 'Db'],
+    ['code_devise' => 'SCR', 'libelle' => 'Roupie seychelloise',           'symbole' => 'Rs'],
+    ['code_devise' => 'SLE', 'libelle' => 'Leone sierra-léonais',          'symbole' => 'Le'],
+    ['code_devise' => 'SOS', 'libelle' => 'Shilling somalien',             'symbole' => 'Sh'],
+    ['code_devise' => 'ZAR', 'libelle' => 'Rand sud-africain',             'symbole' => 'R'],
+    ['code_devise' => 'SSP', 'libelle' => 'Livre sud-soudanaise',          'symbole' => 'SSP'],
+    ['code_devise' => 'SDG', 'libelle' => 'Livre soudanaise',              'symbole' => 'SDG'],
+    ['code_devise' => 'SZL', 'libelle' => 'Lilangeni eswatinien',          'symbole' => 'L'],
+    ['code_devise' => 'TZS', 'libelle' => 'Shilling tanzanien',            'symbole' => 'TSh'],
+    ['code_devise' => 'TND', 'libelle' => 'Dinar tunisien',                'symbole' => 'DT'],
+    ['code_devise' => 'UGX', 'libelle' => 'Shilling ougandais',            'symbole' => 'USh'],
+    ['code_devise' => 'ZMW', 'libelle' => 'Kwacha zambien',                'symbole' => 'ZK'],
+    ['code_devise' => 'ZWL', 'libelle' => 'Dollar zimbabwéen',             'symbole' => 'Z$'],
+    // Europe
+    ['code_devise' => 'EUR', 'libelle' => 'Euro',                          'symbole' => '€'],
+    ['code_devise' => 'GBP', 'libelle' => 'Livre sterling',                'symbole' => '£'],
+    ['code_devise' => 'CHF', 'libelle' => 'Franc suisse',                  'symbole' => 'Fr'],
+    ['code_devise' => 'NOK', 'libelle' => 'Couronne norvégienne',          'symbole' => 'kr'],
+    ['code_devise' => 'SEK', 'libelle' => 'Couronne suédoise',             'symbole' => 'kr'],
+    ['code_devise' => 'DKK', 'libelle' => 'Couronne danoise',              'symbole' => 'kr'],
+    ['code_devise' => 'ISK', 'libelle' => 'Couronne islandaise',           'symbole' => 'kr'],
+    ['code_devise' => 'PLN', 'libelle' => 'Zloty polonais',                'symbole' => 'zł'],
+    ['code_devise' => 'CZK', 'libelle' => 'Couronne tchèque',              'symbole' => 'Kč'],
+    ['code_devise' => 'HUF', 'libelle' => 'Forint hongrois',               'symbole' => 'Ft'],
+    ['code_devise' => 'RON', 'libelle' => 'Leu roumain',                   'symbole' => 'lei'],
+    ['code_devise' => 'BGN', 'libelle' => 'Lev bulgare',                   'symbole' => 'лв'],
+    ['code_devise' => 'RSD', 'libelle' => 'Dinar serbe',                   'symbole' => 'RSD'],
+    ['code_devise' => 'MKD', 'libelle' => 'Denar macédonien',              'symbole' => 'ден'],
+    ['code_devise' => 'ALL', 'libelle' => 'Lek albanais',                  'symbole' => 'L'],
+    ['code_devise' => 'BAM', 'libelle' => 'Mark convertible bosnien',      'symbole' => 'KM'],
+    ['code_devise' => 'MDL', 'libelle' => 'Leu moldave',                   'symbole' => 'L'],
+    ['code_devise' => 'UAH', 'libelle' => 'Hryvnia ukrainienne',           'symbole' => '₴'],
+    ['code_devise' => 'RUB', 'libelle' => 'Rouble russe',                  'symbole' => '₽'],
+    ['code_devise' => 'TRY', 'libelle' => 'Livre turque',                  'symbole' => '₺'],
+    ['code_devise' => 'GEL', 'libelle' => 'Lari géorgien',                 'symbole' => '₾'],
+    ['code_devise' => 'AZN', 'libelle' => 'Manat azerbaïdjanais',          'symbole' => '₼'],
+    ['code_devise' => 'AMD', 'libelle' => 'Dram arménien',                 'symbole' => '֏'],
+    // Amériques
+    ['code_devise' => 'USD', 'libelle' => 'Dollar américain',              'symbole' => '$'],
+    ['code_devise' => 'CAD', 'libelle' => 'Dollar canadien',               'symbole' => 'CA$'],
+    ['code_devise' => 'MXN', 'libelle' => 'Peso mexicain',                 'symbole' => 'MX$'],
+    ['code_devise' => 'BRL', 'libelle' => 'Real brésilien',                'symbole' => 'R$'],
+    ['code_devise' => 'ARS', 'libelle' => 'Peso argentin',                 'symbole' => '$'],
+    ['code_devise' => 'CLP', 'libelle' => 'Peso chilien',                  'symbole' => 'CL$'],
+    ['code_devise' => 'COP', 'libelle' => 'Peso colombien',                'symbole' => 'CO$'],
+    ['code_devise' => 'PEN', 'libelle' => 'Sol péruvien',                  'symbole' => 'S/'],
+    ['code_devise' => 'VES', 'libelle' => 'Bolívar vénézuélien',           'symbole' => 'Bs.S'],
+    ['code_devise' => 'BOB', 'libelle' => 'Boliviano',                     'symbole' => 'Bs.'],
+    ['code_devise' => 'UYU', 'libelle' => 'Peso uruguayen',                'symbole' => '$U'],
+    ['code_devise' => 'PYG', 'libelle' => 'Guaraní paraguayen',            'symbole' => '₲'],
+    ['code_devise' => 'GYD', 'libelle' => 'Dollar guyanais',               'symbole' => 'G$'],
+    ['code_devise' => 'SRD', 'libelle' => 'Dollar surinamais',             'symbole' => 'SR$'],
+    ['code_devise' => 'TTD', 'libelle' => 'Dollar de Trinité-et-Tobago',   'symbole' => 'TT$'],
+    ['code_devise' => 'JMD', 'libelle' => 'Dollar jamaïcain',              'symbole' => 'J$'],
+    ['code_devise' => 'HTG', 'libelle' => 'Gourde haïtienne',              'symbole' => 'G'],
+    ['code_devise' => 'DOP', 'libelle' => 'Peso dominicain',               'symbole' => 'RD$'],
+    ['code_devise' => 'GTQ', 'libelle' => 'Quetzal guatémaltèque',         'symbole' => 'Q'],
+    ['code_devise' => 'HNL', 'libelle' => 'Lempira hondurien',             'symbole' => 'L'],
+    ['code_devise' => 'NIO', 'libelle' => 'Córdoba nicaraguayen',          'symbole' => 'C$'],
+    ['code_devise' => 'CRC', 'libelle' => 'Colón costaricain',             'symbole' => '₡'],
+    ['code_devise' => 'PAB', 'libelle' => 'Balboa panaméen',               'symbole' => 'B/.'],
+    ['code_devise' => 'XCD', 'libelle' => 'Dollar des Caraïbes orientales','symbole' => 'EC$'],
+    ['code_devise' => 'BBD', 'libelle' => 'Dollar de la Barbade',          'symbole' => 'Bds$'],
+    ['code_devise' => 'BSD', 'libelle' => 'Dollar des Bahamas',            'symbole' => 'B$'],
+    ['code_devise' => 'BZD', 'libelle' => 'Dollar de Belize',              'symbole' => 'BZ$'],
+    // Asie - Extrême-Orient
+    ['code_devise' => 'JPY', 'libelle' => 'Yen japonais',                  'symbole' => '¥'],
+    ['code_devise' => 'CNY', 'libelle' => 'Yuan renminbi (Chine)',         'symbole' => '¥'],
+    ['code_devise' => 'HKD', 'libelle' => 'Dollar de Hong Kong',           'symbole' => 'HK$'],
+    ['code_devise' => 'KRW', 'libelle' => 'Won sud-coréen',                'symbole' => '₩'],
+    ['code_devise' => 'TWD', 'libelle' => 'Nouveau dollar taïwanais',      'symbole' => 'NT$'],
+    ['code_devise' => 'MNT', 'libelle' => 'Tögrög mongol',                 'symbole' => '₮'],
+    // Asie - Sud-Est
+    ['code_devise' => 'SGD', 'libelle' => 'Dollar de Singapour',           'symbole' => 'S$'],
+    ['code_devise' => 'IDR', 'libelle' => 'Roupiah indonésienne',          'symbole' => 'Rp'],
+    ['code_devise' => 'MYR', 'libelle' => 'Ringgit malaisien',             'symbole' => 'RM'],
+    ['code_devise' => 'THB', 'libelle' => 'Baht thaïlandais',              'symbole' => '฿'],
+    ['code_devise' => 'PHP', 'libelle' => 'Peso philippin',                'symbole' => '₱'],
+    ['code_devise' => 'VND', 'libelle' => 'Dong vietnamien',               'symbole' => '₫'],
+    ['code_devise' => 'KHR', 'libelle' => 'Riel cambodgien',               'symbole' => '៛'],
+    ['code_devise' => 'MMK', 'libelle' => 'Kyat birman',                   'symbole' => 'K'],
+    ['code_devise' => 'LAK', 'libelle' => 'Kip laotien',                   'symbole' => '₭'],
+    // Asie - Sud
+    ['code_devise' => 'INR', 'libelle' => 'Roupie indienne',               'symbole' => '₹'],
+    ['code_devise' => 'PKR', 'libelle' => 'Roupie pakistanaise',           'symbole' => '₨'],
+    ['code_devise' => 'BDT', 'libelle' => 'Taka bangladais',               'symbole' => '৳'],
+    ['code_devise' => 'LKR', 'libelle' => 'Roupie sri-lankaise',           'symbole' => 'Rs'],
+    ['code_devise' => 'NPR', 'libelle' => 'Roupie népalaise',              'symbole' => '₨'],
+    ['code_devise' => 'MVR', 'libelle' => 'Rufiyaa maldivien',             'symbole' => 'Rf'],
+    ['code_devise' => 'BTN', 'libelle' => 'Ngultrum bhoutanais',           'symbole' => 'Nu'],
+    // Asie centrale
+    ['code_devise' => 'KZT', 'libelle' => 'Tenge kazakh',                  'symbole' => '₸'],
+    ['code_devise' => 'UZS', 'libelle' => 'Som ouzbek',                    'symbole' => 'UZS'],
+    ['code_devise' => 'KGS', 'libelle' => 'Som kirghiz',                   'symbole' => 'KGS'],
+    ['code_devise' => 'TJS', 'libelle' => 'Somoni tadjik',                 'symbole' => 'SM'],
+    ['code_devise' => 'TMT', 'libelle' => 'Manat turkmène',                'symbole' => 'T'],
+    ['code_devise' => 'AFN', 'libelle' => 'Afghani afghan',                'symbole' => '؋'],
+    // Moyen-Orient
+    ['code_devise' => 'AED', 'libelle' => 'Dirham des Émirats arabes unis','symbole' => 'AED'],
+    ['code_devise' => 'SAR', 'libelle' => 'Riyal saoudien',                'symbole' => 'SAR'],
+    ['code_devise' => 'QAR', 'libelle' => 'Riyal qatarien',                'symbole' => 'QAR'],
+    ['code_devise' => 'KWD', 'libelle' => 'Dinar koweïtien',               'symbole' => 'KWD'],
+    ['code_devise' => 'BHD', 'libelle' => 'Dinar bahreïni',                'symbole' => 'BHD'],
+    ['code_devise' => 'OMR', 'libelle' => 'Rial omanais',                  'symbole' => 'OMR'],
+    ['code_devise' => 'JOD', 'libelle' => 'Dinar jordanien',               'symbole' => 'JOD'],
+    ['code_devise' => 'ILS', 'libelle' => 'Shekel israélien',              'symbole' => '₪'],
+    ['code_devise' => 'LBP', 'libelle' => 'Livre libanaise',               'symbole' => 'LL'],
+    ['code_devise' => 'IQD', 'libelle' => 'Dinar irakien',                 'symbole' => 'IQD'],
+    ['code_devise' => 'IRR', 'libelle' => 'Rial iranien',                  'symbole' => '﷼'],
+    ['code_devise' => 'SYP', 'libelle' => 'Livre syrienne',                'symbole' => 'SYP'],
+    ['code_devise' => 'YER', 'libelle' => 'Rial yéménite',                 'symbole' => '﷼'],
+    // Océanie
+    ['code_devise' => 'AUD', 'libelle' => 'Dollar australien',             'symbole' => 'A$'],
+    ['code_devise' => 'NZD', 'libelle' => 'Dollar néo-zélandais',          'symbole' => 'NZ$'],
+    ['code_devise' => 'FJD', 'libelle' => 'Dollar fidjien',                'symbole' => 'FJ$'],
+    ['code_devise' => 'PGK', 'libelle' => 'Kina de Papouasie-Nvelle-Guinée','symbole' => 'K'],
+    ['code_devise' => 'WST', 'libelle' => 'Tala samoan',                   'symbole' => 'WS$'],
+    ['code_devise' => 'TOP', 'libelle' => "Pa'anga tongien",               'symbole' => 'T$'],
+    ['code_devise' => 'SBD', 'libelle' => 'Dollar des Îles Salomon',       'symbole' => 'SI$'],
+    ['code_devise' => 'VUV', 'libelle' => 'Vatu vanuatais',                'symbole' => 'VT'],
+];
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -229,6 +432,23 @@ if (empty($devises)) {
         .recap-row:last-child { border-bottom: none; }
         .recap-label { color: #64748b; }
         .recap-value { font-weight: 600; color: #1e293b; }
+
+        .mode-card {
+            border: 2px solid #e2e8f0; border-radius: 12px;
+            padding: 1rem; cursor: pointer;
+            transition: all .2s;
+        }
+        .mode-card:hover { border-color: #93c5fd; background: #f8faff; }
+        .mode-card.selected { border-color: #1565c0; background: #eff6ff; }
+        .mode-card.selected-cabinet { border-color: #7c3aed; background: #f5f3ff; }
+
+        .longueur-btn {
+            padding: .45rem 1rem; border-radius: 8px; border: 1.5px solid #e2e8f0;
+            font-size: .8rem; font-weight: 600; color: #64748b;
+            background: #f8fafc; cursor: pointer; transition: all .2s;
+        }
+        .longueur-btn:hover { border-color: #93c5fd; color: #1565c0; background: #eff6ff; }
+        .longueur-btn-active { border-color: #1565c0 !important; color: #1565c0 !important; background: #eff6ff !important; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -313,45 +533,85 @@ if (empty($devises)) {
 
         <!-- ===== ETAPE 1 : BIENVENUE ===== -->
         <div class="step-panel active" id="step-1">
-            <div class="p-8 text-center">
-                <div class="w-24 h-24 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <i class="fas fa-rocket text-blue-600 text-4xl"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-slate-800 mb-3">Bienvenue dans ComptaOHADA</h2>
-                <p class="text-slate-500 text-sm max-w-md mx-auto mb-8 leading-relaxed">
-                    Le premier ERP conçu pour les normes <strong>SYSCOHADA Révisé</strong>.
-                    Cette configuration prendra moins de 5 minutes.
-                </p>
-
-                <div class="grid grid-cols-3 gap-4 max-w-sm mx-auto mb-8">
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <i class="fas fa-building text-blue-500 text-xl mb-2 block"></i>
-                        <p class="text-xs text-slate-500">Société</p>
+            <div class="p-8">
+                <div class="text-center mb-7">
+                    <div class="w-20 h-20 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                        <i class="fas fa-rocket text-blue-600 text-3xl"></i>
                     </div>
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <i class="fas fa-calendar-alt text-blue-500 text-xl mb-2 block"></i>
-                        <p class="text-xs text-slate-500">Exercice</p>
-                    </div>
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <i class="fas fa-user-shield text-blue-500 text-xl mb-2 block"></i>
-                        <p class="text-xs text-slate-500">Admin</p>
-                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">Bienvenue dans ComptaOHADA</h2>
+                    <p class="text-slate-500 text-sm max-w-md mx-auto leading-relaxed">
+                        Le premier ERP conçu pour les normes <strong>SYSCOHADA Révisé</strong>.
+                        Commencez par choisir votre mode d'utilisation.
+                    </p>
                 </div>
 
-                <button type="button" onclick="goTo(2)" class="btn-primary">
-                    <i class="fas fa-arrow-right mr-2"></i>Commencer la configuration
-                </button>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider text-center mb-4">Comment allez-vous utiliser ComptaOHADA ?</p>
+
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 mb-7">
+                    <!-- Mode Entreprise -->
+                    <div class="mode-card selected" id="mode-entreprise" onclick="selectMode('entreprise')">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-building text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <p class="font-bold text-slate-800 text-sm">Mode Entreprise</p>
+                                    <i class="fas fa-check-circle text-blue-600 text-lg mode-check" id="check-entreprise"></i>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">
+                                    Gérez la comptabilité de votre propre entreprise ou d'un groupe de sociétés (filiales, holding).
+                                </p>
+                                <div class="flex flex-wrap gap-1 mt-2">
+                                    <span class="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">PME</span>
+                                    <span class="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">Holding</span>
+                                    <span class="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">Groupe</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mode Cabinet -->
+                    <div class="mode-card" id="mode-cabinet" onclick="selectMode('cabinet')">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-violet-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-briefcase text-violet-600 text-xl"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <p class="font-bold text-slate-800 text-sm">Mode Cabinet</p>
+                                    <i class="far fa-circle text-slate-300 text-lg mode-check" id="check-cabinet"></i>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">
+                                    Gérez la comptabilité de plusieurs clients depuis un seul espace - vue portefeuille, dossiers et collaborateurs.
+                                </p>
+                                <div class="flex flex-wrap gap-1 mt-2">
+                                    <span class="text-xs bg-violet-50 text-violet-600 px-2 py-0.5 rounded-full">Expertise comptable</span>
+                                    <span class="text-xs bg-violet-50 text-violet-600 px-2 py-0.5 rounded-full">Fiduciaire</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" name="mode" id="mode_input" value="entreprise">
+
+                <div class="text-center">
+                    <button type="button" onclick="goTo(2)" class="btn-primary">
+                        <i class="fas fa-arrow-right mr-2"></i>Commencer la configuration
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- ===== ETAPE 2 : SOCIETE ===== -->
+        <!-- ===== ETAPE 2 : SOCIETE / CABINET ===== -->
         <div class="step-panel" id="step-2">
             <div class="px-6 py-5 border-b border-slate-100">
                 <h2 class="font-bold text-slate-800 flex items-center gap-2">
                     <span class="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
-                    Informations de la société
+                    <span id="step2-title">Informations de la société</span>
                 </h2>
-                <p class="text-slate-400 text-xs mt-1 ml-9">Renseignez les informations légales de votre entreprise</p>
+                <p class="text-slate-400 text-xs mt-1 ml-9" id="step2-subtitle">Renseignez les informations légales de votre entreprise</p>
             </div>
             <div class="p-6 space-y-4">
 
@@ -380,13 +640,50 @@ if (empty($devises)) {
                     </div>
 
                     <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Secteur d'activité</label>
+                        <select name="secteur_activite" class="input-field">
+                            <option value="">- Sélectionner -</option>
+                            <?php foreach ([
+                                'Agriculture, Élevage et Pêche',
+                                'Mines et Carrières',
+                                'Énergie et Eau',
+                                'Industrie manufacturière',
+                                'BTP (Bâtiment et Travaux Publics)',
+                                'Commerce de gros',
+                                'Commerce de détail',
+                                'Transport et Logistique',
+                                'Hôtellerie et Restauration',
+                                'Informatique et Télécommunications',
+                                'Services financiers et Assurance',
+                                'Immobilier',
+                                'Conseil et Expertise',
+                                'Santé et Action sociale',
+                                'Éducation et Formation',
+                                'Médias et Communication',
+                                'ONG / Association',
+                                'Administration publique',
+                                'Autre',
+                            ] as $s): ?>
+                            <option value="<?= htmlspecialchars($s) ?>" <?= ($_POST['secteur_activite'] ?? '') === $s ? 'selected' : '' ?>><?= htmlspecialchars($s) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Capital social</label>
+                        <input type="text" name="capital" class="input-field" placeholder="Ex: 1 000 000"
+                               value="<?= htmlspecialchars($_POST['capital'] ?? '') ?>"
+                               inputmode="numeric">
+                    </div>
+
+                    <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1.5">Numéro RCCM</label>
                         <input type="text" name="numero_rccm" class="input-field" placeholder="CI-ABJ-2024-B-XXXXX"
                                value="<?= htmlspecialchars($_POST['numero_rccm'] ?? '') ?>">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Numéro contribuable (NIF)</label>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Numéro contribuable (NCC)</label>
                         <input type="text" name="numero_contribuable" class="input-field" placeholder="XXXXXXXXXX"
                                value="<?= htmlspecialchars($_POST['numero_contribuable'] ?? '') ?>">
                     </div>
@@ -395,12 +692,11 @@ if (empty($devises)) {
                         <label class="block text-xs font-semibold text-slate-600 mb-1.5">Régime fiscal</label>
                         <select name="regime_fiscal" class="input-field">
                             <?php foreach ([
-                                'reel_normal'   => 'Réel normal',
-                                'reel_simplifie'=> 'Réel simplifié',
-                                'bic'           => 'BIC',
-                                'bnc'           => 'BNC',
-                                'microentreprise' => 'Micro-entreprise',
-                                'exonere'       => 'Exonéré',
+                                'reel_normal'        => 'Réel normal',
+                                'reel_simplifie'     => 'Réel simplifié',
+                                'microentreprise'    => 'Micro-entreprise',
+                                'taxe_entreprenant'  => "Taxe de l'entreprenant",
+                                'aucun'              => 'Aucun',
                             ] as $val => $lab): ?>
                             <option value="<?= $val ?>" <?= ($_POST['regime_fiscal'] ?? 'reel_normal') === $val ? 'selected' : '' ?>><?= $lab ?></option>
                             <?php endforeach; ?>
@@ -432,8 +728,46 @@ if (empty($devises)) {
 
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1.5">Pays</label>
-                        <input type="text" name="pays" class="input-field" placeholder="Côte d'Ivoire"
-                               value="<?= htmlspecialchars($_POST['pays'] ?? "Côte d'Ivoire") ?>">
+                        <select name="pays" class="input-field">
+                            <?php
+                            $paysList = [
+                                'Afghanistan','Afrique du Sud','Albanie','Algérie','Allemagne','Andorre','Angola',
+                                'Antigua-et-Barbuda','Arabie saoudite','Argentine','Arménie','Australie','Autriche',
+                                'Azerbaïdjan','Bahamas','Bahreïn','Bangladesh','Barbade','Bélarus','Belgique','Belize',
+                                'Bénin','Bhoutan','Bolivie','Bosnie-Herzégovine','Botswana','Brésil','Brunéi',
+                                'Bulgarie','Burkina Faso','Burundi','Cabo Verde','Cambodge','Cameroun','Canada',
+                                'République centrafricaine','Chili','Chine','Chypre','Colombie','Comores',
+                                'Congo (République du)','Congo (RDC)','Corée du Nord','Corée du Sud','Costa Rica',
+                                "Côte d'Ivoire",'Croatie','Cuba','Danemark','Djibouti','Dominique','Égypte',
+                                'Émirats arabes unis','Équateur','Érythrée','Espagne','Estonie','Eswatini',
+                                'États-Unis','Éthiopie','Fidji','Finlande','France','Gabon','Gambie','Géorgie',
+                                'Ghana','Grèce','Grenade','Guatemala','Guinée','Guinée-Bissau','Guinée équatoriale',
+                                'Guyana','Haïti','Honduras','Hongrie','Îles Cook','Îles Marshall','Îles Salomon',
+                                'Inde','Indonésie','Irak','Iran','Irlande','Islande','Israël','Italie','Jamaïque',
+                                'Japon','Jordanie','Kazakhstan','Kenya','Kirghizistan','Kiribati','Kosovo','Koweït',
+                                'Laos','Lesotho','Lettonie','Liban','Libéria','Libye','Liechtenstein','Lituanie',
+                                'Luxembourg','Macédoine du Nord','Madagascar','Malaisie','Malawi','Maldives',
+                                'Mali','Malte','Maroc','Maurice','Mauritanie','Mexique','Micronésie','Moldavie',
+                                'Monaco','Mongolie','Monténégro','Mozambique','Myanmar','Namibie','Nauru',
+                                'Népal','Nicaragua','Niger','Nigeria','Niue','Norvège','Nouvelle-Zélande','Oman',
+                                'Ouganda','Ouzbékistan','Pakistan','Palaos','Palestine','Panama',
+                                'Papouasie-Nouvelle-Guinée','Paraguay','Pays-Bas','Pérou','Philippines','Pologne',
+                                'Portugal','Qatar','République dominicaine','République tchèque','Roumanie',
+                                'Royaume-Uni','Russie','Rwanda','Saint-Christophe-et-Niévès','Saint-Marin',
+                                'Saint-Vincent-et-les-Grenadines','Sainte-Lucie','Salvador','Samoa',
+                                'São Tomé-et-Príncipe','Sénégal','Serbie','Seychelles','Sierra Leone',
+                                'Singapour','Slovaquie','Slovénie','Somalie','Soudan','Soudan du Sud',
+                                'Sri Lanka','Suède','Suisse','Suriname','Syrie','Tadjikistan','Tanzanie',
+                                'Tchad','Thaïlande','Timor oriental','Togo','Tonga','Trinité-et-Tobago',
+                                'Tunisie','Turkménistan','Turquie','Tuvalu','Ukraine','Uruguay','Vanuatu',
+                                'Vatican','Venezuela','Viêt Nam','Yémen','Zambie','Zimbabwe',
+                            ];
+                            $paysSel = $_POST['pays'] ?? "Côte d'Ivoire";
+                            foreach ($paysList as $p):
+                            ?>
+                            <option value="<?= htmlspecialchars($p) ?>" <?= $paysSel === $p ? 'selected' : '' ?>><?= htmlspecialchars($p) ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
 
                     <div>
@@ -446,6 +780,12 @@ if (empty($devises)) {
                         <label class="block text-xs font-semibold text-slate-600 mb-1.5">Email société</label>
                         <input type="email" name="email_societe" class="input-field" placeholder="contact@societe.com"
                                value="<?= htmlspecialchars($_POST['email_societe'] ?? '') ?>">
+                    </div>
+
+                    <div class="col-span-2">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Site web</label>
+                        <input type="url" name="site_web" class="input-field" placeholder="https://www.societe.com"
+                               value="<?= htmlspecialchars($_POST['site_web'] ?? '') ?>">
                     </div>
                 </div>
             </div>
@@ -489,7 +829,7 @@ if (empty($devises)) {
 
                 <div>
                     <p class="text-xs font-semibold text-slate-600 mb-3">Référentiel comptable</p>
-                    <label class="radio-card mb-3 cursor-pointer" onclick="selectCard(this, 'plan_type')">
+                    <label class="radio-card mb-3 cursor-pointer" onclick="selectCard(this,'plan_type'); updateLongueurInfo()">
                         <input type="radio" name="plan_type" value="ohada" class="hidden" checked>
                         <div class="w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
                             <i class="fas fa-book text-blue-600 text-sm"></i>
@@ -498,9 +838,9 @@ if (empty($devises)) {
                             <p class="text-sm font-semibold text-slate-800">Plan SYSCOHADA Révisé (recommandé)</p>
                             <p class="text-xs text-slate-400">Import automatique du plan comptable OHADA complet</p>
                         </div>
-                        <i class="fas fa-check-circle text-blue-600 ml-auto text-lg"></i>
+                        <i class="fas fa-check-circle text-blue-600 ml-auto text-lg check-icon"></i>
                     </label>
-                    <label class="radio-card cursor-pointer" onclick="selectCard(this, 'plan_type')">
+                    <label class="radio-card cursor-pointer" onclick="selectCard(this,'plan_type'); updateLongueurInfo()">
                         <input type="radio" name="plan_type" value="vide" class="hidden">
                         <div class="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
                             <i class="fas fa-file text-slate-400 text-sm"></i>
@@ -511,6 +851,27 @@ if (empty($devises)) {
                         </div>
                         <i class="fas fa-circle text-slate-300 ml-auto text-lg check-icon"></i>
                     </label>
+                </div>
+
+                <!-- Longueur des numéros de compte -->
+                <div class="border-t border-slate-100 pt-4">
+                    <p class="text-xs font-semibold text-slate-600 mb-1">Longueur des numéros de compte</p>
+                    <p class="text-xs text-slate-400 mb-3">Ce choix est définitif - il ne pourra pas être modifié après l'installation.</p>
+
+                    <div class="flex flex-wrap gap-2 mb-3" id="longueur-btns">
+                        <?php foreach ([4,5,6,7,8,9] as $n): ?>
+                        <button type="button"
+                                onclick="selectLongueur(<?= $n ?>)"
+                                id="lon-<?= $n ?>"
+                                class="longueur-btn <?= $n === 4 ? 'longueur-btn-active' : '' ?>">
+                            <?= $n ?> chiffres<?= $n === 4 ? ' <span class="text-xs opacity-70">(standard)</span>' : '' ?>
+                        </button>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <input type="hidden" name="longueur_compte" id="longueur_compte" value="4">
+
+                    <div id="longueur-info" class="rounded-xl p-3.5 flex gap-2.5 text-xs leading-relaxed"></div>
                 </div>
             </div>
             <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-between">
@@ -697,6 +1058,33 @@ if (empty($devises)) {
 <script>
 let currentStep = 1;
 const totalSteps = 6;
+let currentMode = 'entreprise';
+
+function selectMode(mode) {
+    currentMode = mode;
+    document.getElementById('mode_input').value = mode;
+
+    const cardE = document.getElementById('mode-entreprise');
+    const cardC = document.getElementById('mode-cabinet');
+    const chkE  = document.getElementById('check-entreprise');
+    const chkC  = document.getElementById('check-cabinet');
+
+    if (mode === 'entreprise') {
+        cardE.className = 'mode-card selected';
+        cardC.className = 'mode-card';
+        chkE.className  = 'fas fa-check-circle text-blue-600 text-lg mode-check';
+        chkC.className  = 'far fa-circle text-slate-300 text-lg mode-check';
+        document.getElementById('step2-title').textContent    = 'Informations de la société';
+        document.getElementById('step2-subtitle').textContent = 'Renseignez les informations légales de votre entreprise';
+    } else {
+        cardC.className = 'mode-card selected-cabinet';
+        cardE.className = 'mode-card';
+        chkC.className  = 'fas fa-check-circle text-violet-600 text-lg mode-check';
+        chkE.className  = 'far fa-circle text-slate-300 text-lg mode-check';
+        document.getElementById('step2-title').textContent    = 'Informations du cabinet';
+        document.getElementById('step2-subtitle').textContent = "Renseignez les informations légales de votre cabinet d'expertise";
+    }
+}
 
 function goTo(step) {
     document.getElementById('step-' + currentStep).classList.remove('active');
@@ -755,6 +1143,9 @@ function validateStep4() {
 }
 
 // Force du mot de passe
+// Initialisation de l'info longueur au chargement
+updateLongueurInfo();
+
 document.getElementById('f_password').addEventListener('input', function() {
     const pwd = this.value;
     const bar = document.getElementById('pwd-strength');
@@ -790,6 +1181,59 @@ function togglePwd(fieldId, eyeId) {
     e.classList.toggle('fa-eye-slash');
 }
 
+// Longueur des comptes
+var currentLongueur = 4;
+
+function selectLongueur(n) {
+    currentLongueur = n;
+    document.getElementById('longueur_compte').value = n;
+    var ids = [4, 5, 6, 7, 8, 9];
+    for (var k = 0; k < ids.length; k++) {
+        var btn = document.getElementById('lon-' + ids[k]);
+        if (!btn) continue;
+        if (ids[k] === n) {
+            btn.classList.add('longueur-btn-active');
+        } else {
+            btn.classList.remove('longueur-btn-active');
+        }
+    }
+    updateLongueurInfo();
+}
+
+function updateLongueurInfo() {
+    var box = document.getElementById('longueur-info');
+    if (!box) return;
+    var checkedEl = document.querySelector('[name=plan_type]:checked');
+    var isOhada   = checkedEl ? checkedEl.value === 'ohada' : true;
+    var n         = currentLongueur;
+
+    if (isOhada && n === 4) {
+        box.className = 'rounded-xl p-3.5 flex gap-2.5 text-xs leading-relaxed bg-blue-50 border border-blue-200 text-blue-700';
+        box.innerHTML = '<i class="fas fa-info-circle mt-0.5 flex-shrink-0"></i>'
+            + '<span>Longueur standard SYSCOHADA Révisé. Les comptes sont à 4 chiffres '
+            + '(ex: <strong>1011</strong> Capital, <strong>4011</strong> Fournisseurs). '
+            + 'Recommandé pour la plupart des entreprises.</span>';
+    } else if (isOhada && n > 4) {
+        var zeros   = '';
+        for (var z = 0; z < n - 4; z++) zeros += '0';
+        var exemple = '1011' + zeros;
+        var sousEx  = '1011' + zeros.slice(0, zeros.length - 1) + '1';
+        box.className = 'rounded-xl p-3.5 flex gap-2.5 text-xs leading-relaxed bg-amber-50 border border-amber-200 text-amber-800';
+        box.innerHTML = '<i class="fas fa-layer-group mt-0.5 flex-shrink-0"></i>'
+            + '<span>Les comptes SYSCOHADA (4 chiffres) seront importés avec <strong>' + (n - 4)
+            + ' zéro(s)</strong> ajouté(s) à droite '
+            + '(ex: <strong>1011</strong> &rarr; <strong>' + exemple + '</strong>). '
+            + 'Vous pourrez créer des sous-comptes dans cet espace '
+            + '(ex: <strong>' + sousEx + '</strong>, <strong>' + (parseInt(sousEx, 10) + 1) + '</strong>...). '
+            + 'Tous les numéros de compte devront faire exactement <strong>' + n + ' chiffres</strong>.</span>';
+    } else {
+        box.className = 'rounded-xl p-3.5 flex gap-2.5 text-xs leading-relaxed bg-slate-50 border border-slate-200 text-slate-600';
+        box.innerHTML = '<i class="fas fa-pencil-alt mt-0.5 flex-shrink-0"></i>'
+            + '<span>Plan vide - vous saisirez vos comptes manuellement. '
+            + 'Tous vos numéros de compte devront faire exactement <strong>' + n + ' chiffres</strong>.</span>';
+    }
+}
+
 // Sélection des cartes radio
 function selectCard(el, name) {
     el.closest('.space-y-3, .p-6').querySelectorAll('.radio-card').forEach(c => {
@@ -817,19 +1261,34 @@ function selectTaille(taille) {
 function buildRecap() {
     const v = (id) => document.querySelector('[name=' + id + ']')?.value || '-';
 
+    const modeLabel = document.getElementById('mode_input').value === 'cabinet' ? 'Cabinet d\'expertise' : 'Entreprise';
     const societe = [
-        ['Raison sociale',  v('raison_sociale')],
-        ['Code société',    v('code_societe')],
-        ['Forme juridique', v('forme_juridique') || '-'],
-        ['RCCM',            v('numero_rccm')     || '-'],
-        ['NIF',             v('numero_contribuable') || '-'],
-        ['Devise',          v('devise_principale')],
-        ['Ville / Pays',    (v('ville') || '-') + ' / ' + (v('pays') || '-')],
+        ['Mode',              modeLabel],
+        ['Raison sociale',    v('raison_sociale')],
+        ['Code société',      v('code_societe')],
+        ['Forme juridique',   v('forme_juridique')   || '-'],
+        ["Secteur d'activité",v('secteur_activite')  || '-'],
+        ['Capital social',    v('capital') ? v('capital') + ' ' + v('devise_principale') : '-'],
+        ['RCCM',              v('numero_rccm')        || '-'],
+        ['NCC',               v('numero_contribuable')|| '-'],
+        ['Régime fiscal',     v('regime_fiscal')      || '-'],
+        ['Devise',            v('devise_principale')],
+        ['Ville / Pays',      (v('ville') || '-') + ' / ' + (v('pays') || '-')],
+        ['Site web',          v('site_web') || '-'],
     ];
+    const longueur    = v('longueur_compte') || '4';
+    const planType    = document.querySelector('[name=plan_type]:checked')?.value;
+    const planLabel   = planType === 'ohada'
+        ? 'SYSCOHADA Révisé (import auto)'
+        : 'Plan vide (saisie manuelle)';
+    const longueurEx  = planType === 'ohada' && parseInt(longueur) > 4
+        ? ' - comptes padés (ex: 1011 → 1011' + '0'.repeat(parseInt(longueur) - 4) + ')'
+        : '';
     const exercice = [
-        ['Début',           v('exercice_debut')],
-        ['Fin',             v('exercice_fin')],
-        ['Plan comptable',  document.querySelector('[name=plan_type]:checked')?.value === 'ohada' ? 'SYSCOHADA Révisé (import auto)' : 'Plan vide'],
+        ['Début',              v('exercice_debut')],
+        ['Fin',                v('exercice_fin')],
+        ['Plan comptable',     planLabel],
+        ['Longueur des comptes', longueur + ' chiffres' + longueurEx],
     ];
     const admin = [
         ['Nom',   v('nom_utilisateur')],

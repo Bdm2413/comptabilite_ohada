@@ -340,17 +340,17 @@ $types = ['Client', 'Fournisseur', 'Salarié', 'Banque', 'Caisse', 'Amortis/Prov
                                             <td class="p-3">
                                                 <p class="text-white font-medium"><?php echo htmlspecialchars($compte['intitule_compte']); ?></p>
                                                 <?php if ($compte['libelle_racine']): ?>
-                                                    <p class="text-xs text-slate-500 mt-0.5">→ <?php echo htmlspecialchars($compte['libelle_racine']); ?></p>
+                                                    <p class="text-xs text-slate-500 mt-0.5">→ <?php echo htmlspecialchars($compte['libelle_racine'] ?? ''); ?></p>
                                                 <?php endif; ?>
                                             </td>
                                             <td class="p-3">
                                                 <span class="px-2 py-1 bg-blue-500/10 text-blue-400 rounded text-xs">
-                                                    <?php echo htmlspecialchars($compte['type']); ?>
+                                                    <?php echo htmlspecialchars($compte['type'] ?? ''); ?>
                                                 </span>
                                             </td>
                                             <td class="p-3">
                                                 <span class="px-2 py-1 <?php echo $compte['tableau'] === 'Bilan' ? 'bg-purple-500/10 text-purple-400' : 'bg-amber-500/10 text-amber-400'; ?> rounded text-xs">
-                                                    <?php echo htmlspecialchars($compte['tableau']); ?>
+                                                    <?php echo htmlspecialchars($compte['tableau'] ?? ''); ?>
                                                 </span>
                                             </td>
                                             <td class="p-3">

@@ -109,13 +109,25 @@ L'outil doit être :
 ## 4. NOUVELLES FONCTIONNALITES STRUCTURELLES
 
 ### 4.1 Onboarding Wizard (Démarrage guidé)
-Quand l'application est installée sur un nouveau poste avec une BDD vide :
-- **Etape 1** - Création de la première société (nom, RCCM, NIF, régime fiscal, devise, adresse)
-- **Etape 2** - Création du premier compte administrateur
-- **Etape 3** - Choix et import du plan comptable (référentiel OHADA proposé par défaut)
-- **Etape 4** - Création du premier exercice comptable
-- **Etape 5** - Paramétrage de base (logo, monnaie, format des dates, taille de police)
-- **Etape 6** - Récapitulatif et accès au tableau de bord
+Quand l'application est installée sur un nouveau poste avec une BDD vide, l'assistant guide l'utilisateur en 6 étapes.
+
+**Choix du mode en étape 1 (Bienvenue) :**
+Avant de commencer, l'utilisateur sélectionne l'un des deux modes qui détermine l'expérience complète :
+
+| Mode | Description | Usage typique |
+|---|---|---|
+| **Entreprise** | Gestion de la propre comptabilité de l'entité (ou d'un groupe de filiales) | PME, holding, groupe |
+| **Cabinet** | Gestion de la comptabilité de plusieurs clients distincts depuis un poste unique | Cabinet d'expertise comptable, fiduciaire |
+
+Ce choix est enregistré dans `parametres_systeme.mode_installation` et conditionne l'interface, le dashboard et les fonctionnalités disponibles après le wizard.
+
+**Etapes du wizard :**
+- **Etape 1** - Bienvenue + sélection du mode (Entreprise ou Cabinet)
+- **Etape 2** - Informations de la société / du cabinet (nom, RCCM, NCC, secteur, capital, devise, pays...)
+- **Etape 3** - Premier exercice comptable (dates, référentiel OHADA ou vide)
+- **Etape 4** - Création du compte administrateur
+- **Etape 5** - Préférences d'affichage (taille de police, fuseau horaire)
+- **Etape 6** - Récapitulatif et finalisation
 
 ### 4.2 Periodes comptables mensuelles
 - Chaque exercice est découpé en 12 périodes (janvier à décembre)
@@ -200,18 +212,128 @@ PARAMETRES
 
 ---
 
-## 5. GESTION MULTI-SOCIETE RENFORCEE
+## 5. GESTION MULTI-SOCIETE ET MODE CABINET
 
-- Une installation peut gérer N sociétés (holding, filiales, etc.)
-- Chaque société a : son plan comptable, ses exercices, ses utilisateurs, ses paramètres
-- Un utilisateur peut être rattaché à plusieurs sociétés avec des rôles différents
-- Changement de société en un clic depuis la topbar
-- Isolation totale des données entre sociétés (societe_id sur toutes les tables)
-- Consolidation possible (états financiers multi-sociétés) - phase avancée
+### 5.1 Fondations communes (Entreprise et Cabinet)
+- Une installation gère N sociétés/dossiers avec isolation totale des données (`societe_id` sur toutes les tables)
+- Chaque entité a son plan comptable, ses exercices, ses journaux et ses paramètres propres
+- Un utilisateur peut être rattaché à plusieurs entités avec des rôles différents par entité
+- Droits fins par entité : `peut_modifier_plan`, `peut_cloturer_exercice`, `peut_valider_ecritures`, `peut_exporter`
+- Changement d'entité active en un clic depuis la topbar
+
+### 5.2 Mode Entreprise
+- Usage : PME, groupe, holding avec filiales
+- La première société créée est l'entité principale
+- L'administrateur a accès à toutes les sociétés du groupe
+- Consolidation multi-sociétés possible en phase avancée (étapes financiers agrégés)
+
+### 5.3 Mode Cabinet (nouveau)
+Ce mode est conçu pour un cabinet d'expertise comptable gérant la comptabilité de plusieurs clients.
+
+**Concept clé : Cabinet = entité racine, Dossiers = sociétés clientes**
+- Le cabinet est créé comme entité de type `cabinet` avec `id_cabinet = NULL` (il est sa propre racine)
+- Chaque client est un dossier (type `dossier_client`) lié au cabinet via `id_cabinet`
+- Les collaborateurs du cabinet sont définis une fois et assignés aux dossiers clients
+
+**Fonctionnalités spécifiques au mode Cabinet :**
+
+| Fonctionnalité | Description |
+|---|---|
+| **Vue tableau de bord Cabinet** | Liste de tous les dossiers clients avec statut, avancement, alertes et prochaines échéances |
+| **Statut de dossier** | Chaque dossier a un état : En cours, A jour, En retard, Clôturé - visible depuis le dashboard cabinet |
+| **Ajout de dossier client** | Flux dédié pour créer un nouveau client (nom, NCC, RCCM, devise, exercice) sans repasser par le wizard |
+| **Gestion des collaborateurs** | Les utilisateurs du cabinet existent au niveau cabinet et sont assignés aux dossiers clients avec rôle spécifique |
+| **Accès client (lecture seule)** | Un client peut disposer d'un accès limité pour consulter ses propres états financiers |
+| **Traçabilité par dossier** | Qui a fait quoi sur quel dossier, avec horodatage - utile pour la facturation des honoraires |
+| **Alertes globales cabinet** | Périodes non clôturées, déclarations TVA/IS approchant, rapprochements en attente - vue consolidée |
+
+**Structure BDD pour le mode Cabinet :**
+- `parametres_systeme.mode_installation = 'cabinet'`
+- La société créée dans le wizard a `type_entite = 'cabinet'`
+- Les dossiers clients futurs auront `type_entite = 'dossier_client'` et `id_cabinet = id_du_cabinet`
+- La table `cabinets` existante sert de référence complémentaire (raison sociale, agréments, etc.)
+
+### 5.4 Changement de mode après installation (à prévoir dans Paramètres)
+Un utilisateur peut démarrer en Mode Entreprise puis souhaiter passer en Mode Cabinet (ou inversement). Ce changement n'est pas possible via le wizard une fois l'installation terminée - il doit être accessible depuis **Paramètres > Général**.
+
+**Comportement attendu lors du changement :**
+- Mise à jour de `parametres_systeme.mode_installation`
+- Mise à jour du `type_entite` de la société principale (`entreprise_individuelle` -> `cabinet` ou inverse)
+- Confirmation explicite demandée à l'utilisateur : "Cette action modifie le mode de votre installation. Vos données existantes restent intactes."
+- Rechargement de l'interface (dashboard, sidebar) pour refléter le nouveau mode
+
+**Contrainte :** implémenter lors de la refonte du module Paramètres (Phase 2 ou séparément), pas en page isolée.
+
+### 5.5 Intégration d'une société rachetée ou filiale historique
+Cas concret : une société mère créée en 2023 rachète une entité dont la comptabilité remonte à 2020. Le wizard ne couvre que la société principale. Les entités additionnelles sont gérées via un flux dédié.
+
+**Trois mécanismes à implémenter :**
+
+| Mécanisme | Description | Localisation |
+|---|---|---|
+| **Flux "Nouvelle société"** | Créer une filiale/société rachetée avec sa date de début d'activité réelle, son propre plan comptable et ses exercices historiques en statut "archivé" | Paramètres > Sociétés |
+| **Reprise de balance d'ouverture** | Saisie guidée des soldes de chaque compte à une date donnée - génère une écriture de type `RAN` (Report À Nouveau) qui constitue le point de départ dans le système | Module GL - création d'exercice |
+| **Exercices archivés** | Exercices passés en statut `archivé` : visibles pour consultation et états financiers historiques, verrouillés en saisie | `exercices_comptables.statut = 'archive'` |
+
+**Principe clé :** on ne ressaisit pas des années d'écritures. La reprise de balance capture l'état de chaque compte à une date charnière (ex: 31/12/2022) via une écriture unique. La comptabilité courante repart de là.
+
+**À implémenter lors de la refonte du module Paramètres (Phase 2 ou dédiée).**
+
+### 5.6 Consolidation (phase avancée)
+- Etats financiers multi-sociétés (somme des bilans filiales par exemple)
+- Rapport de gestion de portefeuille pour le cabinet
+- Export Excel multi-dossiers
 
 ---
 
-## 6. INTELLIGENCE ARTIFICIELLE INTEGREE
+## 6. REFERENTIEL PLAN COMPTABLE SYSCOHADA
+
+### 6.1 Architecture des tables de référence
+
+Deux tables coexistent et ont des rôles distincts :
+
+| Table | Comptes | Rôle |
+|---|---|---|
+| `ohada_plan_comptable` | 696 lignes (4 niveaux hiérarchiques) | Référentiel structuré : classes, comptes principaux, divisionnaires, sous-comptes |
+| `table_correspondance` | 1106 comptes 4 chiffres | Source canonique pour BD/BC/RD/RC - lookup lors de la création d'un compte |
+
+**Règle de hiérarchie SYSCOHADA Révisé :**
+- 1 chiffre = classe (ex: `1`)
+- 2 chiffres = compte principal (ex: `10`)
+- 3 chiffres = compte divisionnaire (ex: `101 Capital social`)
+- 4 chiffres = **sous-compte saisissable** (ex: `1011 Capital souscrit, non appelé`) - seul niveau importé dans `plan_comptable`
+
+### 6.2 Import initial (wizard)
+
+Lors de la finalisation du wizard :
+- Seuls les comptes de `ohada_plan_comptable` à `niveau = 4` (4 chiffres) sont importés dans `plan_comptable`
+- Le champ `type_compte` est lu directement depuis `ohada_plan_comptable` (pré-renseigné par classe et racine de compte)
+- Si `longueur_compte > 4`, le numéro est padé à droite avec des zéros : `1011` -> `10110000` pour une longueur de 8
+- `quatre_chiffres` conserve toujours la racine 4 chiffres pour les correspondances
+
+**À faire :** aligner le wizard pour utiliser `table_correspondance` (1106 comptes, plus complet) au lieu de `ohada_plan_comptable` (370 comptes niveau 4)
+
+### 6.3 Création d'un compte en cours d'utilisation
+
+Quand l'utilisateur crée un nouveau compte dans `plan_comptable` (hors wizard) :
+1. Il saisit le numéro de compte (minimum 4 chiffres)
+2. Le système extrait les 4 premiers chiffres (`quatre_chiffres`)
+3. Il recherche ce code dans `table_correspondance`
+4. BD, BC, RD, RC et tableau sont renseignés automatiquement depuis le référentiel
+5. Si le code n'existe pas dans `table_correspondance`, la création est bloquée avec message d'erreur
+
+### 6.4 Administration du référentiel (à implémenter)
+
+L'admin doit pouvoir corriger les valeurs BD/BC/RD/RC dans `table_correspondance` via une interface dédiée dans **Paramètres > Référentiel SYSCOHADA** (page `referentiel_ohada.php` existe en lecture seule - à enrichir).
+
+**Comportement attendu lors d'une correction :**
+- L'admin modifie une valeur (ex: BD de `CA` à `NA` pour le compte `1011`)
+- Le système propose : "Mettre à jour également les comptes existants dans le plan comptable ?" (oui / non)
+- Si oui : `UPDATE plan_comptable SET bd = ? WHERE quatre_chiffres = ? AND societe_id = ?` pour les comptes non personnalisés
+
+---
+
+## 7. INTELLIGENCE ARTIFICIELLE INTEGREE
 
 L'outil doit être proactif et apprenant :
 
@@ -262,19 +384,26 @@ L'outil doit être proactif et apprenant :
 
 ## 8. PLAN D'EXECUTION PAR ETAPES
 
-### PHASE 1 - Fondations (En cours)
-- [ ] Onboarding wizard (nouvelle installation)
-- [ ] Nouvelle structure de navigation / menu
+### PHASE 1 - Fondations
+- [x] Onboarding wizard 6 étapes (réalisé)
+- [x] Nouvelle structure de navigation / menu - sidebar accordéon (réalisé)
+- [x] Sélection du mode installation (Entreprise / Cabinet) dans le wizard (réalisé)
+- [x] Import plan comptable SYSCOHADA : uniquement les sous-comptes à 4 chiffres (niveau 4), avec padding automatique si longueur > 4, et type_compte renseigné depuis le référentiel (réalisé)
+- [ ] Vue dashboard Cabinet (liste dossiers, statuts, alertes)
 - [ ] Fusion Dashboard + Vue d'ensemble
-- [ ] Parametre taille de police
+- [ ] Parametre taille de police (wizard OK, reste à appliquer globalement)
 - [ ] Periodes comptables mensuelles (schema BDD)
 
 ### PHASE 2 - Noyau GL
-- [ ] Plan de comptes enrichi + multidevise
-- [ ] Saisie des ecritures (ameliorée)
+- [ ] Interface admin - édition du référentiel SYSCOHADA (`table_correspondance`) : correction BD/BC/RD/RC avec propagation optionnelle vers `plan_comptable`
+- [ ] Alignement wizard : utiliser `table_correspondance` (1106 comptes) au lieu de `ohada_plan_comptable` (370 comptes) pour l'import, pour une couverture complète
+- [ ] Plan de comptes enrichi (longueur variable, sous-comptes, import SYSCOHADA avec padding)
+- [ ] Saisie des écritures (améliorée)
 - [ ] Grand livre, Journal, Balance
-- [ ] Lettrage amelioré
-- [ ] Clôture/ouverture des périodes
+- [ ] Lettrage amélioré
+- [ ] Clôture/ouverture des périodes mensuelles
+- [ ] Reprise de balance d'ouverture (écriture RAN guidée)
+- [ ] Flux "Nouvelle société / filiale" dans Paramètres (avec exercices archivés)
 
 ### PHASE 3 - Etats financiers
 - [ ] Bilan (amelioré)

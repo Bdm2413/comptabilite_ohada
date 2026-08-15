@@ -433,14 +433,14 @@ function createSociete(array $data) {
             INSERT INTO societes (
                 code_societe, raison_sociale, type_entite,
                 id_cabinet, id_societe_mere,
-                numero_rccm, numero_contribuable, forme_juridique, capital,
+                numero_rccm, numero_contribuable, forme_juridique, secteur_activite, capital,
                 adresse, ville, pays, telephone, email, site_web,
                 devise_principale, regime_fiscal, date_debut_activite,
                 logo, actif
             ) VALUES (
                 :code, :raison_sociale, :type_entite,
                 :id_cabinet, :id_societe_mere,
-                :numero_rccm, :numero_contribuable, :forme_juridique, :capital,
+                :numero_rccm, :numero_contribuable, :forme_juridique, :secteur_activite, :capital,
                 :adresse, :ville, :pays, :telephone, :email, :site_web,
                 :devise, :regime_fiscal, :date_debut_activite,
                 :logo, :actif
@@ -456,10 +456,11 @@ function createSociete(array $data) {
             'numero_rccm' => $data['numero_rccm'] ?? null,
             'numero_contribuable' => $data['numero_contribuable'] ?? null,
             'forme_juridique' => $data['forme_juridique'] ?? null,
-            'capital' => $data['capital'] ?? null,
+            'secteur_activite' => $data['secteur_activite'] ?? null,
+            'capital' => !empty($data['capital']) ? (float)str_replace([' ', ','], ['', '.'], $data['capital']) : null,
             'adresse' => $data['adresse'] ?? null,
             'ville' => $data['ville'] ?? null,
-            'pays' => $data['pays'] ?? 'Côte d\'Ivoire',
+            'pays' => $data['pays'] ?? "Côte d'Ivoire",
             'telephone' => $data['telephone'] ?? null,
             'email' => $data['email'] ?? null,
             'site_web' => $data['site_web'] ?? null,

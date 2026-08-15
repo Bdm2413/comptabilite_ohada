@@ -217,6 +217,20 @@ if ($tab === 'achat') {
     }
 }
 
+$articlesParClient = [];
+if ($tab === 'vente') {
+    foreach ($articles as $article) {
+        $key = $article['id_client'] ?? 0;
+        if (!isset($articlesParClient[$key])) {
+            $articlesParClient[$key] = [
+                'nom'      => $article['client_nom'] ?? 'Catalogue général',
+                'articles' => []
+            ];
+        }
+        $articlesParClient[$key]['articles'][] = $article;
+    }
+}
+
 $pageTitle = "Catalogue Articles";
 ?>
 <!DOCTYPE html>
@@ -444,73 +458,82 @@ $pageTitle = "Catalogue Articles";
                 </div>
 
             <?php else: ?>
-                <!-- Vue Vente : tableau plat avec colonnes vente -->
-                <div class="bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                            <thead class="bg-slate-700/50">
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-xs text-slate-400 uppercase">Référence</th>
-                                    <th class="px-4 py-3 text-left text-xs text-slate-400 uppercase">Désignation</th>
-                                    <th class="px-4 py-3 text-left text-xs text-slate-400 uppercase">Client</th>
-                                    <th class="px-4 py-3 text-center text-xs text-slate-400 uppercase">Type</th>
-                                    <th class="px-4 py-3 text-center text-xs text-slate-400 uppercase">Taxe défaut</th>
-                                    <th class="px-4 py-3 text-left text-xs text-slate-400 uppercase">Compte produit</th>
-                                    <th class="px-4 py-3 text-center text-xs text-slate-400 uppercase">Unité</th>
-                                    <th class="px-4 py-3 text-right text-xs text-slate-400 uppercase">Prix vente HT</th>
-                                    <th class="px-4 py-3 text-center text-xs text-slate-400 uppercase">Usage</th>
-                                    <th class="px-4 py-3 text-center text-xs text-slate-400 uppercase">Statut</th>
-                                    <th class="px-4 py-3 text-center text-xs text-slate-400 uppercase">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-700">
-                                <?php foreach ($articles as $article): ?>
-                                    <?php $taxeColors = ['TVA'=>'text-green-400','PPSSI'=>'text-amber-400','BNC'=>'text-orange-400','Aucune'=>'text-slate-500']; ?>
-                                    <tr class="hover:bg-slate-700/30 transition-colors">
-                                        <td class="px-4 py-3 font-mono text-emerald-400 text-xs"><?= htmlspecialchars($article['reference']) ?></td>
-                                        <td class="px-4 py-3">
-                                            <div class="text-slate-200"><?= htmlspecialchars($article['designation']) ?></div>
-                                            <?php if ($article['description']): ?>
-                                                <div class="text-xs text-slate-500 truncate max-w-xs"><?= htmlspecialchars($article['description']) ?></div>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td class="px-4 py-3 text-xs text-slate-300">
-                                            <?= $article['client_nom'] ? htmlspecialchars($article['client_nom']) : '<span class="text-slate-600">-</span>' ?>
-                                        </td>
-                                        <td class="px-4 py-3 text-center">
-                                            <span class="px-2 py-0.5 rounded-full text-xs <?= $article['type_article'] === 'Bien' ? 'bg-green-500/20 text-green-400' : 'bg-purple-500/20 text-purple-400' ?>">
-                                                <?= $article['type_article'] ?>
-                                            </span>
-                                        </td>
-                                        <td class="px-4 py-3 text-center text-xs <?= $taxeColors[$article['type_taxe_defaut']] ?? 'text-slate-500' ?>">
-                                            <?= $article['type_taxe_defaut'] === 'Aucune' ? '-' : $article['type_taxe_defaut'] ?>
-                                        </td>
-                                        <td class="px-4 py-3 text-xs font-mono text-slate-300">
-                                            <?= $article['compte_vente'] ? htmlspecialchars($article['compte_vente']) : '<span class="text-slate-600">-</span>' ?>
-                                        </td>
-                                        <td class="px-4 py-3 text-center text-slate-400 text-xs"><?= htmlspecialchars($article['unite']) ?></td>
-                                        <td class="px-4 py-3 text-right font-mono text-slate-200 text-xs"><?= safe_number_format($article['prix_vente_ht']) ?></td>
-                                        <td class="px-4 py-3 text-center">
-                                            <?php if ($article['usage_article'] === 'les_deux'): ?>
-                                                <span class="px-2 py-0.5 rounded-full text-xs bg-indigo-500/20 text-indigo-400">Les deux</span>
-                                            <?php else: ?>
-                                                <span class="px-2 py-0.5 rounded-full text-xs bg-emerald-500/20 text-emerald-400">Vente</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td class="px-4 py-3 text-center">
-                                            <span class="px-2 py-0.5 rounded-full text-xs <?= $article['actif'] === 'Oui' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400' ?>">
-                                                <?= $article['actif'] === 'Oui' ? 'Actif' : 'Inactif' ?>
-                                            </span>
-                                        </td>
-                                        <td class="px-4 py-3 text-center whitespace-nowrap">
-                                            <button onclick='openModal("edit", <?= json_encode($article) ?>)' class="p-1.5 text-blue-400 hover:bg-blue-500/20 rounded" title="Modifier"><i class="fas fa-edit"></i></button>
-                                            <button onclick='confirmDelete(<?= $article["id"] ?>, "<?= htmlspecialchars(addslashes($article["designation"])) ?>")' class="p-1.5 text-red-400 hover:bg-red-500/20 rounded" title="Supprimer"><i class="fas fa-trash"></i></button>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
+                <!-- Vue Vente : groupée par client -->
+                <div class="space-y-4">
+                    <?php foreach ($articlesParClient as $clientId => $groupe): ?>
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden">
+                            <button onclick="toggleClient('<?= $clientId ?>')" class="w-full px-4 py-3 bg-slate-700/50 hover:bg-slate-700/70 flex items-center justify-between transition-colors">
+                                <div class="flex items-center gap-3">
+                                    <i id="icon-cli-<?= $clientId ?>" class="fas fa-chevron-down text-slate-400"></i>
+                                    <span class="font-semibold text-slate-200"><?= htmlspecialchars($groupe['nom']) ?></span>
+                                </div>
+                                <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-sm font-medium">
+                                    <?= count($groupe['articles']) ?> article<?= count($groupe['articles']) > 1 ? 's' : '' ?>
+                                </span>
+                            </button>
+                            <div id="articles-cli-<?= $clientId ?>" class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead class="bg-slate-700/30">
+                                        <tr>
+                                            <th class="px-4 py-2 text-left text-xs text-slate-400 uppercase">Référence</th>
+                                            <th class="px-4 py-2 text-left text-xs text-slate-400 uppercase">Désignation</th>
+                                            <th class="px-4 py-2 text-center text-xs text-slate-400 uppercase">Type</th>
+                                            <th class="px-4 py-2 text-center text-xs text-slate-400 uppercase">Taxe défaut</th>
+                                            <th class="px-4 py-2 text-left text-xs text-slate-400 uppercase">Compte produit</th>
+                                            <th class="px-4 py-2 text-center text-xs text-slate-400 uppercase">Unité</th>
+                                            <th class="px-4 py-2 text-right text-xs text-slate-400 uppercase">Prix vente HT</th>
+                                            <th class="px-4 py-2 text-center text-xs text-slate-400 uppercase">Usage</th>
+                                            <th class="px-4 py-2 text-center text-xs text-slate-400 uppercase">Statut</th>
+                                            <th class="px-4 py-2 text-center text-xs text-slate-400 uppercase">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-700">
+                                        <?php foreach ($groupe['articles'] as $article): ?>
+                                            <?php $taxeColors = ['TVA'=>'text-green-400','PPSSI'=>'text-amber-400','BNC'=>'text-orange-400','Aucune'=>'text-slate-500']; ?>
+                                            <tr class="hover:bg-slate-700/30 transition-colors">
+                                                <td class="px-4 py-3 font-mono text-emerald-400 text-xs"><?= htmlspecialchars($article['reference']) ?></td>
+                                                <td class="px-4 py-3">
+                                                    <div class="text-slate-200"><?= htmlspecialchars($article['designation']) ?></div>
+                                                    <?php if ($article['description']): ?>
+                                                        <div class="text-xs text-slate-500 truncate max-w-xs"><?= htmlspecialchars($article['description']) ?></div>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <span class="px-2 py-0.5 rounded-full text-xs <?= $article['type_article'] === 'Bien' ? 'bg-green-500/20 text-green-400' : 'bg-purple-500/20 text-purple-400' ?>">
+                                                        <?= $article['type_article'] ?>
+                                                    </span>
+                                                </td>
+                                                <td class="px-4 py-3 text-center text-xs <?= $taxeColors[$article['type_taxe_defaut']] ?? 'text-slate-500' ?>">
+                                                    <?= $article['type_taxe_defaut'] === 'Aucune' ? '-' : $article['type_taxe_defaut'] ?>
+                                                </td>
+                                                <td class="px-4 py-3 text-xs font-mono text-slate-300">
+                                                    <?= $article['compte_vente'] ? htmlspecialchars($article['compte_vente']) : '<span class="text-slate-600">-</span>' ?>
+                                                </td>
+                                                <td class="px-4 py-3 text-center text-slate-400 text-xs"><?= htmlspecialchars($article['unite']) ?></td>
+                                                <td class="px-4 py-3 text-right font-mono text-slate-200 text-xs"><?= safe_number_format($article['prix_vente_ht']) ?></td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <?php if ($article['usage_article'] === 'les_deux'): ?>
+                                                        <span class="px-2 py-0.5 rounded-full text-xs bg-indigo-500/20 text-indigo-400">Les deux</span>
+                                                    <?php else: ?>
+                                                        <span class="px-2 py-0.5 rounded-full text-xs bg-emerald-500/20 text-emerald-400">Vente</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <span class="px-2 py-0.5 rounded-full text-xs <?= $article['actif'] === 'Oui' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400' ?>">
+                                                        <?= $article['actif'] === 'Oui' ? 'Actif' : 'Inactif' ?>
+                                                    </span>
+                                                </td>
+                                                <td class="px-4 py-3 text-center whitespace-nowrap">
+                                                    <button onclick='openModal("edit", <?= json_encode($article) ?>)' class="p-1.5 text-blue-400 hover:bg-blue-500/20 rounded" title="Modifier"><i class="fas fa-edit"></i></button>
+                                                    <button onclick='confirmDelete(<?= $article["id"] ?>, "<?= htmlspecialchars(addslashes($article["designation"])) ?>")' class="p-1.5 text-red-400 hover:bg-red-500/20 rounded" title="Supprimer"><i class="fas fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             <?php endif; ?>
         </main>
@@ -743,20 +766,20 @@ $pageTitle = "Catalogue Articles";
             if (e.key === 'Escape') closeModal();
         });
 
-        // Toggle fournisseur section
-        function toggleFournisseur(id) {
-            const content = document.getElementById('articles-' + id);
-            const icon = document.getElementById('icon-' + id);
+        // Toggle fournisseur/client section
+        function toggleGroupe(prefix, id) {
+            const content = document.getElementById('articles-' + prefix + id);
+            const icon    = document.getElementById('icon-'     + prefix + id);
             if (content.style.display === 'none') {
                 content.style.display = '';
-                icon.classList.remove('fa-chevron-right');
-                icon.classList.add('fa-chevron-down');
+                icon.classList.replace('fa-chevron-right', 'fa-chevron-down');
             } else {
                 content.style.display = 'none';
-                icon.classList.remove('fa-chevron-down');
-                icon.classList.add('fa-chevron-right');
+                icon.classList.replace('fa-chevron-down', 'fa-chevron-right');
             }
         }
+        function toggleFournisseur(id) { toggleGroupe('', id); }
+        function toggleClient(id)      { toggleGroupe('cli-', id); }
 
         // Génération automatique de référence
         const articleCounts = <?= json_encode(

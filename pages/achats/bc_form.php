@@ -118,8 +118,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $stmt = $db->prepare("
                 INSERT INTO bons_commande
-                (numero_bc, id_fournisseur, id_devis, date_bc, date_livraison_prevue, objet, seuil_alerte, notes, societe_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (numero_bc, id_fournisseur, id_devis, date_bc, date_livraison_prevue, objet, seuil_alerte, notes, societe_id, statut)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Brouillon')
             ");
             $stmt->execute([
                 $data['numero_bc'], $data['id_fournisseur'], $data['id_devis'], $data['date_bc'],
@@ -206,15 +206,16 @@ $pageTitle = $isEdit ? "BC " . htmlspecialchars($bc['numero_bc']) : "Nouveau bon
                             <div class="flex items-center gap-3">
                                 <?php
                                 $statusColors = [
-                                    'Brouillon' => 'bg-slate-500/20 text-slate-400 border-slate-500/50',
-                                    'Validé' => 'bg-blue-500/20 text-blue-400 border-blue-500/50',
-                                    'En cours' => 'bg-purple-500/20 text-purple-400 border-purple-500/50',
+                                    ''                    => 'bg-slate-500/20 text-slate-400 border-slate-600',
+                                    'Brouillon'           => 'bg-slate-500/20 text-slate-400 border-slate-500/50',
+                                    'Validé'              => 'bg-blue-500/20 text-blue-400 border-blue-500/50',
+                                    'En cours'            => 'bg-purple-500/20 text-purple-400 border-purple-500/50',
                                     'Partiellement livré' => 'bg-amber-500/20 text-amber-400 border-amber-500/50',
-                                    'Livré' => 'bg-green-500/20 text-green-400 border-green-500/50',
-                                    'Clôturé' => 'bg-slate-500/20 text-slate-400 border-slate-500/50'
+                                    'Livré'               => 'bg-green-500/20 text-green-400 border-green-500/50',
+                                    'Clôturé'             => 'bg-slate-500/20 text-slate-400 border-slate-500/50'
                                 ];
                                 ?>
-                                <span class="px-3 py-1 rounded-full text-sm border <?= $statusColors[$bc['statut']] ?>"><?= $bc['statut'] ?></span>
+                                <span class="px-3 py-1 rounded-full text-sm border <?= $statusColors[$bc['statut']] ?? 'bg-slate-500/20 text-slate-400 border-slate-600' ?>"><?= $bc['statut'] ?: 'Brouillon' ?></span>
                                 <?php if (!empty($bc['valide_par']) || !empty($bc['date_validation'])): ?>
                                     <span class="text-slate-400 text-sm">
                                         <?php if (!empty($bc['valide_par'])): ?>par <?= htmlspecialchars($bc['valide_par']) ?><?php endif; ?>

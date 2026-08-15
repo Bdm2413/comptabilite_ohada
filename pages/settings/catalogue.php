@@ -541,10 +541,10 @@ $pageTitle = "Catalogue Articles";
                         </div>
                         <div id="bloc_client">
                             <label class="block text-sm font-medium text-slate-400 mb-1">Client</label>
-                            <select name="id_client" id="id_client" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-emerald-500">
+                            <select name="id_client" id="id_client" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-emerald-500" onchange="generateReference()">
                                 <option value="">- Général -</option>
                                 <?php foreach ($clients as $c): ?>
-                                    <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['nom']) ?></option>
+                                    <option value="<?= $c['id'] ?>" data-abrev="<?= htmlspecialchars(strtoupper(substr(preg_replace('/[^a-zA-Z]/', '', $c['nom']), 0, 3))) ?>"><?= htmlspecialchars($c['nom']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -766,25 +766,44 @@ $pageTitle = "Catalogue Articles";
                 return $acc;
             }, [])
         ) ?>;
+        const clientArticleCounts = <?= json_encode(
+            array_reduce($articles, function($acc, $art) {
+                $cid = $art['id_client'];
+                if ($cid) $acc[$cid] = ($acc[$cid] ?? 0) + 1;
+                return $acc;
+            }, [])
+        ) ?>;
+        const venteGeneralCount = <?= count(array_filter($articles, fn($a) => empty($a['id_client']))) ?>;
 
         function generateReference() {
-            const select = document.getElementById('id_fournisseur');
-            const refInput = document.getElementById('reference');
+            const usage     = document.getElementById('usage_article').value;
+            const refInput  = document.getElementById('reference');
             const formAction = document.getElementById('formAction').value;
 
-            // Ne pas générer si en mode édition et référence déjà remplie
+            // Ne pas écraser une référence existante en mode édition
             if (formAction === 'edit' && refInput.value) return;
 
-            if (!select.value) {
-                refInput.value = '';
-                return;
-            }
+            const useVente = usage === 'vente' || (usage === 'les_deux' && CURRENT_TAB === 'vente');
 
-            const option = select.options[select.selectedIndex];
-            const abrev = option.dataset.abrev || 'ART';
-            const count = (articleCounts[select.value] || 0) + 1;
-            const ref = abrev.toUpperCase() + '-' + String(count).padStart(4, '0');
-            refInput.value = ref;
+            if (!useVente) {
+                // Achat : basé sur fournisseur
+                const sel = document.getElementById('id_fournisseur');
+                if (!sel.value) { refInput.value = ''; return; }
+                const abrev = sel.options[sel.selectedIndex].dataset.abrev || 'ART';
+                const count = (articleCounts[sel.value] || 0) + 1;
+                refInput.value = abrev.toUpperCase() + '-' + String(count).padStart(4, '0');
+            } else {
+                // Vente : basé sur client
+                const sel = document.getElementById('id_client');
+                if (!sel.value) {
+                    const count = venteGeneralCount + 1;
+                    refInput.value = 'VTE-' + String(count).padStart(4, '0');
+                } else {
+                    const abrev = sel.options[sel.selectedIndex].dataset.abrev || 'CLI';
+                    const count = (clientArticleCounts[sel.value] || 0) + 1;
+                    refInput.value = abrev.toUpperCase() + '-' + String(count).padStart(4, '0');
+                }
+            }
         }
     </script>
 </body>

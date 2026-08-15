@@ -94,6 +94,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($data['journal'])) $errors[] = "Le journal est requis";
     if (empty($data['libelle'])) $errors[] = "Le libellé est requis";
 
+    // Verrou de période comptable (Oracle GL pattern)
+    if (!empty($data['date_ecriture']) && empty($errors)) {
+        try {
+            requirePeriodeOuverte($data['date_ecriture'], $societe_id);
+        } catch (RuntimeException $e) {
+            $errors[] = $e->getMessage();
+        }
+    }
+
     // Validation des lignes
     $details = [];
     $total_debit = 0;

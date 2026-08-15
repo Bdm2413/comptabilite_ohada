@@ -49,6 +49,14 @@ try {
         throw new Exception("Aucun exercice comptable trouvé pour cette écriture");
     }
 
+    // Verrou de période : l'extourne sera datée d'aujourd'hui - la période doit être ouverte
+    $date_extourne_check = date('Y-m-d');
+    try {
+        requirePeriodeOuverte($date_extourne_check, $societe_id);
+    } catch (RuntimeException $e) {
+        throw new Exception("Impossible d'extourner : " . $e->getMessage());
+    }
+
     // Récupérer les lignes de l'écriture
     $stmt = $db->prepare("
         SELECT * FROM lignes_ecriture

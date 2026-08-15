@@ -240,6 +240,16 @@ try {
             $date_ecriture = date('Y-m-d', strtotime($date_ecriture));
         }
 
+        // Verrou de période comptable
+        if (!empty($date_ecriture) && !$mode_simulation) {
+            try {
+                requirePeriodeOuverte($date_ecriture, $societe_id);
+            } catch (RuntimeException $e) {
+                $stats['erreurs'][] = "Écriture $numero_ecriture ($date_ecriture) ignorée : " . $e->getMessage();
+                continue;
+            }
+        }
+
         // Préparer les données - TOUS LES CHAMPS
         $journal = $ecriture['journal'] ?? 'OD';
         $libelle = $ecriture['libelle'] ?? '';

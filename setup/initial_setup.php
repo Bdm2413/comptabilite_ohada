@@ -106,14 +106,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ")->execute([$longueur_compte, $longueur_compte]);
 
             // Import du plan comptable SYSCOHADA Révisé
-            // Seuls les comptes à 4 chiffres (niveau 4) sont importés :
-            // 2 chiffres = compte principal, 3 chiffres = divisionnaire, 4 chiffres = sous-compte saisissable
+            // Source : table_correspondance (1106 sous-comptes à 4 chiffres, couverture complète)
             $plan_type = $_POST['plan_type'] ?? 'ohada';
             if ($plan_type === 'ohada') {
-                $comptes_ohada = $db->query("
-                    SELECT * FROM ohada_plan_comptable
-                    WHERE niveau = 4 AND compte_4 IS NOT NULL AND libelle_4 IS NOT NULL
-                    ORDER BY compte_4
+                $comptes = $db->query("
+                    SELECT compte, classe, libelle, tableau, bd, bc, rd, rc, type_compte
+                    FROM table_correspondance
+                    ORDER BY compte
                 ")->fetchAll();
 
                 $insComp = $db->prepare("
@@ -122,9 +121,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Oui')
                 ");
 
-                foreach ($comptes_ohada as $c) {
-                    $num4 = (string)$c['compte_4'];
-                    $lib  = $c['libelle_4'];
+                foreach ($comptes as $c) {
+                    $num4 = (string)$c['compte'];
+                    $lib  = $c['libelle'];
                     if (empty($num4) || empty($lib)) continue;
 
                     // Appliquer le padding si longueur choisie > 4
@@ -132,25 +131,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ? str_pad($num4, $longueur_compte, '0', STR_PAD_RIGHT)
                         : $num4;
 
-                    $classe_int  = (int)$c['classe'];
-                    $quatre_int  = (int)$num4;
-                    $tableau_val = $c['bd'] ?? 'ND';
-
-                    // Type lu directement depuis le referentiel ohada_plan_comptable
-                    $type_compte = $c['type_compte'] ?? null;
-
                     $insComp->execute([
                         $societe_id,
                         (int)$num_final,
                         $lib,
-                        $classe_int,
-                        $quatre_int,
-                        $tableau_val,
+                        (int)$c['classe'],
+                        (int)$num4,
+                        $c['tableau'] ?? 'ND',
                         $c['bd'],
                         $c['bc'],
                         $c['rd'],
                         $c['rc'],
-                        $type_compte,
+                        $c['type_compte'],
                     ]);
                 }
             }

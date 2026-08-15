@@ -649,7 +649,18 @@ L'outil doit être proactif et apprenant :
 - [ ] **Factures fournisseurs (AP) :** saisie avec numéro fournisseur, lignes depuis catalogue, taxes (TVA/PPSSI/BNC), statuts, comptabilisation automatique; bouton "Convertir en facture" depuis BC approuvé
 - [ ] **Encaissements clients :** modal règlement depuis la facture, écriture 521/411 auto, lettrage auto
 - [ ] **Paiements fournisseurs :** modal règlement depuis la facture, écriture 401/521 auto, lettrage auto
+- [ ] **Aging (ancienneté des factures) :** champ `date_echeance` sur chaque facture, calcul du retard en jours, buckets 0-30 / 31-60 / 61-90 / +90 jours - base de la balance âgée clients et fournisseurs
+- [ ] **Balance âgée clients :** tableau par client, colonnes par tranche d'ancienneté, total échu/non échu
+- [ ] **Balance âgée fournisseurs :** même structure côté fournisseurs
 - [ ] **Devis et bons de commande :** améliorer le flux existant, lier BC approuvé vers facture fournisseur
+
+**Structure aging dans les tables de factures :**
+- `date_facture` : date d'émission
+- `date_echeance` : date limite de paiement (calculée : date_facture + délai tiers, ou saisie manuelle)
+- `montant_ttc` : montant total dû
+- `montant_regle` : cumul des règlements enregistrés
+- `solde_restant` : montant_ttc - montant_regle (calculé)
+- Buckets aging calculés à la volée : `DATEDIFF(CURDATE(), date_echeance)` par tranche
 
 ### PHASE 4 - Fiscal & Social (différenciateur marché)
 

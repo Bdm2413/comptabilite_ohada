@@ -16,6 +16,17 @@ $stmtFournisseurs = $db->prepare("SELECT id, nom, abreviation FROM plan_tiers WH
 $stmtFournisseurs->execute([$societe_id]);
 $fournisseurs = $stmtFournisseurs->fetchAll();
 
+// Comptes comptables pour les selects (comptes de charge 6x et de produit 7x)
+$stmtComptes = $db->prepare("
+    SELECT compte, intitule_compte
+    FROM plan_comptable
+    WHERE societe_id = ? AND LENGTH(compte) >= 4
+      AND (LEFT(compte,1) = '6' OR LEFT(compte,1) = '7')
+    ORDER BY compte
+");
+$stmtComptes->execute([$societe_id]);
+$comptes_compta = $stmtComptes->fetchAll();
+
 // Traitement du formulaire
 $message = '';
 $messageType = '';
@@ -24,21 +35,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
     try {
+        $parseDecimal = fn($v) => floatval(str_replace([' ', ',', "\xc2\xa0"], ['', '.', ''], $v ?? '0'));
+
         if ($action === 'add') {
             $stmt = $db->prepare("
                 INSERT INTO catalogues_fournisseurs
-                (societe_id, id_fournisseur, reference, designation, description, type_article, unite, prix_unitaire_ht, actif)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (societe_id, id_fournisseur, reference, designation, description,
+                 type_article, usage_article, compte_achat, compte_vente, type_taxe_defaut,
+                 unite, prix_unitaire_ht, prix_vente_ht, actif)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([
                 $societe_id,
-                $_POST['id_fournisseur'],
+                $_POST['id_fournisseur'] ?: null,
                 trim($_POST['reference']),
                 trim($_POST['designation']),
                 trim($_POST['description'] ?? ''),
                 $_POST['type_article'],
+                $_POST['usage_article'] ?? 'achat',
+                $_POST['compte_achat']  ?: null,
+                $_POST['compte_vente']  ?: null,
+                $_POST['type_taxe_defaut'] ?? 'Aucune',
                 trim($_POST['unite']),
-                floatval(str_replace([' ', ','], ['', '.'], $_POST['prix_unitaire_ht'])),
+                $parseDecimal($_POST['prix_unitaire_ht']),
+                $parseDecimal($_POST['prix_vente_ht']),
                 $_POST['actif'] ?? 'Oui'
             ]);
             $message = 'Article ajouté au catalogue avec succès';
@@ -52,19 +72,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     designation = ?,
                     description = ?,
                     type_article = ?,
+                    usage_article = ?,
+                    compte_achat = ?,
+                    compte_vente = ?,
+                    type_taxe_defaut = ?,
                     unite = ?,
                     prix_unitaire_ht = ?,
+                    prix_vente_ht = ?,
                     actif = ?
                 WHERE id = ? AND societe_id = ?
             ");
             $stmt->execute([
-                $_POST['id_fournisseur'],
+                $_POST['id_fournisseur'] ?: null,
                 trim($_POST['reference']),
                 trim($_POST['designation']),
                 trim($_POST['description'] ?? ''),
                 $_POST['type_article'],
+                $_POST['usage_article'] ?? 'achat',
+                $_POST['compte_achat']  ?: null,
+                $_POST['compte_vente']  ?: null,
+                $_POST['type_taxe_defaut'] ?? 'Aucune',
                 trim($_POST['unite']),
-                floatval(str_replace([' ', ','], ['', '.'], $_POST['prix_unitaire_ht'])),
+                $parseDecimal($_POST['prix_unitaire_ht']),
+                $parseDecimal($_POST['prix_vente_ht']),
                 $_POST['actif'] ?? 'Oui',
                 $_POST['id'],
                 $societe_id
@@ -363,11 +393,12 @@ $pageTitle = "Catalogue Fournisseurs";
                     <input type="hidden" name="action" id="formAction" value="add">
                     <input type="hidden" name="id" id="articleId">
 
+                    <!-- Ligne 1 : Fournisseur + Référence -->
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-400 mb-1">Fournisseur *</label>
-                            <select name="id_fournisseur" id="id_fournisseur" required class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500" onchange="generateReference()">
-                                <option value="">Sélectionner...</option>
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Fournisseur</label>
+                            <select name="id_fournisseur" id="id_fournisseur" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500" onchange="generateReference()">
+                                <option value="">- Catalogue général -</option>
                                 <?php foreach ($fournisseurs as $f): ?>
                                     <option value="<?= $f['id'] ?>" data-abrev="<?= htmlspecialchars($f['abreviation'] ?? strtoupper(substr($f['nom'], 0, 3))) ?>"><?= htmlspecialchars($f['nom']) ?></option>
                                 <?php endforeach; ?>
@@ -384,17 +415,20 @@ $pageTitle = "Catalogue Fournisseurs";
                         </div>
                     </div>
 
+                    <!-- Désignation -->
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Désignation *</label>
                         <input type="text" name="designation" id="designation" required class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500">
                     </div>
 
+                    <!-- Description -->
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Description</label>
                         <textarea name="description" id="description" rows="2" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500"></textarea>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-4">
+                    <!-- Ligne 2 : Type + Usage + Taxe par défaut + Unité -->
+                    <div class="grid grid-cols-4 gap-3">
                         <div>
                             <label class="block text-sm font-medium text-slate-400 mb-1">Type *</label>
                             <select name="type_article" id="type_article" required class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500">
@@ -403,28 +437,69 @@ $pageTitle = "Catalogue Fournisseurs";
                             </select>
                         </div>
                         <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Usage *</label>
+                            <select name="usage_article" id="usage_article" required class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500" onchange="togglePrixVente()">
+                                <option value="achat">Achat</option>
+                                <option value="vente">Vente</option>
+                                <option value="les_deux">Les deux</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Taxe par défaut</label>
+                            <select name="type_taxe_defaut" id="type_taxe_defaut" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500">
+                                <option value="Aucune">Aucune</option>
+                                <option value="TVA">TVA 18%</option>
+                                <option value="PPSSI">PPSSI 2%</option>
+                                <option value="BNC">BNC 7.5%</option>
+                            </select>
+                        </div>
+                        <div>
                             <label class="block text-sm font-medium text-slate-400 mb-1">Unité *</label>
                             <input type="text" name="unite" id="unite" required value="unité" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500" list="unites">
                             <datalist id="unites">
-                                <option value="unité">
-                                <option value="pcs">
-                                <option value="kg">
-                                <option value="m">
-                                <option value="m²">
-                                <option value="m³">
-                                <option value="litre">
-                                <option value="forfait">
-                                <option value="heure">
-                                <option value="jour">
-                                <option value="mois">
+                                <option value="unité"><option value="pcs"><option value="kg">
+                                <option value="m"><option value="m²"><option value="m³">
+                                <option value="litre"><option value="forfait">
+                                <option value="heure"><option value="jour"><option value="mois">
                             </datalist>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-400 mb-1">Prix unitaire HT *</label>
-                            <input type="text" name="prix_unitaire_ht" id="prix_unitaire_ht" required class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500 text-right">
                         </div>
                     </div>
 
+                    <!-- Ligne 3 : Prix achat + Prix vente -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Prix achat HT</label>
+                            <input type="text" name="prix_unitaire_ht" id="prix_unitaire_ht" value="0" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500 text-right">
+                        </div>
+                        <div id="bloc_prix_vente">
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Prix vente HT</label>
+                            <input type="text" name="prix_vente_ht" id="prix_vente_ht" value="0" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500 text-right">
+                        </div>
+                    </div>
+
+                    <!-- Ligne 4 : Compte achat + Compte vente -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Compte de charge (achat)</label>
+                            <select name="compte_achat" id="compte_achat" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500">
+                                <option value="">- Non défini -</option>
+                                <?php foreach ($comptes_compta as $c): if (substr($c['compte'], 0, 1) !== '6') continue; ?>
+                                    <option value="<?= $c['compte'] ?>"><?= $c['compte'] ?> - <?= htmlspecialchars(substr($c['intitule_compte'], 0, 40)) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div id="bloc_compte_vente">
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Compte de produit (vente)</label>
+                            <select name="compte_vente" id="compte_vente" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500">
+                                <option value="">- Non défini -</option>
+                                <?php foreach ($comptes_compta as $c): if (substr($c['compte'], 0, 1) !== '7') continue; ?>
+                                    <option value="<?= $c['compte'] ?>"><?= $c['compte'] ?> - <?= htmlspecialchars(substr($c['intitule_compte'], 0, 40)) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Statut -->
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Statut</label>
                         <select name="actif" id="actif" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500">
@@ -453,6 +528,13 @@ $pageTitle = "Catalogue Fournisseurs";
     </form>
 
     <script>
+        function togglePrixVente() {
+            const usage = document.getElementById('usage_article').value;
+            const showVente = usage === 'vente' || usage === 'les_deux';
+            document.getElementById('bloc_prix_vente').style.opacity   = showVente ? '1' : '0.3';
+            document.getElementById('bloc_compte_vente').style.opacity = showVente ? '1' : '0.3';
+        }
+
         function openModal(action, data = null) {
             document.getElementById('modal').classList.remove('hidden');
             document.getElementById('formAction').value = action;
@@ -462,17 +544,26 @@ $pageTitle = "Catalogue Fournisseurs";
                 document.getElementById('articleForm').reset();
                 document.getElementById('articleId').value = '';
                 document.getElementById('unite').value = 'unité';
+                document.getElementById('prix_unitaire_ht').value = '0';
+                document.getElementById('prix_vente_ht').value = '0';
+                togglePrixVente();
             } else if (action === 'edit' && data) {
                 document.getElementById('modalTitle').textContent = 'Modifier l\'article';
-                document.getElementById('articleId').value = data.id;
-                document.getElementById('id_fournisseur').value = data.id_fournisseur;
-                document.getElementById('reference').value = data.reference;
-                document.getElementById('designation').value = data.designation;
-                document.getElementById('description').value = data.description || '';
-                document.getElementById('type_article').value = data.type_article;
-                document.getElementById('unite').value = data.unite;
-                document.getElementById('prix_unitaire_ht').value = parseFloat(data.prix_unitaire_ht).toLocaleString('fr-FR');
-                document.getElementById('actif').value = data.actif;
+                document.getElementById('articleId').value        = data.id;
+                document.getElementById('id_fournisseur').value   = data.id_fournisseur || '';
+                document.getElementById('reference').value        = data.reference;
+                document.getElementById('designation').value      = data.designation;
+                document.getElementById('description').value      = data.description || '';
+                document.getElementById('type_article').value     = data.type_article;
+                document.getElementById('usage_article').value    = data.usage_article || 'achat';
+                document.getElementById('type_taxe_defaut').value = data.type_taxe_defaut || 'Aucune';
+                document.getElementById('unite').value            = data.unite;
+                document.getElementById('prix_unitaire_ht').value = parseFloat(data.prix_unitaire_ht || 0).toLocaleString('fr-FR');
+                document.getElementById('prix_vente_ht').value    = parseFloat(data.prix_vente_ht || 0).toLocaleString('fr-FR');
+                document.getElementById('compte_achat').value     = data.compte_achat || '';
+                document.getElementById('compte_vente').value     = data.compte_vente || '';
+                document.getElementById('actif').value            = data.actif;
+                togglePrixVente();
             }
         }
 

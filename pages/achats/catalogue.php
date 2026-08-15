@@ -134,21 +134,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// Onglet actif
+$tab = in_array($_GET['tab'] ?? '', ['achat','vente']) ? $_GET['tab'] : 'achat';
+
 // Filtres
 $filterFournisseur = $_GET['fournisseur'] ?? '';
-$filterType = $_GET['type'] ?? '';
-$filterActif = $_GET['actif'] ?? 'Oui';
-$search = $_GET['search'] ?? '';
+$filterType        = $_GET['type'] ?? '';
+$filterActif       = $_GET['actif'] ?? 'Oui';
+$search            = $_GET['search'] ?? '';
 
-// Construire la requête
+// Requête adaptée à l'onglet
 $sql = "
-    SELECT c.*, pt.nom as fournisseur_nom, pt.abreviation as fournisseur_abrev
+    SELECT c.*,
+           pt.nom as fournisseur_nom, pt.abreviation as fournisseur_abrev
     FROM catalogues_fournisseurs c
-    JOIN plan_tiers pt ON c.id_fournisseur = pt.id
+    LEFT JOIN plan_tiers pt ON c.id_fournisseur = pt.id
     WHERE c.societe_id = ?
 ";
 $params = [$societe_id];
 
+if ($tab === 'achat') {
+    $sql .= " AND c.usage_article IN ('achat','les_deux')";
+} else {
+    $sql .= " AND c.usage_article IN ('vente','les_deux')";
+}
 if (!empty($filterFournisseur)) {
     $sql .= " AND c.id_fournisseur = ?";
     $params[] = $filterFournisseur;
@@ -169,27 +178,31 @@ if (!empty($search)) {
     $params[] = $searchParam;
 }
 
-$sql .= " ORDER BY pt.nom, c.reference";
+$sql .= $tab === 'achat'
+    ? " ORDER BY pt.nom, c.reference"
+    : " ORDER BY c.designation";
 
 $stmt = $db->prepare($sql);
 $stmt->execute($params);
 $articles = $stmt->fetchAll();
 
-// Regrouper les articles par fournisseur
+// Groupement par fournisseur uniquement pour l'onglet Achat
 $articlesParFournisseur = [];
-foreach ($articles as $article) {
-    $fournisseurId = $article['id_fournisseur'];
-    if (!isset($articlesParFournisseur[$fournisseurId])) {
-        $articlesParFournisseur[$fournisseurId] = [
-            'nom' => $article['fournisseur_nom'],
-            'abrev' => $article['fournisseur_abrev'],
-            'articles' => []
-        ];
+if ($tab === 'achat') {
+    foreach ($articles as $article) {
+        $key = $article['id_fournisseur'] ?? 0;
+        if (!isset($articlesParFournisseur[$key])) {
+            $articlesParFournisseur[$key] = [
+                'nom'      => $article['fournisseur_nom'] ?? 'Catalogue général',
+                'abrev'    => $article['fournisseur_abrev'] ?? '',
+                'articles' => []
+            ];
+        }
+        $articlesParFournisseur[$key]['articles'][] = $article;
     }
-    $articlesParFournisseur[$fournisseurId]['articles'][] = $article;
 }
 
-$pageTitle = "Catalogue Fournisseurs";
+$pageTitle = "Catalogue Articles";
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -212,32 +225,43 @@ $pageTitle = "Catalogue Fournisseurs";
 
         <main class="flex-1 overflow-y-auto p-8">
             <!-- Header -->
-            <div class="mb-8">
+            <div class="mb-6">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-600 mb-2">
+                        <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-600 mb-1">
                             <i class="fas fa-book-open mr-3"></i><?= $pageTitle ?>
                         </h1>
-                        <p class="text-slate-400">Gérez les articles et services de vos fournisseurs</p>
+                        <p class="text-slate-400 text-sm">Articles et services - référentiel pour la comptabilisation automatique</p>
                     </div>
-                    <button onclick="openModal('add')" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all shadow-lg hover:shadow-xl inline-flex items-center gap-2">
-                        <i class="fas fa-plus"></i>
-                        Nouvel article
+                    <button onclick="openModal('add')" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all shadow-lg inline-flex items-center gap-2">
+                        <i class="fas fa-plus"></i>Nouvel article
                     </button>
+                </div>
+
+                <!-- Onglets Achat / Vente -->
+                <div class="flex gap-1 bg-slate-800/60 p-1 rounded-lg w-fit border border-slate-700">
+                    <a href="?tab=achat" class="px-5 py-2 rounded-md text-sm font-medium transition-all <?= $tab === 'achat' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-slate-200' ?>">
+                        <i class="fas fa-shopping-cart mr-2"></i>Catalogue Achat
+                    </a>
+                    <a href="?tab=vente" class="px-5 py-2 rounded-md text-sm font-medium transition-all <?= $tab === 'vente' ? 'bg-emerald-600 text-white shadow' : 'text-slate-400 hover:text-slate-200' ?>">
+                        <i class="fas fa-tag mr-2"></i>Catalogue Vente
+                    </a>
                 </div>
             </div>
 
             <!-- Message flash -->
             <?php if ($message): ?>
-                <div class="mb-6 p-4 rounded-lg <?= $messageType === 'success' ? 'bg-green-500/10 border border-green-500/50 text-green-400' : 'bg-red-500/10 border border-red-500/50 text-red-400' ?>">
+                <div class="mb-4 p-4 rounded-lg <?= $messageType === 'success' ? 'bg-green-500/10 border border-green-500/50 text-green-400' : 'bg-red-500/10 border border-red-500/50 text-red-400' ?>">
                     <i class="fas <?= $messageType === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle' ?> mr-2"></i>
                     <?= htmlspecialchars($message) ?>
                 </div>
             <?php endif; ?>
 
             <!-- Filtres -->
-            <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4 mb-6">
-                <form method="GET" class="flex flex-wrap items-end gap-4">
+            <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4 mb-5">
+                <form method="GET" class="flex flex-wrap items-end gap-3">
+                    <input type="hidden" name="tab" value="<?= $tab ?>">
+                    <?php if ($tab === 'achat'): ?>
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Fournisseur</label>
                         <select name="fournisseur" class="px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500">
@@ -249,6 +273,7 @@ $pageTitle = "Catalogue Fournisseurs";
                             <?php endforeach; ?>
                         </select>
                     </div>
+                    <?php endif; ?>
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Type</label>
                         <select name="type" class="px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500">
@@ -270,79 +295,87 @@ $pageTitle = "Catalogue Fournisseurs";
                         <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Référence, désignation..."
                                class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500">
                     </div>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
                         <i class="fas fa-search mr-2"></i>Filtrer
                     </button>
-                    <a href="catalogue.php" class="px-4 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-colors">
+                    <a href="?tab=<?= $tab ?>" class="px-4 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded-lg">
                         <i class="fas fa-times mr-2"></i>Reset
                     </a>
                 </form>
             </div>
 
             <!-- Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <?php
+                $nbBiens    = count(array_filter($articles, fn($a) => $a['type_article'] === 'Bien'));
+                $nbServices = count(array_filter($articles, fn($a) => $a['type_article'] === 'Service'));
+                $nbAvecCompte = $tab === 'achat'
+                    ? count(array_filter($articles, fn($a) => !empty($a['compte_achat'])))
+                    : count(array_filter($articles, fn($a) => !empty($a['compte_vente'])));
+                $nbFourn = count(array_unique(array_filter(array_column($articles, 'id_fournisseur'))));
+            ?>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
                 <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
-                    <div class="text-2xl font-bold text-blue-400"><?= count($articles) ?></div>
-                    <div class="text-slate-400 text-sm">Articles affichés</div>
+                    <div class="text-2xl font-bold <?= $tab === 'achat' ? 'text-blue-400' : 'text-emerald-400' ?>"><?= count($articles) ?></div>
+                    <div class="text-slate-400 text-sm">Articles</div>
                 </div>
                 <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
-                    <div class="text-2xl font-bold text-green-400"><?= count(array_filter($articles, fn($a) => $a['type_article'] === 'Bien')) ?></div>
+                    <div class="text-2xl font-bold text-green-400"><?= $nbBiens ?></div>
                     <div class="text-slate-400 text-sm">Biens</div>
                 </div>
                 <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
-                    <div class="text-2xl font-bold text-purple-400"><?= count(array_filter($articles, fn($a) => $a['type_article'] === 'Service')) ?></div>
+                    <div class="text-2xl font-bold text-purple-400"><?= $nbServices ?></div>
                     <div class="text-slate-400 text-sm">Services</div>
                 </div>
                 <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
-                    <div class="text-2xl font-bold text-cyan-400"><?= count(array_unique(array_column($articles, 'id_fournisseur'))) ?></div>
-                    <div class="text-slate-400 text-sm">Fournisseurs</div>
+                    <div class="text-2xl font-bold text-amber-400"><?= $nbAvecCompte ?></div>
+                    <div class="text-slate-400 text-sm">Avec compte comptable</div>
                 </div>
             </div>
 
-            <!-- Articles groupés par fournisseur -->
+            <!-- Articles -->
             <?php if (empty($articles)): ?>
                 <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-8 text-center text-slate-400">
                     <i class="fas fa-inbox text-3xl mb-2"></i>
-                    <p>Aucun article dans le catalogue</p>
+                    <p>Aucun article dans ce catalogue</p>
+                    <p class="text-sm mt-1">Cliquez sur "Nouvel article" et choisissez l'usage "<?= $tab === 'achat' ? 'Achat' : 'Vente' ?>" ou "Les deux".</p>
                 </div>
-            <?php else: ?>
+
+            <?php elseif ($tab === 'achat'): ?>
+                <!-- Vue Achat : groupée par fournisseur -->
                 <div class="space-y-4">
                     <?php foreach ($articlesParFournisseur as $fournisseurId => $groupe): ?>
                         <div class="bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden">
-                            <!-- En-tête fournisseur (cliquable pour déplier/replier) -->
-                            <button onclick="toggleFournisseur(<?= $fournisseurId ?>)" class="w-full px-4 py-3 bg-slate-700/50 hover:bg-slate-700/70 flex items-center justify-between transition-colors">
+                            <button onclick="toggleFournisseur('<?= $fournisseurId ?>')" class="w-full px-4 py-3 bg-slate-700/50 hover:bg-slate-700/70 flex items-center justify-between transition-colors">
                                 <div class="flex items-center gap-3">
-                                    <i id="icon-<?= $fournisseurId ?>" class="fas fa-chevron-down text-slate-400 transition-transform"></i>
-                                    <div class="text-left">
-                                        <span class="font-semibold text-slate-200"><?= htmlspecialchars($groupe['nom']) ?></span>
-                                        <?php if ($groupe['abrev']): ?>
-                                            <span class="ml-2 text-xs text-slate-500">(<?= htmlspecialchars($groupe['abrev']) ?>)</span>
-                                        <?php endif; ?>
-                                    </div>
+                                    <i id="icon-<?= $fournisseurId ?>" class="fas fa-chevron-down text-slate-400"></i>
+                                    <span class="font-semibold text-slate-200"><?= htmlspecialchars($groupe['nom']) ?></span>
+                                    <?php if ($groupe['abrev']): ?>
+                                        <span class="text-xs text-slate-500">(<?= htmlspecialchars($groupe['abrev']) ?>)</span>
+                                    <?php endif; ?>
                                 </div>
                                 <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm font-medium">
                                     <?= count($groupe['articles']) ?> article<?= count($groupe['articles']) > 1 ? 's' : '' ?>
                                 </span>
                             </button>
-
-                            <!-- Table des articles du fournisseur -->
                             <div id="articles-<?= $fournisseurId ?>" class="overflow-x-auto">
                                 <table class="w-full text-sm">
                                     <thead class="bg-slate-700/30">
                                         <tr>
-                                            <th class="px-4 py-2 text-left text-xs font-medium text-slate-400 uppercase">Référence</th>
-                                            <th class="px-4 py-2 text-left text-xs font-medium text-slate-400 uppercase">Désignation</th>
-                                            <th class="px-4 py-2 text-center text-xs font-medium text-slate-400 uppercase">Type</th>
-                                            <th class="px-4 py-2 text-center text-xs font-medium text-slate-400 uppercase">Unité</th>
-                                            <th class="px-4 py-2 text-right text-xs font-medium text-slate-400 uppercase">Prix HT</th>
-                                            <th class="px-4 py-2 text-center text-xs font-medium text-slate-400 uppercase">Statut</th>
-                                            <th class="px-4 py-2 text-center text-xs font-medium text-slate-400 uppercase">Actions</th>
+                                            <th class="px-4 py-2 text-left text-xs text-slate-400 uppercase">Référence</th>
+                                            <th class="px-4 py-2 text-left text-xs text-slate-400 uppercase">Désignation</th>
+                                            <th class="px-4 py-2 text-center text-xs text-slate-400 uppercase">Type</th>
+                                            <th class="px-4 py-2 text-center text-xs text-slate-400 uppercase">Taxe défaut</th>
+                                            <th class="px-4 py-2 text-left text-xs text-slate-400 uppercase">Compte charge</th>
+                                            <th class="px-4 py-2 text-center text-xs text-slate-400 uppercase">Unité</th>
+                                            <th class="px-4 py-2 text-right text-xs text-slate-400 uppercase">Prix achat HT</th>
+                                            <th class="px-4 py-2 text-center text-xs text-slate-400 uppercase">Statut</th>
+                                            <th class="px-4 py-2 text-center text-xs text-slate-400 uppercase">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-700">
                                         <?php foreach ($groupe['articles'] as $article): ?>
                                             <tr class="hover:bg-slate-700/30 transition-colors">
-                                                <td class="px-4 py-3 font-mono text-blue-400"><?= htmlspecialchars($article['reference']) ?></td>
+                                                <td class="px-4 py-3 font-mono text-blue-400 text-xs"><?= htmlspecialchars($article['reference']) ?></td>
                                                 <td class="px-4 py-3">
                                                     <div class="text-slate-200"><?= htmlspecialchars($article['designation']) ?></div>
                                                     <?php if ($article['description']): ?>
@@ -350,24 +383,29 @@ $pageTitle = "Catalogue Fournisseurs";
                                                     <?php endif; ?>
                                                 </td>
                                                 <td class="px-4 py-3 text-center">
-                                                    <span class="px-2 py-1 rounded-full text-xs <?= $article['type_article'] === 'Bien' ? 'bg-green-500/20 text-green-400' : 'bg-purple-500/20 text-purple-400' ?>">
+                                                    <span class="px-2 py-0.5 rounded-full text-xs <?= $article['type_article'] === 'Bien' ? 'bg-green-500/20 text-green-400' : 'bg-purple-500/20 text-purple-400' ?>">
                                                         <?= $article['type_article'] ?>
                                                     </span>
                                                 </td>
-                                                <td class="px-4 py-3 text-center text-slate-400"><?= htmlspecialchars($article['unite']) ?></td>
-                                                <td class="px-4 py-3 text-right font-mono text-slate-200"><?= safe_number_format($article['prix_unitaire_ht']) ?></td>
                                                 <td class="px-4 py-3 text-center">
-                                                    <span class="px-2 py-1 rounded-full text-xs <?= $article['actif'] === 'Oui' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400' ?>">
+                                                    <?php $taxeColors = ['TVA'=>'text-green-400','PPSSI'=>'text-amber-400','BNC'=>'text-orange-400','Aucune'=>'text-slate-500']; ?>
+                                                    <span class="text-xs <?= $taxeColors[$article['type_taxe_defaut']] ?? 'text-slate-500' ?>">
+                                                        <?= $article['type_taxe_defaut'] === 'Aucune' ? '-' : $article['type_taxe_defaut'] ?>
+                                                    </span>
+                                                </td>
+                                                <td class="px-4 py-3 text-xs font-mono text-slate-300">
+                                                    <?= $article['compte_achat'] ? htmlspecialchars($article['compte_achat']) : '<span class="text-slate-600">-</span>' ?>
+                                                </td>
+                                                <td class="px-4 py-3 text-center text-slate-400 text-xs"><?= htmlspecialchars($article['unite']) ?></td>
+                                                <td class="px-4 py-3 text-right font-mono text-slate-200 text-xs"><?= safe_number_format($article['prix_unitaire_ht']) ?></td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <span class="px-2 py-0.5 rounded-full text-xs <?= $article['actif'] === 'Oui' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400' ?>">
                                                         <?= $article['actif'] === 'Oui' ? 'Actif' : 'Inactif' ?>
                                                     </span>
                                                 </td>
-                                                <td class="px-4 py-3 text-center">
-                                                    <button onclick='openModal("edit", <?= json_encode($article) ?>)' class="p-1.5 text-blue-400 hover:bg-blue-500/20 rounded transition-colors" title="Modifier">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button onclick='confirmDelete(<?= $article["id"] ?>, "<?= htmlspecialchars(addslashes($article["designation"])) ?>")' class="p-1.5 text-red-400 hover:bg-red-500/20 rounded transition-colors" title="Supprimer">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
+                                                <td class="px-4 py-3 text-center whitespace-nowrap">
+                                                    <button onclick='openModal("edit", <?= json_encode($article) ?>)' class="p-1.5 text-blue-400 hover:bg-blue-500/20 rounded" title="Modifier"><i class="fas fa-edit"></i></button>
+                                                    <button onclick='confirmDelete(<?= $article["id"] ?>, "<?= htmlspecialchars(addslashes($article["designation"])) ?>")' class="p-1.5 text-red-400 hover:bg-red-500/20 rounded" title="Supprimer"><i class="fas fa-trash"></i></button>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -376,6 +414,72 @@ $pageTitle = "Catalogue Fournisseurs";
                             </div>
                         </div>
                     <?php endforeach; ?>
+                </div>
+
+            <?php else: ?>
+                <!-- Vue Vente : tableau plat avec colonnes vente -->
+                <div class="bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-slate-700/50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs text-slate-400 uppercase">Référence</th>
+                                    <th class="px-4 py-3 text-left text-xs text-slate-400 uppercase">Désignation</th>
+                                    <th class="px-4 py-3 text-center text-xs text-slate-400 uppercase">Type</th>
+                                    <th class="px-4 py-3 text-center text-xs text-slate-400 uppercase">Taxe défaut</th>
+                                    <th class="px-4 py-3 text-left text-xs text-slate-400 uppercase">Compte produit</th>
+                                    <th class="px-4 py-3 text-center text-xs text-slate-400 uppercase">Unité</th>
+                                    <th class="px-4 py-3 text-right text-xs text-slate-400 uppercase">Prix vente HT</th>
+                                    <th class="px-4 py-3 text-center text-xs text-slate-400 uppercase">Usage</th>
+                                    <th class="px-4 py-3 text-center text-xs text-slate-400 uppercase">Statut</th>
+                                    <th class="px-4 py-3 text-center text-xs text-slate-400 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-700">
+                                <?php foreach ($articles as $article): ?>
+                                    <?php $taxeColors = ['TVA'=>'text-green-400','PPSSI'=>'text-amber-400','BNC'=>'text-orange-400','Aucune'=>'text-slate-500']; ?>
+                                    <tr class="hover:bg-slate-700/30 transition-colors">
+                                        <td class="px-4 py-3 font-mono text-emerald-400 text-xs"><?= htmlspecialchars($article['reference']) ?></td>
+                                        <td class="px-4 py-3">
+                                            <div class="text-slate-200"><?= htmlspecialchars($article['designation']) ?></div>
+                                            <?php if ($article['description']): ?>
+                                                <div class="text-xs text-slate-500 truncate max-w-xs"><?= htmlspecialchars($article['description']) ?></div>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td class="px-4 py-3 text-center">
+                                            <span class="px-2 py-0.5 rounded-full text-xs <?= $article['type_article'] === 'Bien' ? 'bg-green-500/20 text-green-400' : 'bg-purple-500/20 text-purple-400' ?>">
+                                                <?= $article['type_article'] ?>
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 text-center text-xs <?= $taxeColors[$article['type_taxe_defaut']] ?? 'text-slate-500' ?>">
+                                            <?= $article['type_taxe_defaut'] === 'Aucune' ? '-' : $article['type_taxe_defaut'] ?>
+                                        </td>
+                                        <td class="px-4 py-3 text-xs font-mono text-slate-300">
+                                            <?= $article['compte_vente'] ? htmlspecialchars($article['compte_vente']) : '<span class="text-slate-600">-</span>' ?>
+                                        </td>
+                                        <td class="px-4 py-3 text-center text-slate-400 text-xs"><?= htmlspecialchars($article['unite']) ?></td>
+                                        <td class="px-4 py-3 text-right font-mono text-slate-200 text-xs"><?= safe_number_format($article['prix_vente_ht']) ?></td>
+                                        <td class="px-4 py-3 text-center">
+                                            <?php if ($article['usage_article'] === 'les_deux'): ?>
+                                                <span class="px-2 py-0.5 rounded-full text-xs bg-indigo-500/20 text-indigo-400">Les deux</span>
+                                            <?php else: ?>
+                                                <span class="px-2 py-0.5 rounded-full text-xs bg-emerald-500/20 text-emerald-400">Vente</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td class="px-4 py-3 text-center">
+                                            <span class="px-2 py-0.5 rounded-full text-xs <?= $article['actif'] === 'Oui' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400' ?>">
+                                                <?= $article['actif'] === 'Oui' ? 'Actif' : 'Inactif' ?>
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 text-center whitespace-nowrap">
+                                            <button onclick='openModal("edit", <?= json_encode($article) ?>)' class="p-1.5 text-blue-400 hover:bg-blue-500/20 rounded" title="Modifier"><i class="fas fa-edit"></i></button>
+                                            <button onclick='confirmDelete(<?= $article["id"] ?>, "<?= htmlspecialchars(addslashes($article["designation"])) ?>")' class="p-1.5 text-red-400 hover:bg-red-500/20 rounded" title="Supprimer"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             <?php endif; ?>
         </main>

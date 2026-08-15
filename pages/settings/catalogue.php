@@ -530,7 +530,7 @@ $pageTitle = "Catalogue Articles";
 
                     <!-- Ligne 1 : Fournisseur + Client + Référence -->
                     <div class="grid grid-cols-3 gap-4">
-                        <div>
+                        <div id="bloc_fournisseur">
                             <label class="block text-sm font-medium text-slate-400 mb-1">Fournisseur</label>
                             <select name="id_fournisseur" id="id_fournisseur" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500" onchange="generateReference()">
                                 <option value="">- Général -</option>
@@ -539,7 +539,7 @@ $pageTitle = "Catalogue Articles";
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div>
+                        <div id="bloc_client">
                             <label class="block text-sm font-medium text-slate-400 mb-1">Client</label>
                             <select name="id_client" id="id_client" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-emerald-500">
                                 <option value="">- Général -</option>
@@ -582,7 +582,7 @@ $pageTitle = "Catalogue Articles";
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-400 mb-1">Usage *</label>
-                            <select name="usage_article" id="usage_article" required class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500" onchange="togglePrixVente()">
+                            <select name="usage_article" id="usage_article" required class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500" onchange="toggleUsageFields()">
                                 <option value="achat">Achat</option>
                                 <option value="vente">Vente</option>
                                 <option value="les_deux">Les deux</option>
@@ -611,7 +611,7 @@ $pageTitle = "Catalogue Articles";
 
                     <!-- Ligne 3 : Prix achat + Prix vente -->
                     <div class="grid grid-cols-2 gap-4">
-                        <div>
+                        <div id="bloc_prix_achat">
                             <label class="block text-sm font-medium text-slate-400 mb-1">Prix achat HT</label>
                             <input type="text" name="prix_unitaire_ht" id="prix_unitaire_ht" value="0" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500 text-right">
                         </div>
@@ -623,7 +623,7 @@ $pageTitle = "Catalogue Articles";
 
                     <!-- Ligne 4 : Compte achat + Compte vente -->
                     <div class="grid grid-cols-2 gap-4">
-                        <div>
+                        <div id="bloc_compte_achat">
                             <label class="block text-sm font-medium text-slate-400 mb-1">Compte de charge (achat)</label>
                             <select name="compte_achat" id="compte_achat" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500">
                                 <option value="">- Non défini -</option>
@@ -672,11 +672,24 @@ $pageTitle = "Catalogue Articles";
     </form>
 
     <script>
-        function togglePrixVente() {
-            const usage = document.getElementById('usage_article').value;
-            const showVente = usage === 'vente' || usage === 'les_deux';
-            document.getElementById('bloc_prix_vente').style.opacity   = showVente ? '1' : '0.3';
-            document.getElementById('bloc_compte_vente').style.opacity = showVente ? '1' : '0.3';
+        const CURRENT_TAB = '<?= $tab ?>';
+
+        function toggleUsageFields() {
+            const usage    = document.getElementById('usage_article').value;
+            const isAchat  = usage === 'achat'    || usage === 'les_deux';
+            const isVente  = usage === 'vente'    || usage === 'les_deux';
+
+            // Tier : afficher/masquer Fournisseur ou Client
+            document.getElementById('bloc_fournisseur').style.display = isAchat ? '' : 'none';
+            document.getElementById('bloc_client').style.display      = isVente ? '' : 'none';
+
+            // Prix achat + compte charge
+            document.getElementById('bloc_prix_achat').style.opacity   = isAchat ? '1' : '0.3';
+            document.getElementById('bloc_compte_achat').style.opacity = isAchat ? '1' : '0.3';
+
+            // Prix vente + compte produit
+            document.getElementById('bloc_prix_vente').style.opacity   = isVente ? '1' : '0.3';
+            document.getElementById('bloc_compte_vente').style.opacity = isVente ? '1' : '0.3';
         }
 
         function openModal(action, data = null) {
@@ -690,7 +703,9 @@ $pageTitle = "Catalogue Articles";
                 document.getElementById('unite').value = 'unité';
                 document.getElementById('prix_unitaire_ht').value = '0';
                 document.getElementById('prix_vente_ht').value = '0';
-                togglePrixVente();
+                // Pré-sélectionner l'usage selon l'onglet actif
+                document.getElementById('usage_article').value = CURRENT_TAB === 'vente' ? 'vente' : 'achat';
+                toggleUsageFields();
             } else if (action === 'edit' && data) {
                 document.getElementById('modalTitle').textContent = 'Modifier l\'article';
                 document.getElementById('articleId').value        = data.id;
@@ -708,7 +723,7 @@ $pageTitle = "Catalogue Articles";
                 document.getElementById('compte_achat').value     = data.compte_achat || '';
                 document.getElementById('compte_vente').value     = data.compte_vente || '';
                 document.getElementById('actif').value            = data.actif;
-                togglePrixVente();
+                toggleUsageFields();
             }
         }
 

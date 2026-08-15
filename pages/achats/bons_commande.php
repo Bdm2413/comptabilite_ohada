@@ -323,6 +323,8 @@ $pageTitle = "Bons de Commande";
                                                         <?php if ($bc['statut'] === 'Brouillon'): ?>
                                                             <button onclick="openValidateModal(<?= $bc['id'] ?>)" class="p-1.5 text-green-400 hover:bg-green-500/20 rounded" title="Valider"><i class="fas fa-check"></i></button>
                                                             <button onclick="confirmDelete(<?= $bc['id'] ?>, '<?= htmlspecialchars(addslashes($bc['numero_bc'])) ?>')" class="p-1.5 text-red-400 hover:bg-red-500/20 rounded" title="Supprimer"><i class="fas fa-trash"></i></button>
+                                                        <?php elseif (in_array($bc['statut'], ['Validé','En cours','Partiellement livré','Livré'])): ?>
+                                                            <a href="../achats/facture_fournisseur_form.php?from_bc=<?= $bc['id'] ?>" class="p-1.5 text-purple-400 hover:bg-purple-500/20 rounded" title="Créer facture fournisseur"><i class="fas fa-file-invoice"></i></a>
                                                         <?php endif; ?>
                                                     </div>
                                                 </td>

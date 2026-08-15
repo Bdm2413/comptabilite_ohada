@@ -238,6 +238,10 @@ $pageTitle = $isEdit ? "BC " . htmlspecialchars($bc['numero_bc']) : "Nouveau bon
                             <button type="button" onclick="openValidateModal()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg inline-flex items-center gap-2">
                                 <i class="fas fa-check"></i>Valider le BC
                             </button>
+                        <?php elseif ($isEdit && in_array($bc['statut'], ['Validé','En cours','Partiellement livré','Livré'])): ?>
+                            <a href="facture_fournisseur_form.php?from_bc=<?= $bc['id'] ?>" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg inline-flex items-center gap-2">
+                                <i class="fas fa-file-invoice"></i>Créer facture fournisseur
+                            </a>
                         <?php endif; ?>
                         <a href="bons_commande.php" class="px-4 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded-lg inline-flex items-center gap-2">
                             <i class="fas fa-arrow-left"></i>Retour

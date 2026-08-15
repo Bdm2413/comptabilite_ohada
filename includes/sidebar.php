@@ -199,6 +199,10 @@ function endAccordion() { echo "</div>"; }
             '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>',
             'Clients'
         ); ?>
+            <?php navLink("$basePath/ventes/factures_clients.php",
+                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>',
+                'Factures clients', isActiveMultiple(['factures_clients.php','facture_client_form.php'], 'ventes')
+            ); ?>
             <?php navLink("$basePath/rapports/balance_agee_clients.php",
                 '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>',
                 'Balance Âgée Clients', isActive('balance_agee_clients.php', 'rapports')
@@ -206,10 +210,6 @@ function endAccordion() { echo "</div>"; }
             <?php navLink("$basePath/rapports/balance_auxiliaire.php",
                 '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>',
                 'Balance Auxiliaire', isActive('balance_auxiliaire.php', 'rapports')
-            ); ?>
-            <?php navLink("$basePath/achats/devis.php",
-                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>',
-                'Devis', isActive('devis.php', 'achats')
             ); ?>
         <?php endAccordion(); ?>
 
@@ -222,6 +222,10 @@ function endAccordion() { echo "</div>"; }
             <?php navLink("$basePath/rapports/balance_agee_fournisseurs.php",
                 '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>',
                 'Balance Âgée Fourn.', isActive('balance_agee_fournisseurs.php', 'rapports')
+            ); ?>
+            <?php navLink("$basePath/achats/devis.php",
+                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>',
+                'Devis fournisseurs', isActiveMultiple(['devis.php','devis_form.php'], 'achats')
             ); ?>
             <?php navLink("$basePath/achats/bons_commande.php",
                 '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>',

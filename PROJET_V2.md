@@ -645,14 +645,16 @@ L'outil doit être proactif et apprenant :
 **Tâches :**
 - [ ] **Catalogue - évolution :** ajouter `compte_produit`, `compte_charge`, `type_taxe_defaut`, `usage`(vente/achat/les_deux) à `catalogues_fournisseurs`; permettre un catalogue général (id_fournisseur nullable)
 - [ ] **Catalogue - Modèles d'écritures :** nouvelle table `catalogue_modeles` + `catalogue_modeles_lignes` - gabarits débit/crédit complets pour amortissements, paie, provisions
-- [ ] **Factures clients (AR) :** création, numérotation auto (FAC-AAAA-NNNN), lignes depuis catalogue, taxe TVA, statuts (Brouillon/Envoyée/Partiellement payée/Payée/Annulée), comptabilisation automatique
-- [ ] **Factures fournisseurs (AP) :** saisie avec numéro fournisseur, lignes depuis catalogue, taxes (TVA/PPSSI/BNC), statuts, comptabilisation automatique; bouton "Convertir en facture" depuis BC approuvé
-- [ ] **Encaissements clients :** modal règlement depuis la facture, écriture 521/411 auto, lettrage auto
-- [ ] **Paiements fournisseurs :** modal règlement depuis la facture, écriture 401/521 auto, lettrage auto
+- [x] **Devis clients (AR) :** `pages/ventes/devis_clients.php` + `devis_client_form.php` - numérotation DVC-AAAA-NNNN, workflow Brouillon→Envoye→Accepte→Refuse/Converti, TVA 18%, catalogue vente, conversion vers BC client
+- [x] **BC clients (AR) :** `pages/ventes/bons_commande_clients.php` + `bc_client_form.php` - numérotation BCC-AAAA-NNNN, conversion depuis devis (pre-remplissage complet), workflow En cours→Livre partiellement→Livre→Facture, conversion vers facture client
+- [x] **Factures clients (AR) :** `pages/ventes/factures_clients.php` + `facture_client_form.php` - numérotation FAC-AAAA-NNNN, TVA 18%, statuts (brouillon/envoyee/partiellement_payee/payee/annulee), comptabilisation automatique journal VTE (Debit 411/Credit 70x+443), conversion depuis BC client (`?from_bc=ID`)
+- [x] **Menu AR/AP restructuré :** ordre symétrique Devis → BC → Factures → Balance âgée dans sidebar pour AR (Clients) et AP (Fournisseurs)
+- [ ] **Factures fournisseurs (AP) :** `pages/achats/factures_fournisseurs.php` + `facture_fournisseur_form.php` - numéro libre (fournisseur), lignes depuis catalogue, taxes TVA/PPSSI/BNC, statuts, comptabilisation automatique journal ACH (Debit 60x+445+retenues/Credit 401), conversion depuis BC fournisseur approuvé
+- [ ] **Encaissements clients :** modal règlement depuis la facture, écriture Debit 521/Credit 411 auto, lettrage auto
+- [ ] **Paiements fournisseurs :** modal règlement depuis la facture, écriture Debit 401/Credit 521 auto, lettrage auto
 - [ ] **Aging (ancienneté des factures) :** champ `date_echeance` sur chaque facture, calcul du retard en jours, buckets 0-30 / 31-60 / 61-90 / +90 jours - base de la balance âgée clients et fournisseurs
 - [ ] **Balance âgée clients :** tableau par client, colonnes par tranche d'ancienneté, total échu/non échu
 - [ ] **Balance âgée fournisseurs :** même structure côté fournisseurs
-- [ ] **Devis et bons de commande :** améliorer le flux existant, lier BC approuvé vers facture fournisseur
 
 **Structure aging dans les tables de factures :**
 - `date_facture` : date d'émission

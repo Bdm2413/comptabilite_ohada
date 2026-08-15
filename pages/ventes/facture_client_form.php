@@ -33,9 +33,11 @@ $stmtCli->execute([$societe_id]);
 $clients = $stmtCli->fetchAll();
 
 // ── Mode édition ──────────────────────────────────────────────────────────────
-$facture = null;
-$lignes  = [];
-$isEdit  = isset($_GET['id']);
+$facture   = null;
+$lignes    = [];
+$isEdit    = isset($_GET['id']);
+$fromBcId  = isset($_GET['from_bc']) ? (int)$_GET['from_bc'] : 0;
+$bcSource  = null;
 
 if ($isEdit) {
     $stmt = $db->prepare("SELECT f.*, pt.nom AS client_nom, pt.compte_tiers AS client_compte FROM factures_clients f JOIN plan_tiers pt ON f.id_client=pt.id WHERE f.id=? AND f.societe_id=?");
@@ -52,6 +54,37 @@ if ($isEdit) {
     $stmtLig = $db->prepare("SELECT * FROM lignes_facture_client WHERE facture_id=? ORDER BY ordre, id");
     $stmtLig->execute([(int)$_GET['id']]);
     $lignes = $stmtLig->fetchAll();
+}
+
+// ── Conversion depuis BC client ───────────────────────────────────────────────
+if ($fromBcId && !$isEdit) {
+    $stmt = $db->prepare("SELECT b.*, pt.nom AS client_nom FROM bons_commande_clients b JOIN plan_tiers pt ON b.id_client=pt.id WHERE b.id=? AND b.societe_id=? AND b.statut='Livre'");
+    $stmt->execute([$fromBcId, $societe_id]);
+    $bcSource = $stmt->fetch();
+    if ($bcSource) {
+        $stmtLig = $db->prepare("SELECT * FROM lignes_bc_client WHERE bc_id=? ORDER BY ordre");
+        $stmtLig->execute([$fromBcId]);
+        $bcLignes = $stmtLig->fetchAll();
+        // Map BC lines to facture line format
+        foreach ($bcLignes as $bl) {
+            $lignes[] = [
+                'article_id'      => $bl['article_id'],
+                'designation'     => $bl['designation'],
+                'description'     => $bl['description'] ?? '',
+                'type_ligne'      => $bl['type_ligne'],
+                'quantite'        => $bl['quantite'],
+                'unite'           => $bl['unite'],
+                'prix_unitaire_ht'=> $bl['prix_unitaire_ht'],
+                'type_remise'     => 'Aucune',
+                'valeur_remise'   => 0,
+                'type_taxe'       => $bl['type_taxe'],
+                'montant_ht'      => $bl['montant_ht'],
+                'montant_tva'     => $bl['montant_tva'],
+                'montant_ttc'     => $bl['montant_ttc'],
+                'compte_produit'  => $bl['compte_produit'],
+            ];
+        }
+    }
 }
 
 // ── POST handler ──────────────────────────────────────────────────────────────
@@ -154,6 +187,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$viewOnly) {
                     $reference_cli, $objet, $notes, $montant_ht, $montant_tva, $montant_ttc, $createur
                 ]);
                 $factureId = (int)$db->lastInsertId();
+
+                // Marquer le BC source comme Facturé
+                if ($fromBcId) {
+                    $db->prepare("UPDATE bons_commande_clients SET statut='Facture' WHERE id=? AND societe_id=?")->execute([$fromBcId, $societe_id]);
+                }
             }
 
             // Insérer les lignes
@@ -272,15 +310,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$viewOnly) {
 }
 
 // ── Valeurs du formulaire ─────────────────────────────────────────────────────
-$f_client  = $facture['id_client']        ?? ($_POST['id_client']        ?? '');
-$f_date    = $facture['date_facture']     ?? ($_POST['date_facture']     ?? date('Y-m-d'));
-$f_delai   = $facture['delai_paiement']  ?? ($_POST['delai_paiement']   ?? 30);
-$f_refcli  = $facture['reference_client']?? ($_POST['reference_client'] ?? '');
-$f_objet   = $facture['objet']           ?? ($_POST['objet']            ?? '');
-$f_notes   = $facture['notes']           ?? ($_POST['notes']            ?? '');
-$f_echec   = $facture['date_echeance']   ?? '';
+$f_client  = $facture['id_client']         ?? ($bcSource['id_client'] ?? ($_POST['id_client']        ?? ''));
+$f_date    = $facture['date_facture']      ?? ($_POST['date_facture']     ?? date('Y-m-d'));
+$f_delai   = $facture['delai_paiement']   ?? ($_POST['delai_paiement']   ?? 30);
+$f_refcli  = $facture['reference_client'] ?? ($_POST['reference_client'] ?? '');
+$f_objet   = $facture['objet']            ?? ($bcSource['objet'] ?? ($_POST['objet']  ?? ''));
+$f_notes   = $facture['notes']            ?? ($bcSource['notes'] ?? ($_POST['notes']  ?? ''));
+$f_echec   = $facture['date_echeance']    ?? '';
 
-$pageTitle = $isEdit ? 'Facture ' . htmlspecialchars($facture['numero_facture'] ?? '') : 'Nouvelle facture client';
+if ($fromBcId && $bcSource) {
+    $pageTitle = 'Nouvelle facture - BC ' . htmlspecialchars($bcSource['numero_bc']);
+} elseif ($isEdit) {
+    $pageTitle = 'Facture ' . htmlspecialchars($facture['numero_facture'] ?? '');
+} else {
+    $pageTitle = 'Nouvelle facture client';
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -300,6 +344,14 @@ $pageTitle = $isEdit ? 'Facture ' . htmlspecialchars($facture['numero_facture'] 
   <?php include '../../includes/sidebar.php'; ?>
 
   <main class="flex-1 overflow-y-auto p-8">
+
+    <?php if ($bcSource): ?>
+    <div class="mb-4 px-4 py-3 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-sm flex items-center gap-2">
+      <i class="fas fa-link text-xs"></i>
+      Facture generee depuis le BC <strong><?= htmlspecialchars($bcSource['numero_bc']) ?></strong> - <?= htmlspecialchars($bcSource['client_nom']) ?>
+      <a href="bc_client_form.php?id=<?= $bcSource['id'] ?>&view=1" class="ml-auto text-xs text-indigo-400 hover:text-indigo-300 underline">Voir le BC</a>
+    </div>
+    <?php endif; ?>
 
     <!-- Breadcrumb / titre -->
     <div class="mb-6 flex items-start justify-between">

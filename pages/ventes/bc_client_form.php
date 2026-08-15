@@ -119,7 +119,7 @@ $preNotes    = $bc['notes']           ?? ($devisSource['notes']  ?? '');
     <div class="mb-6 px-4 py-3 rounded-lg bg-slate-700/50 border border-slate-600 text-slate-300 text-sm flex items-center gap-2">
       <i class="fas fa-lock text-slate-400"></i>
       Lecture seule - statut : <strong class="text-slate-200"><?= htmlspecialchars($bc['statut']) ?></strong>
-      <?php if ($bc['statut'] === 'Livre'): ?>
+      <?php if (in_array($bc['statut'], ['Livre', 'Livre partiellement'])): ?>
       <a href="facture_client_form.php?from_bc=<?= $bc['id'] ?>" class="ml-auto flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-sm transition-colors">
         <i class="fas fa-file-invoice text-xs"></i> Creer facture
       </a>

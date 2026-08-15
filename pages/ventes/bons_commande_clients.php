@@ -179,6 +179,7 @@ function statutBadgeBC(string $s): string {
                 <button onclick="openAction(<?= $bc['id'] ?>, 'annuler')" class="p-1.5 rounded text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors" title="Annuler"><i class="fas fa-times text-xs"></i></button>
                 <?php elseif ($bc['statut'] === 'Livre partiellement'): ?>
                 <button onclick="openAction(<?= $bc['id'] ?>, 'livre')" class="p-1.5 rounded text-slate-400 hover:text-green-300 hover:bg-green-500/10 transition-colors" title="Marquer livre"><i class="fas fa-check text-xs"></i></button>
+                <a href="facture_client_form.php?from_bc=<?= $bc['id'] ?>" class="p-1.5 rounded text-slate-400 hover:text-purple-300 hover:bg-purple-500/10 transition-colors" title="Creer facture"><i class="fas fa-file-invoice text-xs"></i></a>
                 <?php elseif ($bc['statut'] === 'Livre'): ?>
                 <a href="facture_client_form.php?from_bc=<?= $bc['id'] ?>" class="p-1.5 rounded text-slate-400 hover:text-purple-300 hover:bg-purple-500/10 transition-colors" title="Creer facture"><i class="fas fa-file-invoice text-xs"></i></a>
                 <?php endif; ?>

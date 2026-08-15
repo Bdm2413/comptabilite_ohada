@@ -164,12 +164,13 @@ $pageTitle = $isEdit ? "Devis " . htmlspecialchars($devis['numero_devis']) : "No
                                 <?php
                                 $statusColors = [
                                     'En attente' => 'bg-amber-500/20 text-amber-400 border-amber-500/50',
-                                    'Approuvé' => 'bg-green-500/20 text-green-400 border-green-500/50',
-                                    'Rejeté' => 'bg-red-500/20 text-red-400 border-red-500/50',
-                                    'Expiré' => 'bg-slate-500/20 text-slate-400 border-slate-500/50'
+                                    'Approuvé'   => 'bg-green-500/20 text-green-400 border-green-500/50',
+                                    'Rejeté'     => 'bg-red-500/20 text-red-400 border-red-500/50',
+                                    'Expiré'     => 'bg-slate-500/20 text-slate-400 border-slate-500/50',
+                                    'Converti'   => 'bg-purple-500/20 text-purple-400 border-purple-500/50',
                                 ];
                                 ?>
-                                <span class="px-3 py-1 rounded-full text-sm border <?= $statusColors[$devis['statut']] ?>">
+                                <span class="px-3 py-1 rounded-full text-sm border <?= $statusColors[$devis['statut']] ?? 'bg-slate-500/20 text-slate-400 border-slate-500/50' ?>">
                                     <?= $devis['statut'] ?>
                                 </span>
                                 <?php if ($devis['decide_par']): ?>

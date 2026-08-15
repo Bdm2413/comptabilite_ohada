@@ -348,10 +348,10 @@ $typeColors = [
                 <thead>
                     <tr class="bg-slate-900 border-b border-slate-700">
                         <th class="text-left px-4 py-2 text-slate-400 text-xs w-20">Niveau</th>
-                        <th class="text-left px-4 py-2 text-slate-400 text-xs w-56">Classe</th>
-                        <th class="text-left px-4 py-2 text-slate-400 text-xs w-28">2 ch.</th>
-                        <th class="text-left px-4 py-2 text-slate-400 text-xs w-28">3 ch.</th>
-                        <th class="text-left px-4 py-2 text-slate-400 text-xs w-28">4 ch.</th>
+                        <th class="text-left px-4 py-2 text-slate-400 text-xs w-44">Classe</th>
+                        <th class="text-left px-4 py-2 text-slate-400 text-xs">Compte principal</th>
+                        <th class="text-left px-4 py-2 text-slate-400 text-xs">Compte divisionnaire</th>
+                        <th class="text-left px-4 py-2 text-slate-400 text-xs w-24">Sous-compte</th>
                         <th class="text-left px-4 py-2 text-slate-400 text-xs">Libellé</th>
                         <th class="text-center px-3 py-2 text-slate-400 text-xs w-12">BD</th>
                         <th class="text-center px-3 py-2 text-slate-400 text-xs w-12">BC</th>
@@ -381,11 +381,17 @@ $typeColors = [
                     <td class="px-4 py-1.5">
                         <?php if ($r['compte_2']): ?>
                         <span class="compte-badge <?= $n==2?'text-sky-300':'text-slate-500' ?>"><?= htmlspecialchars($r['compte_2']) ?></span>
+                        <?php if ($r['libelle_2']): ?>
+                        <span class="text-xs <?= $n==2?'text-slate-300':'text-slate-600' ?> ml-1 font-sans font-normal">- <?= htmlspecialchars($r['libelle_2']) ?></span>
+                        <?php endif; ?>
                         <?php endif; ?>
                     </td>
                     <td class="px-4 py-1.5">
                         <?php if ($r['compte_3']): ?>
                         <span class="compte-badge <?= $n==3?'text-emerald-300':'text-slate-500' ?>"><?= htmlspecialchars($r['compte_3']) ?></span>
+                        <?php if ($r['libelle_3']): ?>
+                        <span class="text-xs <?= $n==3?'text-slate-300':'text-slate-600' ?> ml-1 font-sans font-normal">- <?= htmlspecialchars($r['libelle_3']) ?></span>
+                        <?php endif; ?>
                         <?php endif; ?>
                     </td>
                     <td class="px-4 py-1.5">

@@ -623,24 +623,72 @@ L'outil doit être proactif et apprenant :
 > **Principe :** le Catalogue est le prérequis. Sans lui, pas d'automatisation de la comptabilisation sur les factures.
 > **Approche :** évolution de l'existant, pas de remplacement. La table `catalogues_fournisseurs` et les modules devis/BC sont conservés et enrichis.
 
-**Etat de l'existant (inventaire avant codage) :**
-- Table `catalogues_fournisseurs` : catalogue lié aux fournisseurs, sans compte comptable ni taxe par défaut
-- Table `lignes_devis` : champ `type_taxe` ENUM('Aucune','TVA','PPSSI','BNC') - 3 taxes déjà gérées dans les devis
-- Taxes déjà codées dans `devis_form.php` :
-  - TVA 18% : ajoutée au montant HT
-  - PPSSI 2% : Prélèvement sur Paiements à Prestataires hors CI (retenue, déduite du net à payer)
-  - BNC/RIBNC 7.5% : Retenue sur Bénéfices Non Commerciaux (retenue, déduite du net à payer)
-- Flux devis existant : Devis fournisseur → Approuvé → Bon de commande (`bc_form.php`)
-- API catalogue : `api_catalogue.php?action=liste&fournisseur_id=X`
+**Tables BDD créées (AR/AP) :**
 
-**Ce qui manque et doit être ajouté :**
-- Comptes comptables dans le catalogue (`compte_produit`, `compte_charge`)
-- Taxe par défaut par article (`type_taxe_defaut`)
-- Usage vente/achat/les_deux (catalogue actuellement achat uniquement, lié à un fournisseur)
-- Module Factures clients (AR) - inexistant
-- Module Factures fournisseurs (AP) - inexistant (seuls les devis/BC existent)
-- Connexion Bon de commande → Facture fournisseur
-- Module Règlements (encaissements et paiements avec écriture comptable auto)
+| Table | Clé de numérotation | Description |
+|---|---|---|
+| `devis_clients` | DVC-YYYY-NNNN | Devis envoyés aux clients |
+| `lignes_devis_client` | - | Lignes de devis client |
+| `bons_commande_clients` | BCC-YYYY-NNNN | BC reçus des clients |
+| `lignes_bc_client` | - | Lignes de BC client |
+| `factures_clients` | FAC-YYYY-NNNN | Factures émises aux clients |
+| `lignes_facture_client` | - | Lignes de facture client |
+| `factures_fournisseurs` | FAF-YYYY-NNNN (interne) | Factures reçues des fournisseurs |
+| `lignes_facture_fournisseur` | - | Lignes de facture fournisseur |
+
+**Flux AR (Clients) implémenté :**
+```
+Devis client (DVC)
+  → [Accepté] → BC client (BCC)
+    → [Livré] → Facture client (FAC)
+      → [Comptabilisée] → Écriture VTE : Débit 411xxx / Crédit 70x + 44310000
+        → [à venir] Encaissement : Débit 521 / Crédit 411
+```
+
+**Flux AP (Fournisseurs) implémenté :**
+```
+Devis fournisseur (DEV)
+  → [Approuvé] → BC fournisseur (BC)
+    → [Livré] → Facture fournisseur (FAF)
+      → [Comptabilisée] → Écriture ACH :
+          Débit 60x (charges HT)
+          Débit 44510000 (TVA déductible)
+          Crédit 401xxx (net à payer = TTC - retenues)
+          Crédit 44730000 (PPSSI 2%)
+          Crédit 44740000 (BNC 7.5%)
+        → [à venir] Paiement : Débit 401 / Crédit 521
+```
+
+**Taxes par module :**
+
+| Module | TVA 18% | PPSSI 2% | BNC 7.5% |
+|---|---|---|---|
+| Devis clients | Oui (ajoutée) | Non | Non |
+| BC clients | Oui (ajoutée) | Non | Non |
+| Factures clients | Oui (ajoutée) | Non | Non |
+| Devis fournisseurs | Oui | Oui (retenue) | Oui (retenue) |
+| BC fournisseurs | Oui | Oui (retenue) | Oui (retenue) |
+| Factures fournisseurs | Oui (déductible) | Oui (retenue à reverser) | Oui (retenue à reverser) |
+
+**Comptes OHADA utilisés :**
+
+| Compte | Libellé | Usage |
+|---|---|---|
+| 411xxxxx | Clients | Débit facture client (TTC) |
+| 70xxxxxx | Produits | Crédit facture client (HT par ligne) |
+| 44310000 | TVA collectée sur ventes | Crédit facture client |
+| 401xxxxx | Fournisseurs | Crédit facture fourn. (net à payer) |
+| 60xxxxxx | Charges | Débit facture fourn. (HT par ligne) |
+| 44510000 | TVA déductible sur achats | Débit facture fourn. |
+| 44730000 | Retenue PPSSI à reverser | Crédit facture fourn. |
+| 44740000 | Retenue BNC/RIBNC à reverser | Crédit facture fourn. |
+| 521xxxxx | Banque | Débit encaissement / Crédit paiement |
+
+**Etat de l'existant AP (pré-Phase 3, conservé) :**
+- Table `catalogues_fournisseurs` : catalogue achat lié aux fournisseurs
+- Table `lignes_devis` : taxes TVA/PPSSI/BNC déjà gérées dans `devis_form.php`
+- Flux existant : Devis fournisseur → Approuvé → BC fournisseur (`bc_form.php`)
+- API catalogue : `pages/settings/api_catalogue.php?action=liste` (achat) et `?action=liste_vente` (vente)
 
 **Tâches :**
 - [ ] **Catalogue - évolution :** ajouter `compte_produit`, `compte_charge`, `type_taxe_defaut`, `usage`(vente/achat/les_deux) à `catalogues_fournisseurs`; permettre un catalogue général (id_fournisseur nullable)
@@ -650,19 +698,29 @@ L'outil doit être proactif et apprenant :
 - [x] **Factures clients (AR) :** `pages/ventes/factures_clients.php` + `facture_client_form.php` - numérotation FAC-AAAA-NNNN, TVA 18%, statuts (brouillon/envoyee/partiellement_payee/payee/annulee), comptabilisation automatique journal VTE (Debit 411/Credit 70x+443), conversion depuis BC client (`?from_bc=ID`)
 - [x] **Menu AR/AP restructuré :** ordre symétrique Devis → BC → Factures → Balance âgée dans sidebar pour AR (Clients) et AP (Fournisseurs)
 - [x] **Factures fournisseurs (AP) :** `pages/achats/factures_fournisseurs.php` + `facture_fournisseur_form.php` - numéro interne FAF-AAAA-NNNN + n° libre fournisseur, lignes depuis catalogue, taxes TVA 18%/PPSSI 2%/BNC 7.5%, statuts brouillon/recue/partiellement_payee/payee/annulee, comptabilisation journal ACH (Debit 60x+44510000/Credit 401+44730000+44740000), conversion depuis BC fournisseur
-- [ ] **Encaissements clients :** modal règlement depuis la facture, écriture Debit 521/Credit 411 auto, lettrage auto
-- [ ] **Paiements fournisseurs :** modal règlement depuis la facture, écriture Debit 401/Credit 521 auto, lettrage auto
-- [ ] **Aging (ancienneté des factures) :** champ `date_echeance` sur chaque facture, calcul du retard en jours, buckets 0-30 / 31-60 / 61-90 / +90 jours - base de la balance âgée clients et fournisseurs
-- [ ] **Balance âgée clients :** tableau par client, colonnes par tranche d'ancienneté, total échu/non échu
-- [ ] **Balance âgée fournisseurs :** même structure côté fournisseurs
+- [ ] **Règlements clients (encaissements) :** `pages/ventes/reglements_clients.php` + modal depuis `factures_clients.php`
+  - Saisie : date, montant, mode (virement/espèces/chèque), référence, banque
+  - Table `reglements_clients` (id, societe_id, facture_id, date_reglement, montant, mode, reference, banque, id_ecriture, createur)
+  - Écriture auto journal BQ/CA : Débit 521/57 (selon mode) / Crédit 411xxx (compte tiers client)
+  - Mise à jour `factures_clients.montant_regle` → recalcul statut (partiellement_payee / payee)
+  - Lettrage auto entre la ligne 411 de la facture et la ligne 411 du règlement
+- [ ] **Règlements fournisseurs (paiements) :** `pages/achats/reglements_fournisseurs.php` + modal depuis `factures_fournisseurs.php`
+  - Saisie : date, montant, mode, référence, banque
+  - Table `reglements_fournisseurs` (id, societe_id, facture_id, date_reglement, montant, mode, reference, banque, id_ecriture, createur)
+  - Écriture auto journal BQ/CA : Débit 401xxx (compte tiers fourn.) / Crédit 521/57 (selon mode)
+  - Mise à jour `factures_fournisseurs.montant_regle` → recalcul statut
+  - Lettrage auto ligne 401 facture / ligne 401 paiement
+- [ ] **Balance âgée clients :** `pages/rapports/balance_agee_clients.php` - tableau par client, colonnes par tranche (courant / 1-30j / 31-60j / 61-90j / +90j), total échu/non échu
+- [ ] **Balance âgée fournisseurs :** `pages/rapports/balance_agee_fournisseurs.php` - même structure côté fournisseurs
+- [ ] **Catalogue - évolution :** ajouter `compte_produit`, `compte_charge`, `type_taxe_defaut` à `catalogues_fournisseurs`; permettre catalogue général (id_fournisseur nullable)
 
-**Structure aging dans les tables de factures :**
+**Structure aging (déjà en place dans les tables) :**
 - `date_facture` : date d'émission
-- `date_echeance` : date limite de paiement (calculée : date_facture + délai tiers, ou saisie manuelle)
-- `montant_ttc` : montant total dû
-- `montant_regle` : cumul des règlements enregistrés
-- `solde_restant` : montant_ttc - montant_regle (calculé)
-- Buckets aging calculés à la volée : `DATEDIFF(CURDATE(), date_echeance)` par tranche
+- `date_echeance` : date limite de paiement (calculée = date_facture + delai_paiement)
+- `montant_ttc` (clients) / `net_a_payer` (fourn.) : montant total dû
+- `montant_regle` : cumul des règlements enregistrés (mis à jour à chaque règlement)
+- Solde restant calculé à la volée : `montant_ttc - montant_regle` (clients) ou `net_a_payer - montant_regle` (fourn.)
+- Ancienneté calculée : `DATEDIFF(CURDATE(), date_echeance)` → buckets 0 / 1-30 / 31-60 / 61-90 / +90 jours
 
 ### PHASE 4 - Fiscal & Social (différenciateur marché)
 

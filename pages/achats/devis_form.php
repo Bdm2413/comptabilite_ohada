@@ -40,6 +40,14 @@ if (isset($_GET['id'])) {
 
 // Traitement du formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Action rapide : soumettre pour approbation (statut Brouillon/vide -> En attente)
+    if (($_POST['action'] ?? '') === 'soumettre' && isset($_GET['id'])) {
+        $db->prepare("UPDATE devis_fournisseurs SET statut='En attente' WHERE id=? AND societe_id=? AND statut IN ('','Brouillon')")
+           ->execute([$_GET['id'], $societe_id]);
+        header('Location: devis_form.php?id=' . (int)$_GET['id']);
+        exit;
+    }
+
     try {
         $db->beginTransaction();
 
@@ -72,8 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Création
             $stmt = $db->prepare("
                 INSERT INTO devis_fournisseurs
-                (numero_devis, id_fournisseur, date_devis, date_validite, objet, notes, societe_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                (numero_devis, id_fournisseur, date_devis, date_validite, objet, notes, societe_id, statut)
+                VALUES (?, ?, ?, ?, ?, ?, ?, 'En attente')
             ");
             $stmt->execute([
                 $data['numero_devis'], $data['id_fournisseur'], $data['date_devis'],
@@ -163,6 +171,8 @@ $pageTitle = $isEdit ? "Devis " . htmlspecialchars($devis['numero_devis']) : "No
                             <div class="flex items-center gap-3">
                                 <?php
                                 $statusColors = [
+                                    ''           => 'bg-slate-500/20 text-slate-400 border-slate-600',
+                                    'Brouillon'  => 'bg-slate-500/20 text-slate-400 border-slate-600',
                                     'En attente' => 'bg-amber-500/20 text-amber-400 border-amber-500/50',
                                     'Approuvé'   => 'bg-green-500/20 text-green-400 border-green-500/50',
                                     'Rejeté'     => 'bg-red-500/20 text-red-400 border-red-500/50',
@@ -183,6 +193,14 @@ $pageTitle = $isEdit ? "Devis " . htmlspecialchars($devis['numero_devis']) : "No
                         <?php endif; ?>
                     </div>
                     <div class="flex gap-2">
+                        <?php if ($isEdit && in_array($devis['statut'], ['', 'Brouillon'])): ?>
+                            <form method="POST" action="devis_form.php?id=<?= $devis['id'] ?>">
+                                <input type="hidden" name="action" value="soumettre">
+                                <button type="submit" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg inline-flex items-center gap-2">
+                                    <i class="fas fa-paper-plane"></i>Soumettre pour approbation
+                                </button>
+                            </form>
+                        <?php endif; ?>
                         <?php if ($isEdit && $devis['statut'] === 'En attente'): ?>
                             <button type="button" onclick="openStatusModal('Approuvé')" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg inline-flex items-center gap-2">
                                 <i class="fas fa-check"></i>Approuver

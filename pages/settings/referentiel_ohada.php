@@ -1,92 +1,159 @@
-﻿<?php
+<?php
 require_once '../../config/config.php';
 requireLogin();
 
-$db = Database::getInstance()->getConnection();
+$db        = Database::getInstance()->getConnection();
+$isAdmin   = ($_SESSION['user_role'] ?? '') === 'admin';
+$societeId = getCurrentSocieteId();
 
-// Vérifier que la table existe
-$tableExists = false;
-try {
-    $db->query("SELECT 1 FROM ohada_plan_comptable LIMIT 1");
-    $tableExists = true;
-} catch (Exception $e) {
-    $tableExists = false;
-}
+$message     = '';
+$messageType = '';
 
-$search    = trim($_GET['search'] ?? '');
-$classe    = $_GET['classe'] ?? '';
-$niveau    = $_GET['niveau'] ?? '';
+// ─── POST : édition d'un compte du référentiel ───────────────────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $isAdmin) {
+    $action = $_POST['action'] ?? '';
 
-$stats = [];
-if ($tableExists) {
-    $stats['total']   = $db->query("SELECT COUNT(*) FROM ohada_plan_comptable")->fetchColumn();
-    $stats['classes'] = $db->query("SELECT COUNT(DISTINCT classe) FROM ohada_plan_comptable")->fetchColumn();
-    $rows_by_niveau   = $db->query("SELECT niveau, COUNT(*) as cnt FROM ohada_plan_comptable GROUP BY niveau ORDER BY niveau")->fetchAll(PDO::FETCH_ASSOC);
-    foreach ($rows_by_niveau as $r) $stats['n'.$r['niveau']] = $r['cnt'];
-    $stats['avec_rubriques'] = $db->query("SELECT COUNT(*) FROM ohada_plan_comptable WHERE bd IS NOT NULL OR bc IS NOT NULL OR rd IS NOT NULL OR rc IS NOT NULL")->fetchColumn();
+    if ($action === 'edit') {
+        $id        = (int)($_POST['id'] ?? 0);
+        $libelle   = trim($_POST['libelle'] ?? '');
+        $type      = $_POST['type_compte'] ?? null;
+        $tableau   = trim($_POST['tableau'] ?? '');
+        $bd        = trim($_POST['bd'] ?? '') ?: null;
+        $bc        = trim($_POST['bc'] ?? '') ?: null;
+        $rd        = trim($_POST['rd'] ?? '') ?: null;
+        $rc        = trim($_POST['rc'] ?? '') ?: null;
+        $propager  = !empty($_POST['propager']);
 
-    // Requête principale
-    $where = ['1=1'];
-    $params = [];
-    if ($search !== '') {
-        $where[] = "(compte_2 LIKE ? OR compte_3 LIKE ? OR compte_4 LIKE ?
-                     OR libelle_2 LIKE ? OR libelle_3 LIKE ? OR libelle_4 LIKE ?
-                     OR libelle_classe LIKE ?)";
-        $s = '%'.$search.'%';
-        $params = array_merge($params, [$s,$s,$s,$s,$s,$s,$s]);
+        if ($id <= 0 || empty($libelle)) {
+            $message     = "Données invalides.";
+            $messageType = 'error';
+        } else {
+            try {
+                $db->beginTransaction();
+
+                // Récupérer le compte avant modification
+                $avant = $db->prepare("SELECT * FROM table_correspondance WHERE id = ?");
+                $avant->execute([$id]);
+                $avant = $avant->fetch();
+
+                // Mettre à jour le référentiel
+                $db->prepare("
+                    UPDATE table_correspondance
+                    SET libelle = ?, type_compte = ?, tableau = ?, bd = ?, bc = ?, rd = ?, rc = ?, updated_at = NOW()
+                    WHERE id = ?
+                ")->execute([$libelle, $type ?: null, $tableau, $bd, $bc, $rd, $rc, $id]);
+
+                // Propagation optionnelle vers plan_comptable
+                if ($propager && $avant && $societeId) {
+                    $compte4 = (int)$avant['compte'];
+                    $db->prepare("
+                        UPDATE plan_comptable
+                        SET intitule_compte = ?, type = ?, tableau = ?, bd = ?, bc = ?, rd = ?, rc = ?, updated_at = NOW()
+                        WHERE societe_id = ? AND quatre_chiffres = ?
+                    ")->execute([$libelle, $type ?: null, $tableau, $bd, $bc, $rd, $rc, $societeId, $compte4]);
+                }
+
+                $db->commit();
+                $message     = "Compte mis à jour" . ($propager ? " et propagé au plan comptable." : ".");
+                $messageType = 'success';
+
+            } catch (Exception $e) {
+                $db->rollBack();
+                $message     = "Erreur : " . $e->getMessage();
+                $messageType = 'error';
+            }
+        }
     }
-    if ($classe !== '') { $where[] = "classe = ?"; $params[] = $classe; }
-    if ($niveau !== '') { $where[] = "niveau = ?"; $params[] = $niveau; }
-
-    // Pagination
-    $page    = max(1, (int)($_GET['page'] ?? 1));
-    $perPage = 20;
-    $offset  = ($page - 1) * $perPage;
-
-    // Total filtré
-    $sqlCount = "SELECT COUNT(*) FROM ohada_plan_comptable WHERE ".implode(' AND ', $where);
-    $stmtC = $db->prepare($sqlCount);
-    $stmtC->execute($params);
-    $totalFiltre = (int)$stmtC->fetchColumn();
-    $totalPages  = max(1, (int)ceil($totalFiltre / $perPage));
-    $page        = min($page, $totalPages);
-
-    $sql = "SELECT * FROM ohada_plan_comptable WHERE ".implode(' AND ', $where)
-         . " ORDER BY classe, compte_2, compte_3, compte_4 LIMIT ? OFFSET ?";
-    $stmt = $db->prepare($sql);
-    $stmt->execute(array_merge($params, [$perPage, ($page - 1) * $perPage]));
-    $comptes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+// ─── Filtres ──────────────────────────────────────────────────────────────────
+$search  = trim($_GET['search'] ?? '');
+$classe  = $_GET['classe'] ?? '';
+$type_f  = $_GET['type_f'] ?? '';
+
+$where  = ['1=1'];
+$params = [];
+if ($search !== '') {
+    $where[]  = "(compte LIKE ? OR libelle LIKE ?)";
+    $s        = '%' . $search . '%';
+    $params   = array_merge($params, [$s, $s]);
+}
+if ($classe !== '') { $where[] = "classe = ?"; $params[] = $classe; }
+if ($type_f !== '') { $where[] = "type_compte = ?"; $params[] = $type_f; }
+
+// Stats
+$stats = [
+    'total'   => $db->query("SELECT COUNT(*) FROM table_correspondance")->fetchColumn(),
+    'bd_ok'   => $db->query("SELECT COUNT(*) FROM table_correspondance WHERE bd IS NOT NULL")->fetchColumn(),
+    'classes' => $db->query("SELECT COUNT(DISTINCT classe) FROM table_correspondance")->fetchColumn(),
+];
+
+// Pagination
+$page    = max(1, (int)($_GET['page'] ?? 1));
+$perPage = 25;
+
+$sqlCount = "SELECT COUNT(*) FROM table_correspondance WHERE " . implode(' AND ', $where);
+$stmtC    = $db->prepare($sqlCount);
+$stmtC->execute($params);
+$totalFiltre = (int)$stmtC->fetchColumn();
+$totalPages  = max(1, (int)ceil($totalFiltre / $perPage));
+$page        = min($page, $totalPages);
+
+$sql   = "SELECT * FROM table_correspondance WHERE " . implode(' AND ', $where)
+       . " ORDER BY compte LIMIT ? OFFSET ?";
+$stmt  = $db->prepare($sql);
+$stmt->execute(array_merge($params, [$perPage, ($page - 1) * $perPage]));
+$comptes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $classeLabels = [
-    '1' => 'Ressources durables',
-    '2' => 'Actif immobilisé',
-    '3' => 'Stocks',
-    '4' => 'Tiers',
-    '5' => 'Trésorerie',
-    '6' => 'Charges AO',
-    '7' => 'Produits AO',
-    '8' => 'Charges/Produits HAO',
+    1 => 'Ressources durables',
+    2 => 'Actif immobilisé',
+    3 => 'Stocks',
+    4 => 'Tiers',
+    5 => 'Trésorerie',
+    6 => 'Charges AO',
+    7 => 'Produits AO',
+    8 => 'Charges/Produits HAO',
 ];
-$niveauLabels = [1=>'Classe',2=>'Principal (2 ch.)',3=>'Divisionnaire (3 ch.)',4=>'Sous-compte (4 ch.)'];
-$niveauColors = [1=>'bg-violet-900/40 text-violet-300',2=>'bg-sky-900/40 text-sky-300',3=>'bg-emerald-900/40 text-emerald-300',4=>'bg-slate-700/60 text-slate-300'];
+
+$typeOptions = [
+    'Capitaux','Immobilisation','Amortis/Provision','Stock',
+    'Client','Fournisseur','Salarié','CNPS','Etat',
+    'Banque','Caisse','Titre',
+    'Charge','Produit','Résultat-Gestion','Résultat-Bilan','Autres',
+];
+
+$typeColors = [
+    'Capitaux'          => 'bg-violet-900/40 text-violet-300',
+    'Immobilisation'    => 'bg-sky-900/40 text-sky-300',
+    'Amortis/Provision' => 'bg-slate-700/60 text-slate-400',
+    'Stock'             => 'bg-amber-900/40 text-amber-300',
+    'Client'            => 'bg-emerald-900/40 text-emerald-300',
+    'Fournisseur'       => 'bg-rose-900/40 text-rose-300',
+    'Salarié'           => 'bg-pink-900/40 text-pink-300',
+    'CNPS'              => 'bg-orange-900/40 text-orange-300',
+    'Etat'              => 'bg-red-900/40 text-red-300',
+    'Banque'            => 'bg-blue-900/40 text-blue-300',
+    'Caisse'            => 'bg-teal-900/40 text-teal-300',
+    'Titre'             => 'bg-indigo-900/40 text-indigo-300',
+    'Charge'            => 'bg-red-900/30 text-red-400',
+    'Produit'           => 'bg-green-900/30 text-green-400',
+    'Résultat-Gestion'  => 'bg-yellow-900/40 text-yellow-300',
+    'Résultat-Bilan'    => 'bg-purple-900/40 text-purple-300',
+    'Autres'            => 'bg-slate-700/40 text-slate-400',
+];
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Référentiel OHADA - Plan Comptable SYSCOHADA 2017</title>
+    <title>Référentiel SYSCOHADA</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <style>
-        .row-n1 td { background: rgba(139,92,246,0.1); font-weight: 700; font-size: 13px; }
-        .row-n2 td { background: rgba(14,165,233,0.07); font-weight: 600; }
-        .row-n3 td { background: rgba(16,185,129,0.05); }
-        .row-n4 td { background: transparent; }
-        .row-n4:hover td { background: rgba(255,255,255,0.03); }
-        .compte-badge { font-family: monospace; font-size: 12px; font-weight: 700; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        .badge { display:inline-block; font-size:10px; padding:1px 6px; border-radius:4px; font-weight:600; }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100">
@@ -94,199 +161,163 @@ $niveauColors = [1=>'bg-violet-900/40 text-violet-300',2=>'bg-sky-900/40 text-sk
 
 <?php include '../../includes/sidebar.php'; ?>
 
-<main class="flex-1 overflow-y-auto p-8">
+<main class="flex-1 overflow-y-auto p-6">
 
     <!-- En-tête -->
-    <div class="mb-6 flex items-center justify-between">
+    <div class="mb-5 flex items-start justify-between">
         <div>
             <h1 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-sky-400 mb-1">
-                <i class="fas fa-book mr-3"></i>Référentiel OHADA - Plan Comptable SYSCOHADA Révisé 2017
+                <i class="fas fa-book mr-2"></i>Référentiel SYSCOHADA Révisé
             </h1>
-            <p class="text-slate-400 text-sm">Base de référence officielle des comptes - Classes 1 à 8</p>
+            <p class="text-slate-400 text-sm">
+                Source canonique des BD/BC/RD/RC - utilisée lors de la création de nouveaux comptes
+                <?php if ($isAdmin): ?>
+                <span class="ml-2 px-2 py-0.5 bg-amber-900/40 text-amber-300 rounded text-xs font-medium">
+                    <i class="fas fa-shield-alt mr-1"></i>Mode admin - édition activée
+                </span>
+                <?php endif; ?>
+            </p>
         </div>
-        <?php if (!$tableExists): ?>
-        <a href="../../setup/migration_ohada_referentiel.php"
-           class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white rounded-lg text-sm inline-flex items-center gap-2">
-            <i class="fas fa-database"></i>Initialiser le référentiel
-        </a>
-        <?php endif; ?>
     </div>
 
-    <?php if (!$tableExists): ?>
-    <!-- Table absente -->
-    <div class="bg-amber-900/20 border border-amber-700/40 rounded-xl p-8 text-center">
-        <i class="fas fa-exclamation-triangle text-4xl text-amber-400 mb-4 block"></i>
-        <h2 class="text-amber-300 font-semibold text-lg mb-2">Référentiel non initialisé</h2>
-        <p class="text-slate-400 text-sm mb-4">La table <code class="bg-slate-800 px-1 rounded">ohada_plan_comptable</code> n'existe pas encore.</p>
-        <a href="../../setup/migration_ohada_referentiel.php"
-           class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white rounded-xl font-semibold transition-all">
-            <i class="fas fa-play"></i>Lancer la migration
-        </a>
+    <?php if ($message): ?>
+    <div class="mb-4 px-4 py-3 rounded-lg text-sm font-medium
+        <?= $messageType === 'success' ? 'bg-emerald-900/40 border border-emerald-700/50 text-emerald-300' : 'bg-rose-900/40 border border-rose-700/50 text-rose-300' ?>">
+        <i class="fas fa-<?= $messageType === 'success' ? 'check-circle' : 'exclamation-circle' ?> mr-2"></i>
+        <?= htmlspecialchars($message) ?>
     </div>
-    <?php else: ?>
+    <?php endif; ?>
 
     <!-- Stats -->
-    <div class="grid grid-cols-2 md:grid-cols-6 gap-3 mb-6">
+    <div class="grid grid-cols-3 gap-3 mb-5">
         <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 text-center">
-            <p class="text-xs text-slate-400 mb-1">Total entrées</p>
+            <p class="text-xs text-slate-400 mb-1">Comptes référentiel</p>
             <p class="text-2xl font-bold text-violet-400"><?= number_format($stats['total']) ?></p>
         </div>
         <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 text-center">
-            <p class="text-xs text-slate-400 mb-1">Classes</p>
+            <p class="text-xs text-slate-400 mb-1">Classes couvertes</p>
             <p class="text-2xl font-bold text-sky-400"><?= $stats['classes'] ?></p>
         </div>
         <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 text-center">
-            <p class="text-xs text-slate-400 mb-1">Comptes 2 ch.</p>
-            <p class="text-2xl font-bold text-emerald-400"><?= $stats['n2'] ?? 0 ?></p>
-        </div>
-        <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 text-center">
-            <p class="text-xs text-slate-400 mb-1">Comptes 3 ch.</p>
-            <p class="text-2xl font-bold text-amber-400"><?= $stats['n3'] ?? 0 ?></p>
-        </div>
-        <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 text-center">
-            <p class="text-xs text-slate-400 mb-1">Sous-comptes 4 ch.</p>
-            <p class="text-2xl font-bold text-rose-400"><?= $stats['n4'] ?? 0 ?></p>
-        </div>
-        <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 text-center">
-            <p class="text-xs text-slate-400 mb-1">Avec bd/bc/rd/rc</p>
-            <p class="text-2xl font-bold text-amber-400"><?= $stats['avec_rubriques'] ?? 0 ?></p>
+            <p class="text-xs text-slate-400 mb-1">Avec BD/BC/RD/RC</p>
+            <p class="text-2xl font-bold text-emerald-400"><?= number_format($stats['bd_ok']) ?></p>
         </div>
     </div>
 
     <!-- Filtres -->
-    <form method="GET" class="bg-slate-800 border border-slate-700 rounded-xl p-5 mb-6">
+    <form method="GET" class="bg-slate-800 border border-slate-700 rounded-xl p-4 mb-5">
         <div class="flex flex-wrap items-end gap-3">
-            <!-- Recherche -->
-            <div class="flex-1 min-w-56">
-                <label class="block text-xs font-medium text-slate-400 mb-1"><i class="fas fa-search mr-1"></i>Rechercher</label>
+            <div class="flex-1 min-w-48">
+                <label class="block text-xs text-slate-400 mb-1"><i class="fas fa-search mr-1"></i>Rechercher</label>
                 <input type="text" name="search" value="<?= htmlspecialchars($search) ?>"
                        placeholder="Numéro ou libellé..."
-                       class="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg focus:ring-2 focus:ring-violet-500 text-slate-100 text-sm">
+                       class="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm text-slate-100 focus:ring-2 focus:ring-violet-500">
             </div>
-            <!-- Classe -->
             <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1"><i class="fas fa-layer-group mr-1"></i>Classe</label>
-                <select name="classe" class="px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg focus:ring-2 focus:ring-violet-500 text-slate-100 text-sm">
+                <label class="block text-xs text-slate-400 mb-1">Classe</label>
+                <select name="classe" class="px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm text-slate-100 focus:ring-2 focus:ring-violet-500">
                     <option value="">Toutes</option>
                     <?php foreach ($classeLabels as $k => $v): ?>
                     <option value="<?= $k ?>" <?= $classe==$k?'selected':'' ?>>Classe <?= $k ?> - <?= $v ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
-            <!-- Niveau -->
             <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1"><i class="fas fa-sitemap mr-1"></i>Niveau</label>
-                <select name="niveau" class="px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg focus:ring-2 focus:ring-violet-500 text-slate-100 text-sm">
+                <label class="block text-xs text-slate-400 mb-1">Type</label>
+                <select name="type_f" class="px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm text-slate-100 focus:ring-2 focus:ring-violet-500">
                     <option value="">Tous</option>
-                    <?php foreach ($niveauLabels as $k => $v): ?>
-                    <option value="<?= $k ?>" <?= $niveau==$k?'selected':'' ?>><?= $v ?></option>
+                    <?php foreach ($typeOptions as $t): ?>
+                    <option value="<?= $t ?>" <?= $type_f===$t?'selected':'' ?>><?= $t ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
-            <button type="submit" class="px-4 py-2 bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-700 hover:to-violet-800 text-white rounded-lg text-sm inline-flex items-center gap-2 transition-all">
-                <i class="fas fa-filter"></i>Filtrer
+            <button type="submit" class="px-4 py-2 bg-violet-700 hover:bg-violet-600 text-white rounded-lg text-sm transition">
+                <i class="fas fa-filter mr-1"></i>Filtrer
             </button>
-            <a href="referentiel_ohada.php" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-sm inline-flex items-center gap-2 transition-all">
-                <i class="fas fa-times"></i>Réinit.
+            <a href="referentiel_ohada.php" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-sm transition">
+                <i class="fas fa-times mr-1"></i>Réinit.
             </a>
         </div>
     </form>
 
-    <!-- Résultats -->
+    <!-- Tableau -->
     <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
-        <div class="px-6 py-3 border-b border-slate-700 flex items-center justify-between">
+        <div class="px-5 py-3 border-b border-slate-700 flex items-center justify-between">
             <p class="text-sm text-slate-400">
-                <span class="text-slate-200 font-medium"><?= number_format($totalFiltre) ?></span> entrée(s)
+                <span class="text-slate-200 font-medium"><?= number_format($totalFiltre) ?></span> compte(s)
                 - page <span class="text-slate-200 font-medium"><?= $page ?></span> / <?= $totalPages ?>
-                (<?= $perPage ?> par page)
             </p>
-            <div class="flex gap-2 text-xs">
-                <?php foreach ($niveauColors as $n => $cls): ?>
-                <span class="px-2 py-0.5 rounded <?= $cls ?>">N<?= $n ?> <?= $niveauLabels[$n] ?></span>
-                <?php endforeach; ?>
-            </div>
+            <?php if ($isAdmin): ?>
+            <p class="text-xs text-amber-400"><i class="fas fa-pencil mr-1"></i>Cliquez sur un compte pour le modifier</p>
+            <?php endif; ?>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full border-collapse text-sm">
+            <table class="w-full text-sm border-collapse">
                 <thead>
                     <tr class="bg-slate-900 border-b border-slate-700">
-                        <th class="text-left px-4 py-2 text-slate-400 text-xs w-20">Niveau</th>
-                        <th class="text-left px-4 py-2 text-slate-400 text-xs w-56">Classe</th>
-                        <th class="text-left px-4 py-2 text-slate-400 text-xs w-32">Compte 2 ch.</th>
-                        <th class="text-left px-4 py-2 text-slate-400 text-xs w-32">Compte 3 ch.</th>
-                        <th class="text-left px-4 py-2 text-slate-400 text-xs w-32">Compte 4 ch.</th>
+                        <th class="text-left px-4 py-2 text-slate-400 text-xs w-20">Compte</th>
+                        <th class="text-left px-4 py-2 text-slate-400 text-xs w-20">Classe</th>
                         <th class="text-left px-4 py-2 text-slate-400 text-xs">Libellé</th>
+                        <th class="text-left px-4 py-2 text-slate-400 text-xs w-32">Type</th>
+                        <th class="text-center px-3 py-2 text-slate-400 text-xs w-16">Tableau</th>
                         <th class="text-center px-3 py-2 text-slate-400 text-xs w-12">BD</th>
                         <th class="text-center px-3 py-2 text-slate-400 text-xs w-12">BC</th>
                         <th class="text-center px-3 py-2 text-slate-400 text-xs w-12">RD</th>
                         <th class="text-center px-3 py-2 text-slate-400 text-xs w-12">RC</th>
+                        <?php if ($isAdmin): ?>
+                        <th class="w-10"></th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody>
                 <?php if (empty($comptes)): ?>
-                    <tr><td colspan="10" class="px-6 py-8 text-center text-slate-500"><i class="fas fa-search mr-2"></i>Aucun résultat</td></tr>
+                    <tr><td colspan="<?= $isAdmin ? 10 : 9 ?>" class="px-6 py-8 text-center text-slate-500">
+                        <i class="fas fa-search mr-2"></i>Aucun résultat
+                    </td></tr>
                 <?php endif; ?>
-                <?php foreach ($comptes as $r):
-                    $n = (int)$r['niveau'];
-                    $rowClass = 'row-n'.$n;
-
-                    // Libellé et compte à afficher selon le niveau
-                    switch ($n) {
-                        case 1: $compte = $r['classe']; $libelle = $r['libelle_classe']; break;
-                        case 2: $compte = $r['compte_2']; $libelle = $r['libelle_2']; break;
-                        case 3: $compte = $r['compte_3']; $libelle = $r['libelle_3']; break;
-                        case 4: $compte = $r['compte_4']; $libelle = $r['libelle_4']; break;
-                        default: $compte=''; $libelle='';
-                    }
-                    $indent = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $n - 1);
-                    $badgeColor = ['','bg-violet-600','bg-sky-600','bg-emerald-600','bg-slate-600'][$n];
+                <?php foreach ($comptes as $c):
+                    $tc     = $c['type_compte'] ?? '';
+                    $tClass = $typeColors[$tc] ?? 'bg-slate-700/40 text-slate-400';
+                    $cl     = (int)$c['classe'];
                 ?>
-                <tr class="<?= $rowClass ?> border-b border-slate-700/30">
+                <tr class="border-b border-slate-700/30"
+                    <?php if ($isAdmin): ?>
+                    onclick="openEdit(<?= htmlspecialchars(json_encode($c), ENT_QUOTES) ?>)"
+                    style="cursor:pointer"
+                    <?php endif; ?>>
                     <td class="px-4 py-1.5">
-                        <span class="<?= $niveauColors[$n] ?> text-xs px-1.5 py-0.5 rounded font-medium">N<?= $n ?></span>
+                        <span class="font-mono font-bold text-amber-300"><?= $c['compte'] ?></span>
                     </td>
+                    <td class="px-4 py-1.5 text-xs text-slate-400">
+                        <?= $cl ?> - <?= $classeLabels[$cl] ?? '' ?>
+                    </td>
+                    <td class="px-4 py-1.5 text-slate-200"><?= htmlspecialchars($c['libelle']) ?></td>
                     <td class="px-4 py-1.5">
-                        <span class="text-xs text-slate-400"><?= $r['classe'] ?> - <?= $classeLabels[$r['classe']] ?? '' ?></span>
+                        <?php if ($tc): ?>
+                        <span class="badge <?= $tClass ?>"><?= htmlspecialchars($tc) ?></span>
+                        <?php else: ?><span class="text-slate-600 text-xs">-</span><?php endif; ?>
                     </td>
-                    <td class="px-4 py-1.5">
-                        <?php if ($r['compte_2']): ?>
-                        <span class="compte-badge <?= $n==2?'text-sky-300':'text-slate-500' ?>"><?= htmlspecialchars($r['compte_2']) ?></span>
-                        <?php endif; ?>
+                    <td class="px-3 py-1.5 text-center text-xs text-slate-400 font-mono">
+                        <?= htmlspecialchars($c['tableau'] ?? '') ?>
                     </td>
-                    <td class="px-4 py-1.5">
-                        <?php if ($r['compte_3']): ?>
-                        <span class="compte-badge <?= $n==3?'text-emerald-300':'text-slate-500' ?>"><?= htmlspecialchars($r['compte_3']) ?></span>
-                        <?php endif; ?>
+                    <td class="px-3 py-1.5 text-center text-xs font-mono font-semibold text-sky-300">
+                        <?= $c['bd'] ? htmlspecialchars($c['bd']) : '<span class="text-slate-700">-</span>' ?>
                     </td>
-                    <td class="px-4 py-1.5">
-                        <?php if ($r['compte_4']): ?>
-                        <span class="compte-badge text-amber-300"><?= htmlspecialchars($r['compte_4']) ?></span>
-                        <?php endif; ?>
+                    <td class="px-3 py-1.5 text-center text-xs font-mono font-semibold text-emerald-300">
+                        <?= $c['bc'] ? htmlspecialchars($c['bc']) : '<span class="text-slate-700">-</span>' ?>
                     </td>
-                    <td class="px-4 py-1.5 text-slate-200">
-                        <?= $indent ?><?= htmlspecialchars($libelle ?? '') ?>
+                    <td class="px-3 py-1.5 text-center text-xs font-mono font-semibold text-amber-300">
+                        <?= $c['rd'] ? htmlspecialchars($c['rd']) : '<span class="text-slate-700">-</span>' ?>
                     </td>
-                    <td class="px-3 py-1.5 text-center">
-                        <?php if ($r['bd']): ?>
-                        <span class="text-xs font-mono font-semibold text-sky-300"><?= htmlspecialchars($r['bd']) ?></span>
-                        <?php else: ?><span class="text-slate-700">-</span><?php endif; ?>
+                    <td class="px-3 py-1.5 text-center text-xs font-mono font-semibold text-rose-300">
+                        <?= $c['rc'] ? htmlspecialchars($c['rc']) : '<span class="text-slate-700">-</span>' ?>
                     </td>
-                    <td class="px-3 py-1.5 text-center">
-                        <?php if ($r['bc']): ?>
-                        <span class="text-xs font-mono font-semibold text-emerald-300"><?= htmlspecialchars($r['bc']) ?></span>
-                        <?php else: ?><span class="text-slate-700">-</span><?php endif; ?>
+                    <?php if ($isAdmin): ?>
+                    <td class="px-2 py-1.5 text-center">
+                        <i class="fas fa-pencil text-slate-600 hover:text-violet-400 text-xs transition"></i>
                     </td>
-                    <td class="px-3 py-1.5 text-center">
-                        <?php if ($r['rd']): ?>
-                        <span class="text-xs font-mono font-semibold text-amber-300"><?= htmlspecialchars($r['rd']) ?></span>
-                        <?php else: ?><span class="text-slate-700">-</span><?php endif; ?>
-                    </td>
-                    <td class="px-3 py-1.5 text-center">
-                        <?php if ($r['rc']): ?>
-                        <span class="text-xs font-mono font-semibold text-rose-300"><?= htmlspecialchars($r['rc']) ?></span>
-                        <?php else: ?><span class="text-slate-700">-</span><?php endif; ?>
-                    </td>
+                    <?php endif; ?>
                 </tr>
                 <?php endforeach; ?>
                 </tbody>
@@ -296,60 +327,166 @@ $niveauColors = [1=>'bg-violet-900/40 text-violet-300',2=>'bg-sky-900/40 text-sk
 
     <!-- Pagination -->
     <?php if ($totalPages > 1):
-        $baseUrl = 'referentiel_ohada.php?';
         $qp = [];
         if ($search  !== '') $qp[] = 'search='  . urlencode($search);
         if ($classe  !== '') $qp[] = 'classe='  . urlencode($classe);
-        if ($niveau  !== '') $qp[] = 'niveau='  . urlencode($niveau);
-        $baseUrl .= implode('&', $qp) . (empty($qp) ? '' : '&');
+        if ($type_f  !== '') $qp[] = 'type_f='  . urlencode($type_f);
+        $base = 'referentiel_ohada.php?' . implode('&', $qp) . (empty($qp)?'':'&');
     ?>
-    <div class="flex items-center justify-between mt-4 p-4 bg-slate-800/30 border border-slate-700/50 rounded-lg">
-        <div class="text-sm text-slate-400">
-            Page <?= $page ?> sur <?= $totalPages ?> (<?= number_format($totalFiltre) ?> entrées au total)
-        </div>
+    <div class="flex items-center justify-between mt-4 px-4 py-3 bg-slate-800/30 border border-slate-700/50 rounded-lg">
+        <p class="text-sm text-slate-400">Page <?= $page ?> / <?= $totalPages ?></p>
         <div class="flex gap-2">
             <?php if ($page > 1): ?>
-                <a href="<?= $baseUrl ?>page=1" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded text-sm transition" title="Première page">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
-                </a>
-                <a href="<?= $baseUrl ?>page=<?= $page - 1 ?>" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded text-sm transition">
-                    Précédent
-                </a>
+            <a href="<?= $base ?>page=1" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-sm transition text-white">&laquo;</a>
+            <a href="<?= $base ?>page=<?= $page-1 ?>" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-sm transition text-white">Préc.</a>
             <?php endif; ?>
-
-            <?php
-            $startPage = max(1, $page - 2);
-            $endPage   = min($totalPages, $page + 2);
-            for ($i = $startPage; $i <= $endPage; $i++): ?>
-                <a href="<?= $baseUrl ?>page=<?= $i ?>"
-                   class="px-3 py-1.5 rounded text-sm transition <?= $i === $page ? 'bg-violet-600 text-white' : 'bg-slate-700 hover:bg-slate-600 text-white' ?>">
-                    <?= $i ?>
-                </a>
+            <?php for ($i = max(1,$page-2); $i <= min($totalPages,$page+2); $i++): ?>
+            <a href="<?= $base ?>page=<?= $i ?>"
+               class="px-3 py-1.5 rounded text-sm transition <?= $i===$page?'bg-violet-600 text-white':'bg-slate-700 hover:bg-slate-600 text-white' ?>">
+                <?= $i ?>
+            </a>
             <?php endfor; ?>
-
             <?php if ($page < $totalPages): ?>
-                <a href="<?= $baseUrl ?>page=<?= $page + 1 ?>" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded text-sm transition">
-                    Suivant
-                </a>
-                <a href="<?= $baseUrl ?>page=<?= $totalPages ?>" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded text-sm transition" title="Dernière page">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
-                </a>
+            <a href="<?= $base ?>page=<?= $page+1 ?>" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-sm transition text-white">Suiv.</a>
+            <a href="<?= $base ?>page=<?= $totalPages ?>" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-sm transition text-white">&raquo;</a>
             <?php endif; ?>
         </div>
     </div>
     <?php endif; ?>
 
-    <!-- Note -->
     <p class="text-xs text-slate-600 mt-3 text-right">
-        Source : Plan Comptable SYSCOHADA Révisé - OHADA 2017
+        Source : table_correspondance - SYSCOHADA Révisé 2017 - <?= number_format($stats['total']) ?> sous-comptes
     </p>
-
-    <?php endif; ?>
 
 </main>
 </div>
+
+<?php if ($isAdmin): ?>
+<!-- Modal édition -->
+<div id="editModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div class="bg-slate-800 border border-slate-600 rounded-2xl w-full max-w-lg mx-4 shadow-2xl">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-700">
+            <h2 class="font-semibold text-slate-100">
+                <i class="fas fa-pencil text-violet-400 mr-2"></i>
+                Modifier le compte <span id="modalCompte" class="font-mono text-amber-300"></span>
+            </h2>
+            <button onclick="closeEdit()" class="text-slate-400 hover:text-white transition text-xl">&times;</button>
+        </div>
+
+        <form method="POST" class="px-6 py-5 space-y-4">
+            <input type="hidden" name="action" value="edit">
+            <input type="hidden" name="id" id="editId">
+
+            <!-- Libellé -->
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Libellé <span class="text-rose-400">*</span></label>
+                <input type="text" name="libelle" id="editLibelle" required
+                       class="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-violet-500">
+            </div>
+
+            <!-- Type + Tableau -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Type de compte</label>
+                    <select name="type_compte" id="editType"
+                            class="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-violet-500">
+                        <option value="">- Aucun -</option>
+                        <?php foreach ($typeOptions as $t): ?>
+                        <option value="<?= $t ?>"><?= $t ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Tableau</label>
+                    <select name="tableau" id="editTableau"
+                            class="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-violet-500">
+                        <option value="Bilan">Bilan</option>
+                        <option value="Compte de résultat">Compte de résultat</option>
+                        <option value="ND">ND</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- BD BC RD RC -->
+            <div>
+                <label class="block text-xs text-slate-400 mb-2">Rubriques BD / BC / RD / RC</label>
+                <div class="grid grid-cols-4 gap-2">
+                    <div>
+                        <label class="block text-xs text-sky-400 mb-1">BD</label>
+                        <input type="text" name="bd" id="editBd" maxlength="10"
+                               class="w-full px-2 py-1.5 bg-slate-900 border border-slate-600 rounded text-sky-300 text-sm font-mono text-center focus:ring-2 focus:ring-sky-500"
+                               placeholder="ex: CA">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-emerald-400 mb-1">BC</label>
+                        <input type="text" name="bc" id="editBc" maxlength="10"
+                               class="w-full px-2 py-1.5 bg-slate-900 border border-slate-600 rounded text-emerald-300 text-sm font-mono text-center focus:ring-2 focus:ring-emerald-500"
+                               placeholder="ex: CA">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-amber-400 mb-1">RD</label>
+                        <input type="text" name="rd" id="editRd" maxlength="10"
+                               class="w-full px-2 py-1.5 bg-slate-900 border border-slate-600 rounded text-amber-300 text-sm font-mono text-center focus:ring-2 focus:ring-amber-500"
+                               placeholder="ex: RA">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-rose-400 mb-1">RC</label>
+                        <input type="text" name="rc" id="editRc" maxlength="10"
+                               class="w-full px-2 py-1.5 bg-slate-900 border border-slate-600 rounded text-rose-300 text-sm font-mono text-center focus:ring-2 focus:ring-rose-500"
+                               placeholder="ex: RA">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Propagation -->
+            <div class="flex items-start gap-3 bg-amber-900/20 border border-amber-700/30 rounded-lg p-3">
+                <input type="checkbox" name="propager" id="editPropager" value="1"
+                       class="mt-0.5 w-4 h-4 rounded accent-amber-500">
+                <label for="editPropager" class="text-sm text-amber-200 cursor-pointer">
+                    <strong>Propager au plan comptable</strong><br>
+                    <span class="text-xs text-amber-400">Met à jour les comptes existants dans le plan comptable de la société courante qui ont la même racine 4 chiffres.</span>
+                </label>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-1">
+                <button type="button" onclick="closeEdit()"
+                        class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-sm transition">
+                    Annuler
+                </button>
+                <button type="submit"
+                        class="px-5 py-2 bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-700 hover:to-violet-800 text-white rounded-lg text-sm font-semibold transition">
+                    <i class="fas fa-save mr-1"></i>Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
-anime({ targets: '#sidebar', opacity: [0, 1], duration: 600, easing: 'easeOutQuad' });
+function openEdit(c) {
+    document.getElementById('editId').value      = c.id;
+    document.getElementById('modalCompte').textContent = c.compte;
+    document.getElementById('editLibelle').value = c.libelle || '';
+    document.getElementById('editType').value    = c.type_compte || '';
+    document.getElementById('editTableau').value = c.tableau || 'Bilan';
+    document.getElementById('editBd').value      = c.bd || '';
+    document.getElementById('editBc').value      = c.bc || '';
+    document.getElementById('editRd').value      = c.rd || '';
+    document.getElementById('editRc').value      = c.rc || '';
+    document.getElementById('editPropager').checked = false;
+    document.getElementById('editModal').classList.remove('hidden');
+}
+function closeEdit() {
+    document.getElementById('editModal').classList.add('hidden');
+}
+document.getElementById('editModal').addEventListener('click', function(e) {
+    if (e.target === this) closeEdit();
+});
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeEdit();
+});
 </script>
+<?php endif; ?>
+
 </body>
 </html>

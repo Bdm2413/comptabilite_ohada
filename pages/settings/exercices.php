@@ -16,19 +16,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         if ($action === 'create') {
-            // Créer un nouvel exercice
-            $annee = intval($_POST['annee']);
+            $annee      = intval($_POST['annee']);
             $date_debut = $_POST['date_debut'];
-            $date_fin = $_POST['date_fin'];
+            $date_fin   = $_POST['date_fin'];
 
             $stmt = $db->prepare("
                 INSERT INTO exercices (societe_id, annee, date_debut, date_fin, statut)
                 VALUES (?, ?, ?, ?, 'Ouvert')
             ");
             $stmt->execute([$societe_id, $annee, $date_debut, $date_fin]);
+            $exercice_id = (int)$db->lastInsertId();
 
-            $_SESSION['flash'] = ['type' => 'success', 'message' => "Exercice $annee créé avec succès"];
-            header('Location: exercices.php');
+            // Auto-générer les 12 périodes mensuelles
+            $nb = generatePeriodesExercice($exercice_id, $societe_id, $date_debut, $date_fin, $_SESSION['user_id'] ?? 1);
+
+            $_SESSION['flash'] = ['type' => 'success', 'message' => "Exercice $annee créé avec $nb périodes mensuelles générées automatiquement."];
+            header('Location: exercices.php?tab=periodes&ex=' . $exercice_id);
+            exit;
+
+        } elseif ($action === 'open_periode') {
+            $periode_id = (int)($_POST['periode_id'] ?? 0);
+            ouvrirPeriode($periode_id, $societe_id, $_SESSION['user_id'] ?? 1);
+            $_SESSION['flash'] = ['type' => 'success', 'message' => 'Période ouverte avec succès.'];
+            header('Location: exercices.php?tab=periodes&ex=' . (int)($_POST['exercice_id'] ?? 0));
+            exit;
+
+        } elseif ($action === 'close_periode') {
+            $periode_id = (int)($_POST['periode_id'] ?? 0);
+            $definitif  = !empty($_POST['definitif']);
+            fermerPeriode($periode_id, $societe_id, $_SESSION['user_id'] ?? 1, $definitif);
+            $msg = $definitif ? 'Période définitivement clôturée.' : 'Période fermée avec succès.';
+            $_SESSION['flash'] = ['type' => 'success', 'message' => $msg];
+            header('Location: exercices.php?tab=periodes&ex=' . (int)($_POST['exercice_id'] ?? 0));
+            exit;
+
+        } elseif ($action === 'open_all_periodes') {
+            $ex_id   = (int)($_POST['exercice_id'] ?? 0);
+            $periodes = getPeriodesExercice($ex_id, $societe_id);
+            $count = 0;
+            foreach ($periodes as $p) {
+                if (in_array($p['statut'], ['Jamais_ouvert', 'Fermé'])) {
+                    ouvrirPeriode((int)$p['id_periode'], $societe_id, $_SESSION['user_id'] ?? 1);
+                    $count++;
+                }
+            }
+            $_SESSION['flash'] = ['type' => 'success', 'message' => "$count période(s) ouverte(s)."];
+            header('Location: exercices.php?tab=periodes&ex=' . $ex_id);
             exit;
 
         } elseif ($action === 'calculate_result') {
@@ -95,7 +128,26 @@ $stmt = $db->prepare("SELECT * FROM exercices WHERE societe_id = ? ORDER BY anne
 $stmt->execute([$societe_id]);
 $exercices = $stmt->fetchAll();
 
-$pageTitle = "Gestion des Exercices Comptables";
+// Onglet actif et exercice sélectionné pour la vue périodes
+$tab    = $_GET['tab'] ?? 'exercices';
+$ex_sel = (int)($_GET['ex'] ?? ($exercices[0]['id'] ?? 0));
+
+// Données de périodes pour l'onglet Périodes
+$periodes       = [];
+$exercice_actif = null;
+if ($tab === 'periodes' && $ex_sel) {
+    $periodes       = getPeriodesExercice($ex_sel, $societe_id);
+    foreach ($exercices as $e) {
+        if ($e['id'] === $ex_sel) { $exercice_actif = $e; break; }
+    }
+    // Si l'exercice existe mais n'a pas de périodes, les générer maintenant
+    if ($exercice_actif && empty($periodes)) {
+        generatePeriodesExercice($ex_sel, $societe_id, $exercice_actif['date_debut'], $exercice_actif['date_fin'], $_SESSION['user_id'] ?? 1);
+        $periodes = getPeriodesExercice($ex_sel, $societe_id);
+    }
+}
+
+$pageTitle = "Exercices et Périodes Comptables";
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -111,38 +163,212 @@ $pageTitle = "Gestion des Exercices Comptables";
     <div class="flex h-screen overflow-hidden">
         <?php include '../../includes/sidebar.php'; ?>
 
-        <main class="flex-1 overflow-y-auto p-8">
+        <main class="flex-1 overflow-y-auto p-6">
             <!-- Header -->
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 mb-2">
-                    <i class="fas fa-calendar-check mr-3"></i>Gestion des Exercices Comptables
+            <div class="mb-5">
+                <h1 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 mb-1">
+                    <i class="fas fa-calendar-check mr-2"></i>Exercices et Périodes Comptables
                 </h1>
-                <p class="text-slate-400">Créez, clôturez et gérez vos exercices comptables avec report à nouveau automatique</p>
+                <p class="text-slate-400 text-sm">Gérez vos exercices et contrôlez l'ouverture/fermeture des périodes mensuelles</p>
             </div>
 
             <!-- Flash Messages -->
             <?php if (isset($_SESSION['flash'])): ?>
-                <div class="mb-6 p-4 rounded-lg <?= $_SESSION['flash']['type'] === 'success' ? 'bg-green-900/30 border border-green-700 text-green-400' : 'bg-red-900/30 border border-red-700 text-red-400' ?>">
-                    <i class="fas <?= $_SESSION['flash']['type'] === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle' ?> mr-2"></i>
+                <div class="mb-5 px-4 py-3 rounded-lg text-sm font-medium
+                    <?= $_SESSION['flash']['type'] === 'success' ? 'bg-emerald-900/40 border border-emerald-700/50 text-emerald-300' : 'bg-rose-900/40 border border-rose-700/50 text-rose-300' ?>">
+                    <i class="fas fa-<?= $_SESSION['flash']['type'] === 'success' ? 'check-circle' : 'exclamation-circle' ?> mr-2"></i>
                     <?= htmlspecialchars($_SESSION['flash']['message']) ?>
                 </div>
                 <?php unset($_SESSION['flash']); ?>
             <?php endif; ?>
 
+            <!-- Onglets -->
+            <div class="flex gap-1 border-b border-slate-700 mb-6">
+                <a href="?tab=exercices"
+                   class="px-5 py-2.5 text-sm font-medium transition <?= $tab==='exercices' ? 'border-b-2 border-purple-500 text-purple-300' : 'border-b-2 border-transparent text-slate-400 hover:text-slate-300' ?>">
+                    <i class="fas fa-calendar-alt mr-2"></i>Exercices
+                </a>
+                <a href="?tab=periodes<?= $ex_sel ? '&ex='.$ex_sel : '' ?>"
+                   class="px-5 py-2.5 text-sm font-medium transition <?= $tab==='periodes' ? 'border-b-2 border-purple-500 text-purple-300' : 'border-b-2 border-transparent text-slate-400 hover:text-slate-300' ?>">
+                    <i class="fas fa-calendar-week mr-2"></i>Périodes mensuelles
+                </a>
+            </div>
+
+            <?php if ($tab === 'periodes'): ?>
+            <!-- ================================================================ -->
+            <!-- ONGLET 2 : GESTION DES PÉRIODES -->
+            <!-- ================================================================ -->
+
+            <?php if (empty($exercices)): ?>
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-8 text-center">
+                <i class="fas fa-calendar-xmark text-4xl text-slate-600 mb-3 block"></i>
+                <p class="text-slate-400">Aucun exercice trouvé. Créez d'abord un exercice dans l'onglet "Exercices".</p>
+            </div>
+            <?php else: ?>
+
+            <!-- Sélecteur d'exercice -->
+            <div class="flex items-center gap-4 mb-6">
+                <label class="text-sm text-slate-400 font-medium">Exercice :</label>
+                <div class="flex gap-2">
+                    <?php foreach ($exercices as $e): ?>
+                    <a href="?tab=periodes&ex=<?= $e['id'] ?>"
+                       class="px-4 py-1.5 rounded-lg text-sm font-medium transition
+                              <?= $e['id']==$ex_sel ? 'bg-purple-700 text-white' : 'bg-slate-700 hover:bg-slate-600 text-slate-300' ?>">
+                        <?= $e['annee'] ?>
+                        <span class="ml-1 text-xs opacity-70"><?= $e['statut'] === 'Ouvert' ? '●' : '○' ?></span>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+                <?php if ($exercice_actif): ?>
+                <span class="text-xs text-slate-500">
+                    <?= date('d/m/Y', strtotime($exercice_actif['date_debut'])) ?> -
+                    <?= date('d/m/Y', strtotime($exercice_actif['date_fin'])) ?>
+                </span>
+                <?php endif; ?>
+            </div>
+
+            <?php if ($exercice_actif && !empty($periodes)): ?>
+
+            <!-- Légende statuts -->
+            <div class="flex flex-wrap gap-2 mb-4 text-xs">
+                <?php foreach (PERIODE_STATUT_COLORS as $statut => $cls): ?>
+                <span class="px-2 py-1 rounded <?= $cls['bg'] ?> <?= $cls['text'] ?>">
+                    <i class="fas <?= $cls['icon'] ?> mr-1"></i><?= str_replace('_', ' ', $statut) ?>
+                </span>
+                <?php endforeach; ?>
+                <span class="text-slate-600 ml-2">Seul l'administrateur peut ouvrir ou fermer une période.</span>
+            </div>
+
+            <!-- Grille des périodes (style Oracle GL) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-6">
+                <?php foreach ($periodes as $p):
+                    $isAjust = $p['type_periode_detail'] === 'ajustement';
+                    $cls     = PERIODE_STATUT_COLORS[$p['statut']] ?? PERIODE_STATUT_COLORS['Jamais_ouvert'];
+                    $canOpen = in_array($p['statut'], ['Jamais_ouvert', 'Fermé']);
+                    $canClose= $p['statut'] === 'Ouvert';
+                ?>
+                <div class="bg-slate-800 border <?= $p['statut']==='Ouvert' ? 'border-emerald-700/60' : 'border-slate-700' ?> rounded-xl p-4
+                            <?= $isAjust ? 'opacity-70' : '' ?>">
+                    <div class="flex items-start justify-between mb-2">
+                        <div>
+                            <p class="font-semibold text-slate-100 text-sm"><?= htmlspecialchars($p['libelle']) ?></p>
+                            <p class="text-xs text-slate-500 mt-0.5">
+                                <?= date('d/m', strtotime($p['date_debut'])) ?> -
+                                <?= date('d/m/Y', strtotime($p['date_fin'])) ?>
+                            </p>
+                        </div>
+                        <span class="text-xs font-bold text-slate-600">#<?= $p['periode_numero'] ?></span>
+                    </div>
+
+                    <!-- Statut badge -->
+                    <div class="mb-3">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium <?= $cls['bg'] ?> <?= $cls['text'] ?>">
+                            <i class="fas <?= $cls['icon'] ?> text-xs"></i>
+                            <?= str_replace('_', ' ', $p['statut']) ?>
+                        </span>
+                        <?php if ($isAjust): ?>
+                        <span class="ml-1 px-1.5 py-0.5 bg-indigo-900/40 text-indigo-300 text-xs rounded">Ajustement</span>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Infos audit -->
+                    <?php if ($p['date_ouverture']): ?>
+                    <p class="text-xs text-slate-600 mb-1">
+                        <i class="fas fa-unlock text-xs mr-1"></i>
+                        Ouvert <?= date('d/m/Y H:i', strtotime($p['date_ouverture'])) ?>
+                        <?= $p['ouvert_par_nom'] ? 'par ' . htmlspecialchars($p['ouvert_par_nom']) : '' ?>
+                    </p>
+                    <?php endif; ?>
+                    <?php if ($p['date_cloture_periode']): ?>
+                    <p class="text-xs text-slate-600 mb-1">
+                        <i class="fas fa-lock text-xs mr-1"></i>
+                        Fermé <?= date('d/m/Y H:i', strtotime($p['date_cloture_periode'])) ?>
+                        <?= $p['ferme_par_nom'] ? 'par ' . htmlspecialchars($p['ferme_par_nom']) : '' ?>
+                    </p>
+                    <?php endif; ?>
+
+                    <!-- Boutons action (admin seulement) -->
+                    <?php $isAdmin = ($_SESSION['user_role'] ?? '') === 'admin'; ?>
+                    <?php if ($isAdmin): ?>
+                    <div class="flex gap-2 mt-3">
+                        <?php if ($canOpen): ?>
+                        <form method="POST">
+                            <input type="hidden" name="action" value="open_periode">
+                            <input type="hidden" name="periode_id" value="<?= $p['id_periode'] ?>">
+                            <input type="hidden" name="exercice_id" value="<?= $ex_sel ?>">
+                            <button type="submit"
+                                    class="px-3 py-1 bg-emerald-700 hover:bg-emerald-600 text-white text-xs rounded transition">
+                                <i class="fas fa-unlock mr-1"></i>Ouvrir
+                            </button>
+                        </form>
+                        <?php endif; ?>
+                        <?php if ($canClose): ?>
+                        <form method="POST" onsubmit="return confirm('Fermer la période <?= htmlspecialchars($p['libelle']) ?> ?\n\nLes écritures sur cette période seront bloquées.\nL\'administrateur pourra la rouvrir si nécessaire.')">
+                            <input type="hidden" name="action" value="close_periode">
+                            <input type="hidden" name="periode_id" value="<?= $p['id_periode'] ?>">
+                            <input type="hidden" name="exercice_id" value="<?= $ex_sel ?>">
+                            <button type="submit"
+                                    class="px-3 py-1 bg-amber-700 hover:bg-amber-600 text-white text-xs rounded transition">
+                                <i class="fas fa-lock mr-1"></i>Fermer
+                            </button>
+                        </form>
+                        <?php endif; ?>
+                        <?php if ($p['statut'] === 'Fermé'): ?>
+                        <form method="POST" onsubmit="return confirm('CLÔTURE DÉFINITIVE de <?= htmlspecialchars($p['libelle']) ?> ?\n\nCette action est IRRÉVERSIBLE.\nLa période ne pourra plus jamais être rouverte.')">
+                            <input type="hidden" name="action" value="close_periode">
+                            <input type="hidden" name="periode_id" value="<?= $p['id_periode'] ?>">
+                            <input type="hidden" name="exercice_id" value="<?= $ex_sel ?>">
+                            <input type="hidden" name="definitif" value="1">
+                            <button type="submit"
+                                    class="px-3 py-1 bg-red-800 hover:bg-red-700 text-white text-xs rounded transition">
+                                <i class="fas fa-ban mr-1"></i>Définitif
+                            </button>
+                        </form>
+                        <?php endif; ?>
+                    </div>
+                    <?php elseif ($p['statut'] === 'Ouvert'): ?>
+                    <p class="text-xs text-emerald-600 mt-2"><i class="fas fa-info-circle mr-1"></i>Saisie active</p>
+                    <?php endif; ?>
+                </div>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- Actions globales (admin) -->
+            <?php if ($isAdmin): ?>
+            <div class="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4 flex flex-wrap items-center gap-4">
+                <span class="text-sm text-slate-400"><i class="fas fa-shield-alt mr-1 text-amber-400"></i>Actions globales :</span>
+                <form method="POST" onsubmit="return confirm('Ouvrir TOUTES les périodes de l\'exercice <?= $exercice_actif['annee'] ?> ?')">
+                    <input type="hidden" name="action" value="open_all_periodes">
+                    <input type="hidden" name="exercice_id" value="<?= $ex_sel ?>">
+                    <button type="submit" class="px-4 py-1.5 bg-emerald-800 hover:bg-emerald-700 text-white text-sm rounded-lg transition">
+                        <i class="fas fa-unlock mr-1"></i>Ouvrir toutes les périodes
+                    </button>
+                </form>
+            </div>
+            <?php endif; ?>
+
+            <?php endif; // exercice_actif && periodes ?>
+            <?php endif; // exercices non vides ?>
+
+            <?php else: ?>
+            <!-- ================================================================ -->
+            <!-- ONGLET 1 : LISTE DES EXERCICES -->
+            <!-- ================================================================ -->
+
             <!-- Boutons Actions -->
             <div class="mb-6 flex gap-3">
                 <button onclick="document.getElementById('modal-create').classList.remove('hidden')"
-                        class="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl">
+                        class="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium transition-all shadow-lg text-sm">
                     <i class="fas fa-plus mr-2"></i>Créer un Nouvel Exercice
                 </button>
                 <a href="reprise_soldes.php"
-                   class="px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl">
+                   class="px-5 py-2.5 bg-gradient-to-r from-cyan-700 to-blue-700 hover:from-cyan-800 hover:to-blue-800 text-white rounded-lg font-medium transition-all shadow-lg text-sm">
                     <i class="fas fa-file-import mr-2"></i>Reprise des Soldes
                 </a>
             </div>
 
             <!-- Liste des Exercices -->
-            <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700 overflow-hidden">
+            <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full">
                         <thead>
@@ -259,6 +485,9 @@ $pageTitle = "Gestion des Exercices Comptables";
                     </div>
                 </div>
             </div>
+
+            <?php endif; // tab exercices vs periodes ?>
+
         </main>
     </div>
 

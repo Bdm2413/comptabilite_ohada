@@ -130,11 +130,61 @@ Ce choix est enregistré dans `parametres_systeme.mode_installation` et conditio
 - **Etape 6** - Récapitulatif et finalisation
 
 ### 4.2 Periodes comptables mensuelles
-- Chaque exercice est découpé en 12 périodes (janvier à décembre)
-- Chaque période peut être : Ouverte, Fermée, Verrouillée
-- Les écritures ne peuvent être saisies que dans une période ouverte
-- Clôture mensuelle avec contrôles automatiques (balance équilibrée, etc.)
-- Seul l'admin peut rouvrir une période fermée
+
+**Concept clé (inspiré d'Oracle GL) :** aucune écriture ne peut être saisie sur une période fermée. C'est le verrou central du GL. Toutes les fonctionnalités comptables (saisie, lettrage, clôture) dépendent de ce mécanisme.
+
+**Structure BDD :**
+
+```sql
+periodes_comptables
+├── id
+├── exercice_id          FK vers exercices
+├── societe_id
+├── numero_periode       1 à 12 (+ 13/14 pour périodes d'ajustement)
+├── libelle              "Janvier 2025", "Période de clôture"
+├── date_debut
+├── date_fin
+├── type                 ENUM('normal','ajustement')
+├── statut               ENUM('Jamais_ouvert','Ouvert','Fermé','Définitivement_fermé')
+├── ouvert_par           FK utilisateurs
+├── date_ouverture
+├── ferme_par            FK utilisateurs
+├── date_cloture
+└── created_at / updated_at
+```
+
+**Statuts (identiques à Oracle) :**
+
+| Statut | Description | Saisie possible |
+|---|---|---|
+| Jamais_ouvert | Période créée mais pas encore ouverte | Non |
+| Ouvert | Période active - saisie autorisée | Oui |
+| Fermé | Clôture mensuelle effectuée - rouvrable par admin | Non |
+| Définitivement_fermé | Clôture annuelle - irréversible | Non |
+
+**Périodes d'ajustement (13 et 14) :**
+- Réservées aux écritures de régularisation de fin d'exercice (provisions, amortissements, régularisations)
+- Même statut que les périodes normales mais distinguées par `type = 'ajustement'`
+- N'apparaissent que si l'exercice est en phase de clôture
+
+**Verrou PHP :**
+```php
+// Appel obligatoire dans tout point d'écriture
+requirePeriodeOuverte($date_ecriture, $societe_id);
+// Lance une exception si la période est Fermée ou Définitivement_fermée
+```
+
+**Interface admin (Paramètres > Exercices et périodes) :**
+- Grille des 12 mois de l'exercice avec statut visuel par couleur
+- Bouton "Ouvrir" / "Fermer" par période (admin uniquement)
+- Chaque action est auditée (qui, quand)
+- Les périodes d'ajustement sont créées manuellement à la clôture annuelle
+
+**Règles métier :**
+- Seul l'admin peut ouvrir ou fermer une période
+- Une période `Définitivement_fermé` ne peut jamais être rouverte
+- À la création d'un exercice, les 12 périodes sont générées avec statut `Jamais_ouvert`
+- La période courante (selon date du jour) est automatiquement ouverte lors de la création de l'exercice
 
 ### 4.3 Multi-devise
 - Devise de référence par société (FCFA par défaut)
@@ -322,14 +372,16 @@ Quand l'utilisateur crée un nouveau compte dans `plan_comptable` (hors wizard) 
 4. BD, BC, RD, RC et tableau sont renseignés automatiquement depuis le référentiel
 5. Si le code n'existe pas dans `table_correspondance`, la création est bloquée avec message d'erreur
 
-### 6.4 Administration du référentiel (à implémenter)
+### 6.4 Administration du référentiel (réalisé)
 
-L'admin doit pouvoir corriger les valeurs BD/BC/RD/RC dans `table_correspondance` via une interface dédiée dans **Paramètres > Référentiel SYSCOHADA** (page `referentiel_ohada.php` existe en lecture seule - à enrichir).
+L'interface d'administration est disponible dans **Paramètres > Référentiel SYSCOHADA** (`referentiel_ohada.php`, Tab 2 "Gestion BD/BC/RD/RC").
 
-**Comportement attendu lors d'une correction :**
-- L'admin modifie une valeur (ex: BD de `CA` à `NA` pour le compte `1011`)
-- Le système propose : "Mettre à jour également les comptes existants dans le plan comptable ?" (oui / non)
-- Si oui : `UPDATE plan_comptable SET bd = ? WHERE quatre_chiffres = ? AND societe_id = ?` pour les comptes non personnalisés
+**Fonctionnalités implémentées :**
+- Accès restreint à l'admin (`$_SESSION['user_role'] === 'admin'`)
+- Modifier libellé, type_compte, tableau, BD/BC/RD/RC avec propagation optionnelle vers `plan_comptable`
+- Ajouter un nouveau compte dans le référentiel (modal avec validation 4 chiffres)
+- Supprimer un compte du référentiel (confirmation JS, sans cascade vers plan_comptable)
+- Filtres par classe, type, recherche texte - pagination 25 par page
 
 ---
 
@@ -388,22 +440,27 @@ L'outil doit être proactif et apprenant :
 - [x] Onboarding wizard 6 étapes (réalisé)
 - [x] Nouvelle structure de navigation / menu - sidebar accordéon (réalisé)
 - [x] Sélection du mode installation (Entreprise / Cabinet) dans le wizard (réalisé)
-- [x] Import plan comptable SYSCOHADA : uniquement les sous-comptes à 4 chiffres (niveau 4), avec padding automatique si longueur > 4, et type_compte renseigné depuis le référentiel (réalisé)
+- [x] Import plan comptable SYSCOHADA via `table_correspondance` (1106 comptes, 4 chiffres, avec type_compte et padding automatique) (réalisé)
+- [x] Référentiel SYSCOHADA : vue hiérarchique + interface admin add/edit/delete BD/BC/RD/RC avec propagation vers plan_comptable (réalisé)
+- [x] Fusion `correspondance.php` dans `referentiel_ohada.php` - suppression de la page redondante (réalisé)
 - [ ] Vue dashboard Cabinet (liste dossiers, statuts, alertes)
 - [ ] Fusion Dashboard + Vue d'ensemble
 - [ ] Parametre taille de police (wizard OK, reste à appliquer globalement)
-- [ ] Periodes comptables mensuelles (schema BDD)
 
-### PHASE 2 - Noyau GL
-- [ ] Interface admin - édition du référentiel SYSCOHADA (`table_correspondance`) : correction BD/BC/RD/RC avec propagation optionnelle vers `plan_comptable`
-- [ ] Alignement wizard : utiliser `table_correspondance` (1106 comptes) au lieu de `ohada_plan_comptable` (370 comptes) pour l'import, pour une couverture complète
-- [ ] Plan de comptes enrichi (longueur variable, sous-comptes, import SYSCOHADA avec padding)
-- [ ] Saisie des écritures (améliorée)
-- [ ] Grand livre, Journal, Balance
-- [ ] Lettrage amélioré
-- [ ] Clôture/ouverture des périodes mensuelles
-- [ ] Reprise de balance d'ouverture (écriture RAN guidée)
-- [ ] Flux "Nouvelle société / filiale" dans Paramètres (avec exercices archivés)
+### PHASE 2 - Noyau GL (ordre d'exécution obligatoire)
+
+> **Principe :** les périodes comptables sont le verrou central. Rien d'autre ne peut être correctement construit sans elles. L'ordre ci-dessous est donc impératif.
+
+- [ ] **[EN COURS] Périodes comptables - Etape 1 :** schéma BDD (`periodes_comptables`), génération automatique des 12 périodes à la création d'un exercice, fonction verrou `requirePeriodeOuverte()`
+- [ ] **Périodes comptables - Etape 2 :** interface admin (Paramètres > Exercices et périodes) - grille des 12 mois, boutons Ouvrir/Fermer, audit trail
+- [ ] **Saisie des écritures :** intégration du verrou de période, amélioration UX (validation en temps réel, raccourcis clavier, auto-complétion des comptes)
+- [ ] **Grand livre, Journal, Balance :** avec filtres par période (mois), export PDF/Excel
+- [ ] **Lettrage amélioré :** par compte tiers, avec numéro de facture, lettrage automatique
+- [ ] **Clôture mensuelle :** contrôles automatiques (balance équilibrée, écritures non lettrées), génération du rapport de clôture
+- [ ] **Clôture annuelle :** génération de l'écriture de report à nouveau (RAN), verrouillage définitif de l'exercice
+- [ ] **Reprise de balance d'ouverture :** écriture RAN guidée pour sociétés avec historique
+- [ ] **Flux "Nouvelle société / filiale" :** dans Paramètres, avec exercices archivés
+- [ ] Plan de comptes enrichi (longueur variable, sous-comptes analytiques)
 
 ### PHASE 3 - Etats financiers
 - [ ] Bilan (amelioré)

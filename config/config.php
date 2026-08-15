@@ -70,6 +70,10 @@ if (file_exists(CONFIG_PATH . '/functions_multi_devises.php')) {
     require_once CONFIG_PATH . '/functions_multi_devises.php';
 }
 
+if (file_exists(CONFIG_PATH . '/functions_periodes.php')) {
+    require_once CONFIG_PATH . '/functions_periodes.php';
+}
+
 // Vérifier si le système nécessite une configuration initiale
 // Ne pas rediriger si on est déjà sur la page de setup ou sur la page de login
 $current_script = basename($_SERVER['PHP_SELF']);

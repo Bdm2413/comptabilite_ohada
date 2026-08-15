@@ -16,6 +16,11 @@ $stmtFournisseurs = $db->prepare("SELECT id, nom, abreviation FROM plan_tiers WH
 $stmtFournisseurs->execute([$societe_id]);
 $fournisseurs = $stmtFournisseurs->fetchAll();
 
+// Récupérer les clients
+$stmtClients = $db->prepare("SELECT id, nom FROM plan_tiers WHERE type = 'Client' AND actif = 1 AND societe_id = ? ORDER BY nom");
+$stmtClients->execute([$societe_id]);
+$clients = $stmtClients->fetchAll();
+
 // Comptes comptables pour les selects (comptes de charge 6x et de produit 7x)
 $stmtComptes = $db->prepare("
     SELECT compte, intitule_compte
@@ -40,14 +45,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'add') {
             $stmt = $db->prepare("
                 INSERT INTO catalogues_fournisseurs
-                (societe_id, id_fournisseur, reference, designation, description,
+                (societe_id, id_fournisseur, id_client, reference, designation, description,
                  type_article, usage_article, compte_achat, compte_vente, type_taxe_defaut,
                  unite, prix_unitaire_ht, prix_vente_ht, actif)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([
                 $societe_id,
                 $_POST['id_fournisseur'] ?: null,
+                $_POST['id_client'] ?: null,
                 trim($_POST['reference']),
                 trim($_POST['designation']),
                 trim($_POST['description'] ?? ''),
@@ -68,6 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $db->prepare("
                 UPDATE catalogues_fournisseurs SET
                     id_fournisseur = ?,
+                    id_client = ?,
                     reference = ?,
                     designation = ?,
                     description = ?,
@@ -84,6 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ");
             $stmt->execute([
                 $_POST['id_fournisseur'] ?: null,
+                $_POST['id_client'] ?: null,
                 trim($_POST['reference']),
                 trim($_POST['designation']),
                 trim($_POST['description'] ?? ''),
@@ -139,16 +147,19 @@ $tab = in_array($_GET['tab'] ?? '', ['achat','vente']) ? $_GET['tab'] : 'achat';
 
 // Filtres
 $filterFournisseur = $_GET['fournisseur'] ?? '';
-$filterType        = $_GET['type'] ?? '';
-$filterActif       = $_GET['actif'] ?? 'Oui';
-$search            = $_GET['search'] ?? '';
+$filterClient      = $_GET['client']      ?? '';
+$filterType        = $_GET['type']        ?? '';
+$filterActif       = $_GET['actif']       ?? 'Oui';
+$search            = $_GET['search']      ?? '';
 
 // Requête adaptée à l'onglet
 $sql = "
     SELECT c.*,
-           pt.nom as fournisseur_nom, pt.abreviation as fournisseur_abrev
+           ptf.nom as fournisseur_nom, ptf.abreviation as fournisseur_abrev,
+           ptc.nom as client_nom
     FROM catalogues_fournisseurs c
-    LEFT JOIN plan_tiers pt ON c.id_fournisseur = pt.id
+    LEFT JOIN plan_tiers ptf ON c.id_fournisseur = ptf.id
+    LEFT JOIN plan_tiers ptc ON c.id_client = ptc.id
     WHERE c.societe_id = ?
 ";
 $params = [$societe_id];
@@ -161,6 +172,10 @@ if ($tab === 'achat') {
 if (!empty($filterFournisseur)) {
     $sql .= " AND c.id_fournisseur = ?";
     $params[] = $filterFournisseur;
+}
+if (!empty($filterClient)) {
+    $sql .= " AND c.id_client = ?";
+    $params[] = $filterClient;
 }
 if (!empty($filterType)) {
     $sql .= " AND c.type_article = ?";
@@ -179,7 +194,7 @@ if (!empty($search)) {
 }
 
 $sql .= $tab === 'achat'
-    ? " ORDER BY pt.nom, c.reference"
+    ? " ORDER BY ptf.nom, c.reference"
     : " ORDER BY c.designation";
 
 $stmt = $db->prepare($sql);
@@ -269,6 +284,18 @@ $pageTitle = "Catalogue Articles";
                             <?php foreach ($fournisseurs as $f): ?>
                                 <option value="<?= $f['id'] ?>" <?= $filterFournisseur == $f['id'] ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($f['nom']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <?php else: ?>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-1">Client</label>
+                        <select name="client" class="px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-emerald-500">
+                            <option value="">Tous</option>
+                            <?php foreach ($clients as $c): ?>
+                                <option value="<?= $c['id'] ?>" <?= $filterClient == $c['id'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($c['nom']) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -425,6 +452,7 @@ $pageTitle = "Catalogue Articles";
                                 <tr>
                                     <th class="px-4 py-3 text-left text-xs text-slate-400 uppercase">Référence</th>
                                     <th class="px-4 py-3 text-left text-xs text-slate-400 uppercase">Désignation</th>
+                                    <th class="px-4 py-3 text-left text-xs text-slate-400 uppercase">Client</th>
                                     <th class="px-4 py-3 text-center text-xs text-slate-400 uppercase">Type</th>
                                     <th class="px-4 py-3 text-center text-xs text-slate-400 uppercase">Taxe défaut</th>
                                     <th class="px-4 py-3 text-left text-xs text-slate-400 uppercase">Compte produit</th>
@@ -445,6 +473,9 @@ $pageTitle = "Catalogue Articles";
                                             <?php if ($article['description']): ?>
                                                 <div class="text-xs text-slate-500 truncate max-w-xs"><?= htmlspecialchars($article['description']) ?></div>
                                             <?php endif; ?>
+                                        </td>
+                                        <td class="px-4 py-3 text-xs text-slate-300">
+                                            <?= $article['client_nom'] ? htmlspecialchars($article['client_nom']) : '<span class="text-slate-600">-</span>' ?>
                                         </td>
                                         <td class="px-4 py-3 text-center">
                                             <span class="px-2 py-0.5 rounded-full text-xs <?= $article['type_article'] === 'Bien' ? 'bg-green-500/20 text-green-400' : 'bg-purple-500/20 text-purple-400' ?>">
@@ -497,14 +528,23 @@ $pageTitle = "Catalogue Articles";
                     <input type="hidden" name="action" id="formAction" value="add">
                     <input type="hidden" name="id" id="articleId">
 
-                    <!-- Ligne 1 : Fournisseur + Référence -->
-                    <div class="grid grid-cols-2 gap-4">
+                    <!-- Ligne 1 : Fournisseur + Client + Référence -->
+                    <div class="grid grid-cols-3 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-slate-400 mb-1">Fournisseur</label>
                             <select name="id_fournisseur" id="id_fournisseur" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500" onchange="generateReference()">
-                                <option value="">- Catalogue général -</option>
+                                <option value="">- Général -</option>
                                 <?php foreach ($fournisseurs as $f): ?>
                                     <option value="<?= $f['id'] ?>" data-abrev="<?= htmlspecialchars($f['abreviation'] ?? strtoupper(substr($f['nom'], 0, 3))) ?>"><?= htmlspecialchars($f['nom']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Client</label>
+                            <select name="id_client" id="id_client" class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-emerald-500">
+                                <option value="">- Général -</option>
+                                <?php foreach ($clients as $c): ?>
+                                    <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['nom']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -655,6 +695,7 @@ $pageTitle = "Catalogue Articles";
                 document.getElementById('modalTitle').textContent = 'Modifier l\'article';
                 document.getElementById('articleId').value        = data.id;
                 document.getElementById('id_fournisseur').value   = data.id_fournisseur || '';
+                document.getElementById('id_client').value        = data.id_client || '';
                 document.getElementById('reference').value        = data.reference;
                 document.getElementById('designation').value      = data.designation;
                 document.getElementById('description').value      = data.description || '';

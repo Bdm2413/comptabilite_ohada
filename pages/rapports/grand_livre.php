@@ -50,6 +50,26 @@ if ($exercice_id) {
     $exercice_selectionne = null;
 }
 
+// Filtre par période mensuelle
+$periode_id    = isset($_GET['periode_id']) ? intval($_GET['periode_id']) : null;
+$periodes_dispo = [];
+
+if ($periode_id) {
+    $stmtP = $db->prepare("SELECT * FROM periodes WHERE id_periode = ? AND societe_id = ?");
+    $stmtP->execute([$periode_id, $societe_id]);
+    $pSel = $stmtP->fetch();
+    if ($pSel) {
+        $date_debut    = $pSel['date_debut'];
+        $date_fin      = $pSel['date_fin'];
+        $mode_exercice = false;
+    }
+}
+if ($exercice_selectionne) {
+    $stmtP2 = $db->prepare("SELECT * FROM periodes WHERE id_exercice = ? AND societe_id = ? AND type_periode_detail = 'normal' ORDER BY periode_numero");
+    $stmtP2->execute([$exercice_selectionne['id'], $societe_id]);
+    $periodes_dispo = $stmtP2->fetchAll();
+}
+
 // Récupérer la liste des comptes
 $stmt_c = $db->prepare("SELECT compte, intitule_compte FROM plan_comptable WHERE societe_id = ? AND actif = 'Oui' ORDER BY compte");
 $stmt_c->execute([$societe_id]);
@@ -269,6 +289,35 @@ $pageTitle = "Grand Livre";
                                 <?php endforeach; ?>
                             </select>
                         </div>
+
+                        <!-- Période mensuelle -->
+                        <?php if (!empty($periodes_dispo)): ?>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">
+                                <i class="fas fa-calendar-week mr-2 text-indigo-400"></i>Période
+                            </label>
+                            <select id="periode_sel" name="periode_id"
+                                    class="px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 text-slate-100 min-w-44">
+                                <option value="" data-debut="" data-fin="">- Toute la période -</option>
+                                <?php foreach ($periodes_dispo as $p):
+                                    $pActive = ($date_debut === $p['date_debut'] && $date_fin === $p['date_fin']);
+                                    $statLabel = match($p['statut']) {
+                                        'Ouvert' => ' - Ouvert',
+                                        'Fermé'  => ' - Fermé',
+                                        'Définitivement_fermé' => ' - Clos',
+                                        default  => ''
+                                    };
+                                ?>
+                                <option value="<?= $p['id_periode'] ?>"
+                                        data-debut="<?= $p['date_debut'] ?>"
+                                        data-fin="<?= $p['date_fin'] ?>"
+                                        <?= $pActive ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($p['libelle']) ?><?= $statLabel ?>
+                                </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <?php endif; ?>
 
                         <!-- Date début -->
                         <div id="date-debut-container">
@@ -539,6 +588,21 @@ $pageTitle = "Grand Livre";
                 dateDebut.classList.remove('opacity-50');
                 dateFin.classList.remove('opacity-50');
             }
+        }
+
+        // Sélecteur de période mensuelle
+        const periodeSel = document.getElementById('periode_sel');
+        if (periodeSel) {
+            periodeSel.addEventListener('change', function() {
+                const opt = this.options[this.selectedIndex];
+                if (opt.dataset.debut) {
+                    document.getElementById('date_debut').value = opt.dataset.debut;
+                    document.getElementById('date_fin').value   = opt.dataset.fin;
+                    const exSel = document.getElementById('exercice_select');
+                    if (exSel) exSel.value = '';
+                }
+                document.getElementById('form-filtres').submit();
+            });
         }
 
         function exportPDF() {

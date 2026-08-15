@@ -147,7 +147,7 @@ if ($tab === 'periodes' && $ex_sel) {
     }
 }
 
-$pageTitle = "Exercices et Périodes Comptables";
+$pageTitle = "Gestion des périodes";
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -167,7 +167,7 @@ $pageTitle = "Exercices et Périodes Comptables";
             <!-- Header -->
             <div class="mb-5">
                 <h1 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 mb-1">
-                    <i class="fas fa-calendar-check mr-2"></i>Exercices et Périodes Comptables
+                    <i class="fas fa-calendar-check mr-2"></i>Gestion des périodes
                 </h1>
                 <p class="text-slate-400 text-sm">Gérez vos exercices et contrôlez l'ouverture/fermeture des périodes mensuelles</p>
             </div>

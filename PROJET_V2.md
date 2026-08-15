@@ -76,6 +76,44 @@ L'outil doit être :
 - Partage interne (entre utilisateurs) et externe (lien sécurisé)
 - Versioning des documents
 - Liaison avec toutes les pièces comptables
+- Intégration **FNE** (Fichier des Numéros d'Entreprise - Côte d'Ivoire) : identification officielle des entreprises rattachée à chaque dossier
+
+### 2.9 Modules Fiscaux - DGI (Côte d'Ivoire)
+Formulaires de déclaration conformes aux modèles de la Direction Générale des Impôts ivoirienne.
+
+| Déclaration | Périodicité | Délai légal |
+|---|---|---|
+| TVA (Taxe sur la Valeur Ajoutée) | Mensuelle | 15 du mois suivant |
+| ITS (Impôts sur Traitements et Salaires) | Mensuelle | 15 du mois suivant |
+| TSE (Taxe sur les Salaires des Expatriés) | Mensuelle | 15 du mois suivant |
+| PPSSI (Prélèvement sur les Paiements faits aux Prestataires de Services Installés hors de Côte d'Ivoire) | Mensuelle | 15 du mois suivant |
+| RIBNC (Retenue à la source sur les Bénéfices Non Commerciaux) | Mensuelle | 15 du mois suivant |
+| Acomptes IS/BIC/BNC | Trimestrielle | Selon calendrier DGI |
+
+Fonctionnalités :
+- Formulaires à l'identique des imprimés DGI
+- Pré-remplissage depuis les données comptables (TVA collectée, TVA déductible, masse salariale...)
+- Taux, seuils et barèmes paramétrables en BDD (modification sans toucher au code)
+- Génération de l'écriture comptable de la déclaration (débit impôt à payer / crédit trésorerie)
+- Marquage : A déclarer / Déclaré / Payé
+- Calendrier fiscal intelligent selon le régime et le secteur d'activité
+
+### 2.10 Modules Sociaux - CNPS (Côte d'Ivoire)
+Formulaires de déclaration conformes aux modèles de la Caisse Nationale de Prévoyance Sociale.
+
+| Déclaration | Périodicité paiement | Conditions |
+|---|---|---|
+| Cotisations retraite (branche vieillesse) | Mensuelle ou Trimestrielle | Mensuel si > 20 salariés, Trimestriel si <= 20 salariés |
+| CMU (Couverture Maladie Universelle) | Mensuelle ou Trimestrielle | Même règle que retraite |
+| Déclaration nominative des salariés | Annuelle | Avant le 31 janvier de l'année N+1 |
+| Accident du travail (AT/MP) | Au fil des événements | Déclaration dans les 48h |
+
+Fonctionnalités :
+- Formulaires conformes aux imprimés CNPS
+- Calcul automatique des bases et taux depuis les données de paie
+- Gestion différenciée selon le nombre de salariés (périodicité de paiement)
+- Génération de l'écriture de charges sociales patronales
+- Marquage : A déclarer / Déclaré / Payé
 
 ---
 
@@ -200,61 +238,169 @@ requirePeriodeOuverte($date_ecriture, $societe_id);
 - Activité du mois, santé financière, alertes, top clients/fournisseurs
 - Dernières écritures, indicateurs de performance
 
-### 4.5 Parametre global : taille de police
+### 4.5 Approche Document-First (innovation clé)
+
+L'approche classique des logiciels comptables africains impose de saisir l'écriture directement dans un journal. L'approche retenue ici s'inspire de Pennylane, Odoo et QuickBooks : **on part du document métier, la comptabilisation en découle automatiquement**.
+
+```
+Document métier          Comptabilisation automatique
+─────────────────        ──────────────────────────────
+Facture client    ──►    Débit 411xxx / Crédit 70xxxx
+Facture fourn.    ──►    Débit 60xxxx / Crédit 401xxx
+Déclaration TVA   ──►    Débit 443xxx / Crédit 445xxx
+Déclaration ITS   ──►    Débit 661xxx / Crédit 447xxx
+Déclaration CNPS  ──►    Débit 664xxx / Crédit 430xxx
+Bulletin de paie  ──►    Débit 66xxxx / Crédit 421xxx
+```
+
+**Avantage :** l'utilisateur ne saisit plus d'écritures manuelles pour ces opérations récurrentes. Il gère ses documents métier, le système génère les écritures. La saisie manuelle reste disponible pour les opérations non couvertes par un module.
+
+### 4.6 Catalogue (référentiel opérationnel)
+
+Le catalogue est le pont entre les opérations métier et la comptabilité. Il se décompose en trois niveaux :
+
+**Articles & Services (Catalogue Vente / Achat)**
+- Produits vendus ou achetés avec compte de produit/charge par défaut
+- Prix unitaire, unité de mesure, TVA applicable
+- Utilisé dans : Factures clients, Factures fournisseurs, Devis, Bons de commande
+
+**Charges récurrentes**
+- Loyers, abonnements, électricité, charges connues d'avance
+- Compte de charge par défaut, ventilation analytique optionnelle
+- Utilisé dans : saisie rapide, import groupé
+
+**Modèles d'écritures (gabarits)**
+- Gabarits débit/crédit complets pour les opérations non documentaires
+- Exemples : dotation aux amortissements, écriture de paie, provision, régularisation
+- L'utilisateur remplit uniquement les montants, les comptes sont pré-câblés
+- Utilisé dans : saisie des écritures (onglet dédié "Depuis un modèle")
+
+### 4.7 Tableau de bord des échéances fiscales et sociales
+
+Widget dédié accessible depuis le Dashboard principal, conçu pour qu'aucune déclaration ne soit oubliée.
+
+**Structure du tableau de bord échéances :**
+
+| Colonne | Contenu |
+|---|---|
+| Déclaration | ITS, TVA, TSE, CNPS Retraite, CMU, etc. |
+| Période concernée | Janvier 2026, T1 2026, etc. |
+| Date limite légale | Date exacte selon régime et secteur |
+| Montant estimé | Pré-calculé depuis les données comptables |
+| Statut | A préparer / Déclaré / Payé / En retard |
+| Action | Bouton "Préparer" qui ouvre le formulaire de déclaration |
+
+**Paramétrage fin du calendrier :**
+
+Le calendrier fiscal est entièrement paramétrable en BDD (table `calendrier_fiscal`) :
+- **Régime fiscal** : Réel normal, Réel simplifié, Impôt synthétique
+- **Secteur d'activité** : Certains secteurs ont des dates dérogatoires (ex: agriculture, BTP)
+- **Taille de l'entreprise** : Périodicité CNPS mensuelle (> 20 salariés) ou trimestrielle (<= 20 salariés)
+- **Taux et seuils** : Tous les paramètres numériques (taux TVA, barèmes ITS, taux CNPS) stockés en BDD - modifiables par l'admin sans toucher au code
+
+**Alertes proactives :**
+- J-7 : notification "7 jours avant l'échéance TVA de janvier"
+- J-2 : alerte rouge si non encore déclaré
+- J+1 : alerte critique "Déclaration en retard - risques de pénalités"
+- Récapitulatif hebdomadaire envoyable par email
+
+### 4.8 GED intégrée et FNE (Côte d'Ivoire)
+
+Chaque pièce comptable (facture, déclaration, reçu de paiement, relevé bancaire) peut avoir un ou plusieurs documents joints.
+
+**Fonctionnement :**
+- Upload depuis le formulaire de saisie ou depuis le module GED central
+- Formats acceptés : PDF, JPG, PNG, Excel, Word
+- Stockage local sécurisé (ou cloud en option SaaS)
+- Liaison directe avec l'écriture comptable, la facture ou la déclaration
+
+**Intégration FNE (Fichier des Numéros d'Entreprise) :**
+- Le numéro FNE est un identifiant unique des entreprises en Côte d'Ivoire
+- Chaque dossier société contient son numéro FNE
+- Documents officiels DGI/CNPS pré-remplis avec le FNE de la société
+
+### 4.9 Parametre global : taille de police
 - Réglable dans les paramètres utilisateur ou société
 - 3 niveaux : Petit / Normal / Grand
 - S'applique à toute l'interface via une variable CSS globale
 
-### 4.6 Reorganisation du menu (nouvelle structure)
+### 4.10 Reorganisation du menu (nouvelle structure)
 Structure proposée :
 ```
 TABLEAU DE BORD
-COMPTABILITE
+  - Dashboard principal (KPIs + Echéances fiscales)
+
+COMPTABILITE (GL)
   - Saisie des ecritures
   - Grand livre
-  - Journal
+  - Journal general
   - Balance generale
   - Lettrage
+
 ETATS FINANCIERS
   - Bilan
   - Compte de resultat
   - Flux de tresorerie (TFT)
   - Notes annexes
+
 CLIENTS (AR)
   - Factures clients
   - Encaissements
   - Balance âgée clients
   - Devis / Bons de commande
+
 FOURNISSEURS (AP)
   - Factures fournisseurs
   - Paiements
   - Balance âgée fournisseurs
   - Commandes fournisseurs
-TRESORERIE (CM)
-  - Rapprochement bancaire
-  - Rapport de caisse
-  - Position de tresorerie
-IMMOBILISATIONS (FA)
-  - Liste des immobilisations
-  - Amortissements
-  - Synthese
+
+FISCAL (DGI)
+  - Déclarations TVA
+  - Déclarations ITS
+  - Autres déclarations (TSE, PPSSI, RIBNC)
+  - Acomptes IS / BIC / BNC
+  - Calendrier fiscal
+
+SOCIAL (CNPS)
+  - Déclarations cotisations (Retraite + CMU)
+  - Déclaration nominative annuelle
+  - Paramètres CNPS (taux, seuils)
+
 PAIE ET RH
   - Employes
   - Bulletins de paie
   - Livre de paie
   - Parametres de paie
+
+TRESORERIE (CM)
+  - Rapprochement bancaire
+  - Rapport de caisse
+  - Position de tresorerie
+
+IMMOBILISATIONS (FA)
+  - Liste des immobilisations
+  - Amortissements
+  - Synthese
+
 NOTES DE FRAIS (Expenses)
+
 BUDGET
   - Saisie du budget
   - Suivi budgetaire
+
 ARCHIVES (GED)
+
 PARAMETRES
   - Societes
   - Utilisateurs
   - Plan comptable
   - Journaux
-  - Exercices et periodes
+  - Gestion des periodes (exercices + periodes mensuelles)
   - Tiers (clients/fournisseurs)
+  - Catalogue (Articles, Charges récurrentes, Modèles d'écritures)
+  - Parametres fiscaux (taux DGI, barèmes, calendrier)
+  - Parametres sociaux (taux CNPS, seuils)
   - Devises et taux de change
   - Securite (2FA)
   - Preferences (police, langue, etc.)
@@ -449,48 +595,81 @@ L'outil doit être proactif et apprenant :
 
 ### PHASE 2 - Noyau GL (ordre d'exécution obligatoire)
 
-> **Principe :** les périodes comptables sont le verrou central. Rien d'autre ne peut être correctement construit sans elles. L'ordre ci-dessous est donc impératif.
+> **Principe :** les périodes comptables sont le verrou central. Rien d'autre ne peut être correctement construit sans elles.
 
-- [ ] **[EN COURS] Périodes comptables - Etape 1 :** schéma BDD (`periodes_comptables`), génération automatique des 12 périodes à la création d'un exercice, fonction verrou `requirePeriodeOuverte()`
-- [ ] **Périodes comptables - Etape 2 :** interface admin (Paramètres > Exercices et périodes) - grille des 12 mois, boutons Ouvrir/Fermer, audit trail
-- [ ] **Saisie des écritures :** intégration du verrou de période, amélioration UX (validation en temps réel, raccourcis clavier, auto-complétion des comptes)
-- [ ] **Grand livre, Journal, Balance :** avec filtres par période (mois), export PDF/Excel
+- [x] **Périodes comptables - Etape 1 :** schéma BDD (`periodes`), génération automatique des 12 périodes à la création d'un exercice, fonction verrou `requirePeriodeOuverte()` - intégrée dans saisie, extourne, import
+- [x] **Périodes comptables - Etape 2 :** interface admin (Paramètres > Gestion des périodes) - grille des 12 mois, boutons Ouvrir/Fermer/Définitif, audit trail, renommage menu sidebar
+- [x] **Saisie des écritures :** verrou de période intégré - message explicite si période fermée
+- [x] **Grand livre, Journal, Balance :** filtres par période mensuelle (dropdown dynamique, auto-remplissage dates, soumission auto)
 - [ ] **Lettrage amélioré :** par compte tiers, avec numéro de facture, lettrage automatique
-- [ ] **Clôture mensuelle :** contrôles automatiques (balance équilibrée, écritures non lettrées), génération du rapport de clôture
-- [ ] **Clôture annuelle :** génération de l'écriture de report à nouveau (RAN), verrouillage définitif de l'exercice
+- [ ] **Clôture mensuelle :** contrôles automatiques (balance équilibrée, écritures non lettrées), rapport de clôture
+- [ ] **Clôture annuelle :** génération de l'écriture RAN (Report à Nouveau), verrouillage définitif de l'exercice
 - [ ] **Reprise de balance d'ouverture :** écriture RAN guidée pour sociétés avec historique
 - [ ] **Flux "Nouvelle société / filiale" :** dans Paramètres, avec exercices archivés
 - [ ] Plan de comptes enrichi (longueur variable, sous-comptes analytiques)
 
-### PHASE 3 - Etats financiers
-- [ ] Bilan (amelioré)
-- [ ] Compte de résultat (amelioré)
-- [ ] TFT (amelioré)
+### PHASE 3 - Document-First : Catalogue + Factures (priorité haute)
+
+> **Principe :** le Catalogue est le prérequis. Sans lui, pas d'automatisation de la comptabilisation sur les factures.
+
+- [ ] **Catalogue - Articles & Services :** produits/prestations avec compte de produit/charge par défaut, TVA applicable, prix unitaire
+- [ ] **Catalogue - Charges récurrentes :** charges connues avec compte de charge pré-câblé
+- [ ] **Catalogue - Modèles d'écritures :** gabarits débit/crédit complets pour amortissements, paie, provisions
+- [ ] **Factures clients (AR) :** création, numérotation automatique, PDF, envoi email, suivi statut (Brouillon/Envoyée/Payée), comptabilisation automatique
+- [ ] **Factures fournisseurs (AP) :** saisie, validation, suivi paiement, balance âgée, comptabilisation automatique
+- [ ] **Encaissements clients :** liaison facture - règlement - lettrage automatique
+- [ ] **Paiements fournisseurs :** liaison facture - virement - lettrage automatique
+- [ ] **Devis et bons de commande :** (existants à améliorer et lier aux factures)
+
+### PHASE 4 - Fiscal & Social (différenciateur marché)
+
+> **Principe :** tous les taux, seuils et délais sont paramétrables en BDD. Aucune valeur codée en dur.
+
+- [ ] **Paramètres fiscaux BDD :** table `parametres_fiscaux` (taux TVA, barèmes ITS, seuils, dates limites par régime et secteur)
+- [ ] **Paramètres sociaux BDD :** table `parametres_cnps` (taux retraite, CMU, seuils, règle mensuel/trimestriel)
+- [ ] **Calendrier fiscal intelligent :** par régime (Réel normal, Réel simplifié, Impôt synthétique), par secteur, alertes J-7/J-2/J+1
+- [ ] **Déclaration TVA :** formulaire conforme DGI, pré-rempli depuis les écritures, génération écriture comptable
+- [ ] **Déclaration ITS :** formulaire conforme DGI, pré-rempli depuis données de paie, génération écriture
+- [ ] **Autres déclarations DGI :** TSE, PPSSI, RIBNC
+- [ ] **Acomptes IS/BIC/BNC :** trimestriels avec rappels calendrier
+- [ ] **Déclarations CNPS :** cotisations retraite + CMU, gestion mensuel/trimestriel selon effectif, formulaires conformes
+- [ ] **Déclaration nominative annuelle CNPS :** liste nominative des salariés avec salaires
+- [ ] **Tableau de bord des échéances fiscales et sociales :** widget dashboard, vue consolidée toutes déclarations, statuts, alertes
+
+### PHASE 5 - Etats financiers (amélioration)
+- [ ] Bilan OHADA (amélioré, conforme SYSCOHADA Révisé)
+- [ ] Compte de résultat (amélioré)
+- [ ] TFT - Tableau des Flux de Trésorerie (amélioré)
 - [ ] Notes annexes (complétées)
-- [ ] Export PDF et Excel
+- [ ] Export PDF et Excel soignés (en-tête société, logo)
 
-### PHASE 4 - Modules transactionnels
-- [ ] AR - Clients (factures, encaissements, balance âgée)
-- [ ] AP - Fournisseurs (factures, paiements, balance âgée)
-- [ ] CM - Tresorerie (rapprochement bancaire automatise)
-- [ ] FA - Immobilisations (amelioré)
+### PHASE 6 - Trésorerie & Immobilisations
+- [ ] CM - Rapprochement bancaire automatisé (import relevé CSV/OFX)
+- [ ] CM - Position de trésorerie en temps réel
+- [ ] FA - Immobilisations (amélioré) : calcul amortissements, plan, cessions
+- [ ] FA - Intégration automatique des dotations en GL
 
-### PHASE 5 - RH, Paie, Expenses
-- [ ] Module Paie amelioré
-- [ ] Notes de frais (Expenses)
-- [ ] Declarations sociales
+### PHASE 7 - GED et Archives
+- [ ] Upload et stockage sécurisé (PDF, images, Excel...)
+- [ ] Liaison avec les pièces : factures, déclarations, écritures, reçus
+- [ ] Intégration FNE (numéro entreprise Côte d'Ivoire) dans les documents officiels
+- [ ] Classement et recherche full-text
+- [ ] Partage interne/externe (lien sécurisé à durée limitée)
+- [ ] Versioning des documents
 
-### PHASE 6 - GED et Archives
-- [ ] Upload et stockage sécurisé
-- [ ] Classement et recherche
-- [ ] Partage interne/externe
+### PHASE 8 - RH, Paie, Expenses
+- [ ] Module Paie simplifié : charges salariales + ITS + CNPS sans gestion complète des bulletins
+- [ ] Module Paie complet : bulletins, congés, ancienneté, conventions collectives
+- [ ] Notes de frais (Expenses) : workflow validation, remboursement, pièce jointe
 
-### PHASE 7 - Intelligence et finition
-- [ ] Alertes automatiques
-- [ ] Suggestions IA (imputation, doublons)
-- [ ] Assistant normatif (OHADA, IFRS, fiscal)
-- [ ] Glossaire de requetes documenté
-- [ ] Consolidation multi-societes
+### PHASE 9 - Intelligence et finition
+- [ ] Alertes automatiques (solde anormal, facture impayée, échéances)
+- [ ] Suggestions IA (imputation automatique, détection doublons)
+- [ ] Assistant normatif interactif (OHADA, IFRS, fiscal CI)
+- [ ] Glossaire de requêtes documenté (Oracle-style)
+- [ ] Consolidation multi-sociétés
+- [ ] API REST (intégration banques, logiciels tiers)
+- [ ] Mode hors-ligne partiel (important contexte africain)
 
 ---
 

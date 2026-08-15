@@ -293,7 +293,7 @@ $pageTitle = "Catalogue Articles";
                     <?php if ($tab === 'achat'): ?>
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Fournisseur</label>
-                        <select name="fournisseur" class="px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500">
+                        <select name="fournisseur" class="w-44 px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500">
                             <option value="">Tous</option>
                             <?php foreach ($fournisseurs as $f): ?>
                                 <option value="<?= $f['id'] ?>" <?= $filterFournisseur == $f['id'] ? 'selected' : '' ?>>
@@ -305,7 +305,7 @@ $pageTitle = "Catalogue Articles";
                     <?php else: ?>
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Client</label>
-                        <select name="client" class="px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-emerald-500">
+                        <select name="client" class="w-44 px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-emerald-500">
                             <option value="">Tous</option>
                             <?php foreach ($clients as $c): ?>
                                 <option value="<?= $c['id'] ?>" <?= $filterClient == $c['id'] ? 'selected' : '' ?>>
@@ -317,7 +317,7 @@ $pageTitle = "Catalogue Articles";
                     <?php endif; ?>
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Type</label>
-                        <select name="type" class="px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500">
+                        <select name="type" class="w-32 px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500">
                             <option value="">Tous</option>
                             <option value="Bien" <?= $filterType === 'Bien' ? 'selected' : '' ?>>Bien</option>
                             <option value="Service" <?= $filterType === 'Service' ? 'selected' : '' ?>>Service</option>
@@ -325,7 +325,7 @@ $pageTitle = "Catalogue Articles";
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Statut</label>
-                        <select name="actif" class="px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500">
+                        <select name="actif" class="w-32 px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:ring-2 focus:ring-blue-500">
                             <option value="">Tous</option>
                             <option value="Oui" <?= $filterActif === 'Oui' ? 'selected' : '' ?>>Actif</option>
                             <option value="Non" <?= $filterActif === 'Non' ? 'selected' : '' ?>>Inactif</option>
@@ -409,6 +409,7 @@ $pageTitle = "Catalogue Articles";
                                             <th class="px-4 py-2 text-left text-xs text-slate-400 uppercase">Compte charge</th>
                                             <th class="px-4 py-2 text-center text-xs text-slate-400 uppercase">Unité</th>
                                             <th class="px-4 py-2 text-right text-xs text-slate-400 uppercase">Prix achat HT</th>
+                                            <th class="px-4 py-2 text-center text-xs text-slate-400 uppercase">Usage</th>
                                             <th class="px-4 py-2 text-center text-xs text-slate-400 uppercase">Statut</th>
                                             <th class="px-4 py-2 text-center text-xs text-slate-400 uppercase">Actions</th>
                                         </tr>
@@ -439,6 +440,13 @@ $pageTitle = "Catalogue Articles";
                                                 </td>
                                                 <td class="px-4 py-3 text-center text-slate-400 text-xs"><?= htmlspecialchars($article['unite']) ?></td>
                                                 <td class="px-4 py-3 text-right font-mono text-slate-200 text-xs"><?= safe_number_format($article['prix_unitaire_ht']) ?></td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <?php if ($article['usage_article'] === 'les_deux'): ?>
+                                                        <span class="px-2 py-0.5 rounded-full text-xs bg-indigo-500/20 text-indigo-400">Les deux</span>
+                                                    <?php else: ?>
+                                                        <span class="px-2 py-0.5 rounded-full text-xs bg-blue-500/20 text-blue-400">Achat</span>
+                                                    <?php endif; ?>
+                                                </td>
                                                 <td class="px-4 py-3 text-center">
                                                     <span class="px-2 py-0.5 rounded-full text-xs <?= $article['actif'] === 'Oui' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400' ?>">
                                                         <?= $article['actif'] === 'Oui' ? 'Actif' : 'Inactif' ?>

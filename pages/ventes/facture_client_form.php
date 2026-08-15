@@ -325,6 +325,24 @@ if ($fromBcId && $bcSource) {
 } else {
     $pageTitle = 'Nouvelle facture client';
 }
+
+// BCs clients actifs pour le select dynamique
+$stmtBcs = $db->prepare("
+    SELECT id, numero_bc, id_client, objet, statut
+    FROM bons_commande_clients
+    WHERE societe_id = ? AND statut NOT IN ('Annule','Facture')
+    ORDER BY date_bc DESC
+");
+$stmtBcs->execute([$societe_id]);
+$bcsByClient = [];
+foreach ($stmtBcs->fetchAll() as $row) {
+    $bcsByClient[$row['id_client']][] = [
+        'numero' => $row['numero_bc'],
+        'objet'  => $row['objet'],
+        'statut' => $row['statut'],
+    ];
+}
+$bcsByClientJson = json_encode($bcsByClient);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -444,7 +462,7 @@ if ($fromBcId && $bcSource) {
           <!-- Client -->
           <div class="md:col-span-1">
             <label class="block text-xs text-slate-400 mb-1">Client *</label>
-            <select name="id_client" required id="sel-client" onchange="updateEcheance()"
+            <select name="id_client" required id="sel-client" onchange="updateEcheance(); updateBcOptions(this.value)"
                     <?= $viewOnly ? 'disabled' : '' ?>
                     class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none">
               <option value="">-- Sélectionner un client --</option>
@@ -494,13 +512,18 @@ if ($fromBcId && $bcSource) {
                    class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
           </div>
 
-          <!-- Référence client -->
+          <!-- Référence client / BC lié -->
           <div>
             <label class="block text-xs text-slate-400 mb-1">Réf. commande client</label>
-            <input type="text" name="reference_client" value="<?= htmlspecialchars($f_refcli) ?>"
-                   placeholder="N° bon de commande client"
-                   <?= $viewOnly ? 'readonly' : '' ?>
-                   class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <?php if ($viewOnly): ?>
+              <input type="text" readonly value="<?= htmlspecialchars($f_refcli) ?>"
+                     class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 text-sm">
+            <?php else: ?>
+              <select name="reference_client" id="sel-bc-client"
+                      class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <option value="">- Aucun BC -</option>
+              </select>
+            <?php endif; ?>
           </div>
 
           <!-- Notes -->
@@ -831,6 +854,25 @@ function removeLigne(btn) {
   calcTotaux();
 }
 
+// ── BCs par client ────────────────────────────────────────────────────────────
+const bcsByClient = <?= $bcsByClientJson ?>;
+const currentBcRef = <?= json_encode($f_refcli) ?>;
+
+function updateBcOptions(clientId) {
+  const sel = document.getElementById('sel-bc-client');
+  if (!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">- Aucun BC -</option>';
+  const bcs = bcsByClient[clientId] || [];
+  bcs.forEach(bc => {
+    const opt = document.createElement('option');
+    opt.value = bc.numero;
+    opt.textContent = bc.numero + (bc.objet ? ' - ' + bc.objet : '') + ' (' + bc.statut + ')';
+    if (bc.numero === (prev || currentBcRef)) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
 // ── Date d'échéance ───────────────────────────────────────────────────────────
 function updateEcheance() {
   const dateStr = document.getElementById('date-facture').value;
@@ -851,6 +893,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     addLigne(); // ligne vide par défaut
   }
   updateEcheance();
+  const initClient = document.getElementById('sel-client')?.value;
+  if (initClient) updateBcOptions(initClient);
 });
 
 // ── Validation avant soumission ───────────────────────────────────────────────
